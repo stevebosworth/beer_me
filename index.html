@@ -1,0 +1,65 @@
+<html>
+	<head>
+		<title></title>
+		<style type="text/css">
+			body {
+				margin: 0;
+				padding: 0;
+			}
+		</style>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js" type="text/javascript"></script>
+		<script src="google-map-api.js" type="text/javascript"></script>
+		<script src="store-locator.js" type="text/javascript"></script>
+		<script type="text/javascript">
+	var map;
+
+			google.maps.event.addDomListener(window, 'load', function() {
+				ResizeMap();
+
+				var x = -79.383184,
+				y = 43.653226,
+				point = new google.maps.LatLng(y, x),
+				offset_point = new google.maps.LatLng(y + 0.065, x);
+
+				map = new google.maps.Map(document.getElementById('canvas'), {
+					center: offset_point,
+					disableDoubleClickZoom: false,
+					streetViewControl: false,
+					overviewMapControl: false,
+					panControl: false,
+					zoomControl: false,
+					scrollwheel: false,
+					mapTypeControl: false,
+					draggable: false,
+					zoom: 12,
+					mapTypeId: google.maps.MapTypeId.ROADMAP
+				});
+
+				var marker = new google.maps.Marker({
+					position: point
+				});
+
+				marker.setMap(map);
+			});
+
+			function ResizeMap(){
+				var windowH = $(window).height();
+				var windowW = $(window).width();
+				var headerH = $('#header').height();
+				var newHeight = (windowH - headerH);
+
+				$('#canvas').height(newHeight);
+				$('.form-wrapper').css('margin-top', function() {
+					return ((windowH / 2) - ($(this).height() / 2)) + 'px'
+				});
+			}
+
+			$(window).resize(function() { 
+				ResizeMap();
+			});
+		</script>
+	</head>
+	<body>
+		<div id="canvas"></div>
+	</body>
+</html>

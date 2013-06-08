@@ -1,0 +1,38 @@
+function jsonp_callback(data){
+    console.log(data.found);
+}
+
+
+$http.jsonp('http://lcboapi.com/stores?callback=jsonp_callback').success(function(data) {
+  $scope.locations = data.stores;
+  //console.log(data.result);
+});
+
+// // .error(function(data, status, headers, config){
+//     console.log("error");
+// });
+
+
+  // $.ajax({
+  // method: 'GET',
+  // dataType: 'jsonp',
+  // url: url,
+  // success: function(data){
+  //   console.log("success!");
+  //   $.each(data.result, function(index, location){
+  //     var location = "<li>" + location.name + ", " + location.inventory_volume_in_milliliters + "</li>";
+  //     $locations.append(location);
+  //     if(data.pager.is_final_page == false){
+  //        getData("lcboapi.com/stores" + data.pager.next_page_path);
+  //     }
+  //   });
+  // },
+  // error: function(data){
+  //   console.log("error!");
+  // }
+// });
+});
+
+// getData("http://lcboapi.com/stores");
+
+// });

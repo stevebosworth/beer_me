@@ -26,24 +26,29 @@ function setJSON(data) {
 
 function listCtrl($scope, $rootScope, Store, geoLocation) {
 
-	$scope.storesList = [];
-
 	$scope.orderStores = 'distance_in_meters';
 
-	// get users current location
-	geoLocation.getCurrentPosition(function (position) {
+	$scope.radius = 5;
 
-		// pass the users position to the getStoresList function
-		Store.getStoresList(position).success(function(data) {
-			$scope.storesList = data.result;
-		}).error(function(data, status) {
-			if (json_data.status == 200)
-				$scope.storesList = json_data.result;
-		});
+	$scope.performSearch = function() {
+		// get users current location
+		geoLocation.getCurrentPosition(function (position) {
 
-		// show users current location
-		$scope.currentLocation = position.coords.latitude + ',' + position.coords.longitude;
-	}, function() { alert('Failed to connect to GeoLocation'); });
+			// pass the users position to the getStoresList function
+			Store.getStoresList(position, $scope.radius).success(function(data) {
+				$scope.storesList = data.result;
+			}).error(function(data, status) {
+				if (json_data.status == 200)
+					$scope.storesList = json_data.result;
+			});
+
+			// show users current location
+			$scope.currentLocation = position.coords.latitude + ',' + position.coords.longitude;
+		}, function() { alert('Failed to connect to GeoLocation'); });
+	}
+
+	$scope.performSearch();
+
 };
 
 // --------------------------------------------------------------------

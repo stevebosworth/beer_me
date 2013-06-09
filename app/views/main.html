@@ -1,6 +1,6 @@
 
 <h1>Search:</h1>
-<input type="text" ng-model="query"/>
+<input type="text" ng-model="search"/>
 
 <h1>Sort:</h1>
 <select ng-model="orderStores">
@@ -8,6 +8,10 @@
     <option value="name">Alphabetical</option>
     <option value="city">City</option>
 </select>
+
+<h1>Store Count:</h1>
+<input type="range" name="radius" ng-model="radius" min="5" max="50"> {{radius}}
+<button ng-click="performSearch()">Update</button>
 
 <h1>Filters:</h1>
 <ul>
@@ -25,7 +29,7 @@
 <h1>Stores ({{filtered.length}}):</h1>
 
 <ul>
-    <li ng-repeat="store in filtered = (storesList | filter: query) | orderBy: orderStores">
+    <li ng-repeat="store in filtered = (storesList | filter: query | filter: search) | orderBy: orderStores">
         <a href="#/store/{{store.id}}">{{store.name}}</a>
         <ul>
             <li>City: {{store.city}}</li>

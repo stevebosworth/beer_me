@@ -24,7 +24,41 @@ function setJSON(data) {
  *
  */
 
-function listCtrl($scope, $rootScope, Store, geoLocation) {
+function listCtrl($scope, $rootScope, Store, geoLocation, $log) {
+
+    // Enable the new Google Maps visuals until it gets enabled by default.
+    // See http://googlegeodevelopers.blogspot.ca/2013/05/a-fresh-new-look-for-maps-api-for-all.html
+    google.maps.visualRefresh = true;
+
+	// default location
+	$scope.center = {
+		latitude: 45,
+		longitude: -73
+	}
+
+	angular.extend($scope, {
+
+		/** the initial zoom level of the map */
+		zoomProperty: 12,
+
+		/** list of markers to put in the map */
+		markersProperty: [ {
+				latitude: 45,
+				longitude: -74
+			}],
+
+		// These 2 properties will be set when clicking on the map
+		clickedLatitudeProperty: null,	
+		clickedLongitudeProperty: null,
+
+		eventsProperty: {
+		  click: function (mapModel, eventName, originalEventArgs) {	
+		    // 'this' is the directive's scope
+		    $log.log("user defined event on map directive with scope", this);
+		    $log.log("user defined event: " + eventName, mapModel, originalEventArgs);
+		  }
+		}
+	});	
 
 	$scope.orderStores = 'distance_in_meters';
 
@@ -34,21 +68,29 @@ function listCtrl($scope, $rootScope, Store, geoLocation) {
 		// get users current location
 		geoLocation.getCurrentPosition(function (position) {
 
+			$scope.currentLocation = { latitude: position.coords.latitude, longitude: position.coords.longitude };
+			// show users current location on map
+			$scope.center = { latitude: position.coords.latitude, longitude: position.coords.longitude };
+			$scope.markers = [{ latitude: position.coords.latitude, longitude: position.coords.longitude }];
+
 			// pass the users position to the getStoresList function
 			Store.getStoresList(position, $scope.radius).success(function(data) {
 				$scope.storesList = data.result;
 			}).error(function(data, status) {
-				if (json_data.status == 200)
+				if (json_data.status == 200) {
 					$scope.storesList = json_data.result;
+
+					// draw the markers onto the map
+					for (var i = json_data.result.length - 1; i >= 0; i--) {
+						$scope.markers.push({ latitude: json_data.result[i].latitude, longitude: json_data.result[i].longitude });
+					};
+				}
 			});
 
-			// show users current location
-			$scope.currentLocation = position.coords.latitude + ',' + position.coords.longitude;
 		}, function() { alert('Failed to connect to GeoLocation'); });
 	}
 
 	$scope.performSearch();
-
 };
 
 // --------------------------------------------------------------------

@@ -16,7 +16,7 @@ angular.module('beerMeServices', ['ngResource'])
     *
     */
 
-    .factory('Store', function($http) {
+    .factory('Store', function ($http) {
       return {
           // returns data for closest 25 stores
           getStoresList: function(position, num) {

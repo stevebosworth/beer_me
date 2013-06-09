@@ -1,20 +1,37 @@
 
 <h1>Search:</h1>
-<input type="text" ng-model="query" placeholder="Enter a query" />
+<input type="text" ng-model="query"/>
 
 <h1>Sort:</h1>
 <select ng-model="orderStores">
+    <option value="distance_in_meters">Shortest Distance</option>
     <option value="name">Alphabetical</option>
-    <option value="distance_in_meters">Distance</option>
+    <option value="city">City</option>
 </select>
 
+<h1>Filters:</h1>
 <ul>
-    <li ng-repeat="store in storesList | filter:query | orderBy: orderStores">
-        <a href="#/store/{{store.id}}">Name: {{store.name}}</a>
+    <li><input type="checkbox" data-ng-model="query.has_parking" ng-true-value="true" ng-false-value="" > Has Parking</li>
+    <li><input type="checkbox" data-ng-model="query.has_wheelchair_accessability" ng-true-value="true" ng-false-value="" > Wheelchair Accessible</li>
+    <li><input type="checkbox" data-ng-model="query.has_product_consultant" ng-true-value="true" ng-false-value="" > Has Product Consultant</li>
+    <li><input type="checkbox" data-ng-model="query.has_special_occasion_permits" ng-true-value="true" ng-false-value="" > Has Special Occasion Permits</li>
+    <li><input type="checkbox" data-ng-model="query.has_beer_cold_room" ng-true-value="true" ng-false-value="" > Has Cold Beer Room</li>
+    <li><input type="checkbox" data-ng-model="query.has_vintages_corner" ng-true-value="true" ng-false-value="" > Has Vintages Corner</li>
+    <li><input type="checkbox" data-ng-model="query.has_tasting_bar" ng-true-value="true" ng-false-value="" > Has Tasting Bar</li>
+    <li><input type="checkbox" data-ng-model="query.has_transit_access" ng-true-value="true" ng-false-value="" > Has Transit Access</li>
+</ul>
+
+
+<h1>Stores ({{filtered.length}}):</h1>
+
+<ul>
+    <li ng-repeat="store in filtered = (storesList | filter: query) | orderBy: orderStores">
+        <a href="#/store/{{store.id}}">{{store.name}}</a>
         <ul>
             <li>City: {{store.city}}</li>
             <li>Address: {{store.address_line_1}} {{store.address_line_2}}</li>
-            <li>Distance: {{store.distance_in_meters}}</li>
+            <li>Distance: {{store.distance_in_meters | mtokm}}</li>
+            <li>Parking: {{store.has_parking | yesno}}</li>
         </ul>
     </li>
 </ul>

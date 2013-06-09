@@ -28,6 +28,8 @@ function listCtrl($scope, $rootScope, Store, geoLocation) {
 
 	$scope.storesList = [];
 
+	$scope.orderStores = 'distance_in_meters';
+
 	// get users current location
 	geoLocation.getCurrentPosition(function (position) {
 

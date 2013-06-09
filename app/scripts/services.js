@@ -19,13 +19,13 @@ angular.module('beerMeServices', ['ngResource'])
     .factory('Store', function($http) {
       return {
           // returns data for closest 25 stores
-          getStoresList: function(position) {
+          getStoresList: function(position, num) {
               return $http({
                   url: 'http://lcboapi.com/stores',
                   method: 'JSONP',
                   params: {
                       callback: 'setJSON',
-                      per_page: '25',
+                      per_page: num,
                       lat: position.coords.latitude,
                       lon: position.coords.longitude
                   }

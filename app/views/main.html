@@ -1,16 +1,26 @@
-<div class="hero-unit">
-  <h1>Cheerio!</h1>
-  <p>You now have</p>
-  <ul>
-      <li ng-repeat="status in locations">{{status}}</li>
-  </ul>
-  <p>installed.</p>
-  <h3>Enjoy coding! - Yeoman</h3>
 
-    <ul>
-        <li ng-repeat="thing in awesomeThings">
-            {{thing.city}}
-        </li>
-    </ul>
-</div>
+<h1>Search:</h1>
+<input type="text" ng-model="query" placeholder="Enter a query" />
+
+<h1>Sort:</h1>
+<select ng-model="orderStores">
+    <option value="name">Alphabetical</option>
+    <option value="distance_in_meters">Distance</option>
+</select>
+
+<ul>
+    <li ng-repeat="store in storesList | filter:query | orderBy: orderStores">
+        <a href="#/store/{{store.id}}">Name: {{store.name}}</a>
+        <ul>
+            <li>City: {{store.city}}</li>
+            <li>Address: {{store.address_line_1}} {{store.address_line_2}}</li>
+            <li>Distance: {{store.distance_in_meters}}</li>
+        </ul>
+    </li>
+</ul>
+
+{{currentLocation}}
+
+<div id="canvas"></div>
+
 </div>

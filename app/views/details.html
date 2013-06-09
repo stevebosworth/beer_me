@@ -1,0 +1,18 @@
+<h1>Details for Store #{{storeId}}</h1>
+<small><a href="./">&mdash; Return to List</a></small>
+<h3>{{store.name}}</h3>
+<ul>
+	<li>{{store.address_line_1}}{{store.address_line_2}}</li>
+	<li>{{store.postal_code}}</li>
+	<li>{{store.city}}</li>
+	<li>{{store.telephone}}</li>
+	<li>Parking: {{store.has_parking | checkmark }}</li>
+	<li>Wheelchair Accessible: {{store.has_wheelchair_accessability | checkmark }}</li>
+	<li>Product Consultant: {{store.has_product_consultant | checkmark }}</li>
+	<li>Special Occassions Permits: {{store.has_special_occasion_permits | checkmark }}</li>
+	<li>Cold Beer Room: {{store.has_beer_cold_room | checkmark }}</li>
+	<li>Vintages Corner: {{store.has_vintages_corner | checkmark }}</li>
+	<li>Tasting Bar: {{store.has_tasting_bar | checkmark }}</li>
+	<li>Transit Access: {{store.has_transit_access | checkmark }}</li>
+</ul>
+

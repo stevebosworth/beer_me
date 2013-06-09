@@ -13,7 +13,6 @@
 
 var json_data;
 function setJSON(data) {
-	json_data = "";
 	json_data = data;
 }
 
@@ -63,5 +62,4 @@ function detailsCtrl($scope, $rootScope, $routeParams, Store) {
 		if (json_data.status == 200)
 			$scope.store = json_data.result;
 	});
-
 }

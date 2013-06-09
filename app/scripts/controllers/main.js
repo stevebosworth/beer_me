@@ -30,35 +30,24 @@ function listCtrl($scope, $rootScope, Store, geoLocation, $log) {
     // See http://googlegeodevelopers.blogspot.ca/2013/05/a-fresh-new-look-for-maps-api-for-all.html
     google.maps.visualRefresh = true;
 
-	// default location
+	// default location is Toronto
 	$scope.center = {
-		latitude: 45,
-		longitude: -73
-	}
+		latitude: 43.67023,
+		longitude: -79.38676
+	};
 
-	angular.extend($scope, {
+	// default zoom
+	$scope.zoom = 12;
 
-		/** the initial zoom level of the map */
-		zoomProperty: 12,
-
-		/** list of markers to put in the map */
-		markersProperty: [ {
-				latitude: 45,
-				longitude: -74
-			}],
-
-		// These 2 properties will be set when clicking on the map
-		clickedLatitudeProperty: null,	
-		clickedLongitudeProperty: null,
-
-		eventsProperty: {
-		  click: function (mapModel, eventName, originalEventArgs) {	
-		    // 'this' is the directive's scope
-		    $log.log("user defined event on map directive with scope", this);
-		    $log.log("user defined event: " + eventName, mapModel, originalEventArgs);
-		  }
+	// ******** testing ********
+	// from: http://nlaplante.github.io/angular-google-maps/#!/api
+	$scope.eventsProperty = {
+		click: function (mapModel, eventName, originalEventArgs) {	
+			// 'this' is the directive's scope
+			$log.log("user defined event on map directive with scope", this);
+			$log.log("user defined event: " + eventName, mapModel, originalEventArgs);
 		}
-	});	
+	};
 
 	$scope.orderStores = 'distance_in_meters';
 

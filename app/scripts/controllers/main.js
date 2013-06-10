@@ -115,13 +115,12 @@ function productsListCtrl($scope, Products) {
     $scope.productSearch = function() {
         console.log("woo!");
         Products.getProductsByQuery($scope.query).success(function(data){
-            console.log("woot!")
             $scope.productsList = data.result;
             console.log(data.result);
         }).error(function(data, status) {
-            if (json_data.status == 200)
+            if (json_data.status == 200){
                 $scope.productsList = json_data.result;
-                console.log($scope.productsList);
+            }
         });
         //$scope.productSearch();
     }

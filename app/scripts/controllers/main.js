@@ -86,7 +86,7 @@ function listCtrl($scope, $rootScope, Store, geoLocation, $log) {
 /**
  * detailsCtrl
  *
- * Used to display data of the selected store 
+ * Used to display data of the selected store
  *
  */
 
@@ -100,4 +100,29 @@ function detailsCtrl($scope, $rootScope, $routeParams, Store) {
 		if (json_data.status == 200)
 			$scope.store = json_data.result;
 	});
+}
+
+// --------------------------------------------------------------------
+/**
+ * Products by Query listCtrl
+ *
+ * Used to display a list of products based on a query.
+ *
+ */
+
+function productsListCtrl($scope, Products) {
+
+    $scope.productSearch = function() {
+        console.log("woo!");
+        Products.getProductsByQuery($scope.query).success(function(data){
+            console.log("woot!")
+            $scope.productsList = data.result;
+            console.log(data.result);
+        }).error(function(data, status) {
+            if (json_data.status == 200)
+                $scope.productsList = json_data.result;
+                console.log($scope.productsList);
+        });
+        //$scope.productSearch();
+    }
 }

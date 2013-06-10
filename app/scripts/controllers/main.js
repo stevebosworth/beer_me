@@ -39,15 +39,13 @@ function listCtrl($scope, $rootScope, $filter, Store, geoLocation, $log) {
 	// default zoom
 	$scope.zoom = 12;
 
-	// ******** testing ********
-	// from: http://nlaplante.github.io/angular-google-maps/#!/api
-	$scope.eventsProperty = {
-		click: function (mapModel, eventName, originalEventArgs) {	
-			// 'this' is the directive's scope
-			$log.log("user defined event on map directive with scope", this);
-			$log.log("user defined event: " + eventName, mapModel, originalEventArgs);
-		}
-	};
+	// $scope.eventsProperty = {
+	// 	click: function (mapModel, eventName, originalEventArgs) {
+	// 		// 'this' is the directive's scope
+	// 		$log.log("user defined event on map directive with scope", this);
+	// 		$log.log("user defined event: " + eventName, mapModel, originalEventArgs);
+	// 	}
+	// };
 
 	$scope.orderStores = 'distance_in_meters';
 
@@ -132,7 +130,6 @@ function detailsCtrl($scope, $rootScope, $routeParams, Store) {
 function productsListCtrl($scope, Products) {
 
     $scope.productSearch = function() {
-        console.log("woo!");
         Products.getProductsByQuery($scope.query).success(function(data){
             $scope.productsList = data.result;
             console.log(data.result);
@@ -143,4 +140,25 @@ function productsListCtrl($scope, Products) {
         });
         //$scope.productSearch();
     }
+}
+
+/**
+ * productDetailsCtrl
+ *
+ * Used to display detailed view of a product
+ *
+ */
+
+function productDetailsCtrl($scope, $routeParams, Products) {
+    //$scope.productId = $routeParams.productId;
+
+    // retrieve the data for the selected store
+    Products.getProduct($routeParams.productId).success(function(data) {
+        $scope.product = data.result;
+    }).error(function(data, status) {
+        if (json_data.status == 200){
+            $scope.product = json_data.result;
+            //console.log($scope.product);
+        }
+    });
 }

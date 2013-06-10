@@ -41,13 +41,13 @@ function listCtrl($scope, $rootScope, Store, geoLocation, $log) {
 
 	// ******** testing ********
 	// from: http://nlaplante.github.io/angular-google-maps/#!/api
-	$scope.eventsProperty = {
-		click: function (mapModel, eventName, originalEventArgs) {	
-			// 'this' is the directive's scope
-			$log.log("user defined event on map directive with scope", this);
-			$log.log("user defined event: " + eventName, mapModel, originalEventArgs);
-		}
-	};
+	// $scope.eventsProperty = {
+	// 	click: function (mapModel, eventName, originalEventArgs) {	
+	// 		// 'this' is the directive's scope
+	// 		$log.log("user defined event on map directive with scope", this);
+	// 		$log.log("user defined event: " + eventName, mapModel, originalEventArgs);
+	// 	}
+	// };
 
 	$scope.orderStores = 'distance_in_meters';
 
@@ -78,6 +78,16 @@ function listCtrl($scope, $rootScope, Store, geoLocation, $log) {
 
 		}, function() { alert('Failed to connect to GeoLocation'); });
 	}
+
+	// for some reason this fixed my query issue
+    $scope.$watch('query', function (newValue) {
+        console.log(newValue);
+    }, true);
+
+    // watch the filtered expression and change the map based on new input
+    $scope.$watch('filtered', function (newValue) {
+    	$scope.markers = newValue;
+    }, true);
 
 	$scope.performSearch();
 };

@@ -21,20 +21,20 @@
 
         <h1>Advanced Filters:</h1>
         <ul>
-            <li><input type="checkbox" data-ng-model="query.has_parking" ng-true-value="true" ng-false-value="" > Has Parking</li>
-            <li><input type="checkbox" data-ng-model="query.has_wheelchair_accessability" ng-true-value="true" ng-false-value="" > Wheelchair Accessible</li>
-            <li><input type="checkbox" data-ng-model="query.has_product_consultant" ng-true-value="true" ng-false-value="" > Has Product Consultant</li>
-            <li><input type="checkbox" data-ng-model="query.has_special_occasion_permits" ng-true-value="true" ng-false-value="" > Has Special Occasion Permits</li>
-            <li><input type="checkbox" data-ng-model="query.has_beer_cold_room" ng-true-value="true" ng-false-value="" > Has Cold Beer Room</li>
-            <li><input type="checkbox" data-ng-model="query.has_vintages_corner" ng-true-value="true" ng-false-value="" > Has Vintages Corner</li>
-            <li><input type="checkbox" data-ng-model="query.has_tasting_bar" ng-true-value="true" ng-false-value="" > Has Tasting Bar</li>
-            <li><input type="checkbox" data-ng-model="query.has_transit_access" ng-true-value="true" ng-false-value="" > Has Transit Access</li>
+            <li><input type="checkbox" ng-model="query.has_parking" ng-true-value="true" ng-false-value="" > Has Parking</li>
+            <li><input type="checkbox" ng-model="query.has_wheelchair_accessability" ng-true-value="true" ng-false-value="" > Wheelchair Accessible</li>
+            <li><input type="checkbox" ng-model="query.has_product_consultant" ng-true-value="true" ng-false-value="" > Has Product Consultant</li>
+            <li><input type="checkbox" ng-model="query.has_special_occasion_permits" ng-true-value="true" ng-false-value="" > Has Special Occasion Permits</li>
+            <li><input type="checkbox" ng-model="query.has_beer_cold_room" ng-true-value="true" ng-false-value="" > Has Cold Beer Room</li>
+            <li><input type="checkbox" ng-model="query.has_vintages_corner" ng-true-value="true" ng-false-value="" > Has Vintages Corner</li>
+            <li><input type="checkbox" ng-model="query.has_tasting_bar" ng-true-value="true" ng-false-value="" > Has Tasting Bar</li>
+            <li><input type="checkbox" ng-model="query.has_transit_access" ng-true-value="true" ng-false-value="" > Has Transit Access</li>
         </ul>
 
 
         <h1>Stores ({{filtered.length}}):</h1>
         <ul>
-            <li ng-repeat="store in filtered = (storesList | filter: query | filter: search) | orderBy: orderStores">
+            <li ng-repeat="store in filtered = (storesList | filter: query | filter: search | orderBy: orderStores)">
                 <a href="#/store/{{store.id}}">{{store.name}}</a>
                 <ul>
                     <li>City: {{store.city}}</li>
@@ -42,6 +42,7 @@
                     <li>Distance: {{store.distance_in_meters | mtokm}}</li>
                     <li>Parking: {{store.has_parking | yesno}}</li>
                     <li style="display: none;">{{store.tags}}</li>
+                    <li style="display: none;">{{store.latitude}}</li>
                 </ul>
             </li>
         </ul>
@@ -51,7 +52,7 @@
     <div class="google-map" 
         center="center"
         zoom="zoom" 
-        markers="filtered"
+        markers="markers"
         mark-click="true"
         draggable="true"
         fit="true"

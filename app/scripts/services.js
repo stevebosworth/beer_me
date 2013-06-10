@@ -1,6 +1,6 @@
 // --------------------------------------------------------------------
 /**
- * Services 
+ * Services
  *
  * RESTful services and GeoLocation services
  *
@@ -10,7 +10,7 @@ angular.module('beerMeServices', ['ngResource'])
 
     // --------------------------------------------------------------------
     /**
-    * Store 
+    * Store
     *
     * Provides us with several methods to access the LCBO API
     *
@@ -46,7 +46,7 @@ angular.module('beerMeServices', ['ngResource'])
 
     // --------------------------------------------------------------------
     /**
-     * geoLocation 
+     * geoLocation
      *
      * Adapted from Brian Ford's tutorial: Angular + PhoneGap
      * http://briantford.com/blog/angular-phonegap.html
@@ -79,5 +79,37 @@ angular.module('beerMeServices', ['ngResource'])
           options);
         }
       };
+    })
+    // --------------------------------------------------------------------
+    /**
+    * Products
+    *
+    * Provides us with several methods to access the LCBO API
+    *
+    */
+
+    .factory('Products', function($http) {
+      return {
+          // returns data for upto 20 products matching search
+          getProductsByQuery: function(query) {
+              return $http({
+                  url: 'http://lcboapi.com/products?q=' + query,
+                  method: 'JSONP',
+                  params: {
+                      callback: 'setJSON',
+                  }
+              })
+          },
+          // returns data for a single product
+          getProduct: function(id) {
+              return $http({
+                  url: 'http://lcboapi.com/products/' + id,
+                  method: 'JSONP',
+                  params: {
+                      callback: 'setJSON'
+                  }
+              })
+          }
+      }
     });
 

@@ -20,7 +20,7 @@ angular.module('beerMeApp', ['beerMeServices', 'beerMeFilters', 'google-maps'])
      * https://github.com/angular/angular.js/pull/1454
      *
      */
-    
+
     .config(function($httpProvider){
         delete $httpProvider.defaults.headers.common['X-Requested-With'];
     })
@@ -31,7 +31,7 @@ angular.module('beerMeApp', ['beerMeServices', 'beerMeFilters', 'google-maps'])
      *
      * Configures routes & controllers for application
      *
-     */    
+     */
     .config(['$routeProvider', function($routeProvider) {
         $routeProvider
         .when('/', {
@@ -41,7 +41,11 @@ angular.module('beerMeApp', ['beerMeServices', 'beerMeFilters', 'google-maps'])
         .when('/store/:storeId', {
             templateUrl: 'views/details.html',
             controller: 'detailsCtrl'
-        })    
+        })
+        .when('/products', {
+            templateUrl: 'views/products.html',
+            controller: 'productsListCtrl'
+        })
         .otherwise({
             redirectTo: '/'
         });

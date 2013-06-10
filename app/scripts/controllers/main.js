@@ -24,7 +24,7 @@ function setJSON(data) {
  *
  */
 
-function listCtrl($scope, $rootScope, Store, geoLocation, $log) {
+function listCtrl($scope, $rootScope, $filter, Store, geoLocation, $log) {
 
     // Enable the new Google Maps visuals until it gets enabled by default.
     // See http://googlegeodevelopers.blogspot.ca/2013/05/a-fresh-new-look-for-maps-api-for-all.html
@@ -41,13 +41,13 @@ function listCtrl($scope, $rootScope, Store, geoLocation, $log) {
 
 	// ******** testing ********
 	// from: http://nlaplante.github.io/angular-google-maps/#!/api
-	// $scope.eventsProperty = {
-	// 	click: function (mapModel, eventName, originalEventArgs) {	
-	// 		// 'this' is the directive's scope
-	// 		$log.log("user defined event on map directive with scope", this);
-	// 		$log.log("user defined event: " + eventName, mapModel, originalEventArgs);
-	// 	}
-	// };
+	$scope.eventsProperty = {
+		click: function (mapModel, eventName, originalEventArgs) {	
+			// 'this' is the directive's scope
+			$log.log("user defined event on map directive with scope", this);
+			$log.log("user defined event: " + eventName, mapModel, originalEventArgs);
+		}
+	};
 
 	$scope.orderStores = 'distance_in_meters';
 
@@ -60,7 +60,7 @@ function listCtrl($scope, $rootScope, Store, geoLocation, $log) {
 			$scope.currentLocation = { latitude: position.coords.latitude, longitude: position.coords.longitude };
 			// show users current location on map
 			$scope.center = { latitude: position.coords.latitude, longitude: position.coords.longitude };
-			$scope.markers = [{ latitude: position.coords.latitude, longitude: position.coords.longitude }];
+			$scope.markers = [];
 
 			// pass the users position to the getStoresList function
 			Store.getStoresList(position, $scope.radius).success(function(data) {
@@ -71,8 +71,14 @@ function listCtrl($scope, $rootScope, Store, geoLocation, $log) {
 
 					// draw the markers onto the map
 					angular.forEach(json_data.result, function(object) {
-						$scope.markers.push({ latitude: object.latitude, longitude: object.longitude });
+						var html = '<div style="min-width: 300px; height: 150px;"">'
+									+ '<p class="lead">' + object.name + '<br /><small>Store ID: ' + object.id + '' 
+									+ '<br />' + object.address_line_1 + ' ' + ((object.address_line_2 != null) ? object.address_line_2 : "")  
+									+ '<br />' + $filter('is_open')(object) + '</small></p></div>';
+						$scope.markers.push({ latitude: object.latitude, longitude: object.longitude, infoWindow: html });
 					})
+
+					//console.log($scope.markers);
 						
 				}
 			});

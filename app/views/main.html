@@ -10,6 +10,7 @@
             <option value="distance_in_meters">Shortest Distance</option>
             <option value="name">Alphabetical</option>
             <option value="city">City</option>
+            <option value="-inventory_volume_in_milliliters">Inventory Volume</option>
         </select>
 
         <h1>Store Count:</h1>
@@ -41,8 +42,8 @@
                     <li>Address: {{store.address_line_1}} {{store.address_line_2}}</li>
                     <li>Distance: {{store.distance_in_meters | mtokm}}</li>
                     <li>Parking: {{store.has_parking | yesno}}</li>
-                    <li style="display: none;">{{store.tags}}</li>
-                    <li style="display: none;">{{store.latitude}}</li>
+                    <li>Selection Size: {{store.products_count | inventorydiversity}}</li>
+                    <li>Status: {{store | is_open}}</li>
                 </ul>
             </li>
         </ul>

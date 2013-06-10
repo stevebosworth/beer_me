@@ -70,18 +70,20 @@ function listCtrl($scope, $rootScope, Store, geoLocation, $log) {
 					$scope.storesList = json_data.result;
 
 					// draw the markers onto the map
-					for (var i = json_data.result.length - 1; i >= 0; i--) {
-						$scope.markers.push({ latitude: json_data.result[i].latitude, longitude: json_data.result[i].longitude });
-					};
+					angular.forEach(json_data.result, function(object) {
+						$scope.markers.push({ latitude: object.latitude, longitude: object.longitude });
+					})
+						
 				}
 			});
 
 		}, function() { alert('Failed to connect to GeoLocation'); });
 	}
 
-	// for some reason this fixed my query issue
+	// for some reason this fixed my query issue: filtered.length was showing 
+	// incorrectly in the view, which the next function is reliant on, doesn't make sense
+	// will investigate later
     $scope.$watch('query', function (newValue) {
-        console.log(newValue);
     }, true);
 
     // watch the filtered expression and change the map based on new input
@@ -90,6 +92,7 @@ function listCtrl($scope, $rootScope, Store, geoLocation, $log) {
     }, true);
 
 	$scope.performSearch();
+
 };
 
 // --------------------------------------------------------------------

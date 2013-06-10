@@ -46,6 +46,10 @@ angular.module('beerMeApp', ['beerMeServices', 'beerMeFilters', 'google-maps'])
             templateUrl: 'views/products.html',
             controller: 'productsListCtrl'
         })
+        .when('/product/:productId', {
+            templateUrl: 'views/product.html',
+            controller: 'productDetailsCtrl'
+        })
         .otherwise({
             redirectTo: '/'
         });

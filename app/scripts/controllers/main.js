@@ -36,6 +36,8 @@ function listCtrl($scope, $rootScope, $filter, Store, geoLocation, $log) {
 		longitude: -79.38676
 	};
 
+	$scope.sidebarVisible = false;
+
 	// default zoom
 	$scope.zoom = 12;
 

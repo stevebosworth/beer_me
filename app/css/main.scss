@@ -1,3 +1,5 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,700);
+
 /* ====================================================================
  * FIX for Bootstrap and Google Maps Info window styes problem 
  * Adapted from: http://stackoverflow.com/questions/16708324/google-maps-infowindow-close-button-hidden
@@ -8,6 +10,29 @@ img[src*="gstatic.com/"], img[src*="googleapis.com/"] {
 	max-width: none;
 }
 
+/* ====================================================================
+ * Sass Mixins
+ * ====================================================================
+ */
+
+@mixin transition($transition-property, $transition-time, $method) {
+	-webkit-transition: $transition-property $transition-time $method;
+	-moz-transition: $transition-property $transition-time $method;
+	-ms-transition: $transition-property $transition-time $method;
+	-o-transition: $transition-property $transition-time $method;
+	transition: $transition-property $transition-time $method;
+}
+
+@mixin linear-gradient($fromColor, $toColor) {
+  background-color: $toColor; /* Fallback Color */
+  background-image: -webkit-gradient(linear, left top, left bottom, from($fromColor), to($toColor)); /* Saf4+, Chrome */
+  background-image: -webkit-linear-gradient(top, $fromColor, $toColor); /* Chrome 10+, Saf5.1+, iOS 5+ */
+  background-image:    -moz-linear-gradient(top, $fromColor, $toColor); /* FF3.6 */
+  background-image:     -ms-linear-gradient(top, $fromColor, $toColor); /* IE10 */
+  background-image:      -o-linear-gradient(top, $fromColor, $toColor); /* Opera 11.10+ */
+  background-image:         linear-gradient(top, $fromColor, $toColor);
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='$fromColor', EndColorStr='$toColor');
+}
 
 /* ====================================================================
  * Global Styles
@@ -15,3 +40,141 @@ img[src*="gstatic.com/"], img[src*="googleapis.com/"] {
  */
 
 $bg-color: #000;
+$lightblue: #2b6280;
+$darkblue: #224e66;
+$menu: #32394a;
+$white: #fff;
+$smoke: #efefef;
+
+html, body {
+	font-size: 18px;
+	font-family: 'Open Sans', 'Helvetica', 'Arial', sans-serif;
+	font-weight: 300;
+	height: 100%;
+	padding: 0;
+	margin: 0;
+}
+
+.row {
+	max-width: 100%;
+}
+
+/* ====================================================================
+ * Navigation Styles
+ * ====================================================================
+ */
+
+#header-bar {
+	height: 2.25em;
+	position: fixed;
+	z-index: 200;
+	padding: 0.25em 0;
+	color: $white;
+
+	@include linear-gradient($lightblue, $darkblue);
+
+	#brand {
+		font-size: 1.5em;
+		width: 100%;
+		display: inline-block;
+		text-align: center;
+	}
+
+}
+
+#content {
+	height: 100%;
+	padding-top: 2.25em;
+}
+
+/* ====================================================================
+ * Custom Checkboxes
+ * ====================================================================
+ */
+
+input[type="checkbox"] {
+    display:none;
+}
+input[type="checkbox"] + label span {
+    display:inline-block;
+    width:19px;
+    height:19px;
+    margin:-1px 4px 0 0;
+    vertical-align:middle;
+    background:url(check_radio_sheet.png) left top no-repeat;
+    cursor:pointer;
+}
+input[type="checkbox"]:checked + label span {
+    background:url(check_radio_sheet.png) -19px top no-repeat;
+}
+
+/* ====================================================================
+ * Nearby Finder
+ * ====================================================================
+ */
+
+.primary-content {
+	@include transition(all, 1s, ease-in-out);
+	width: 75%;
+	height: 100%;
+	position: fixed;
+	z-index: 1;
+}
+
+.secondary-content-tab {
+	position: fixed;
+	z-index: 100;
+	top: 80%;
+	left: 73.75%;
+	background-color: #32394a;
+	width: 2em;
+	height: 3.75em;
+	color: white;
+	border-radius: 10px;
+	padding: 0.5em;
+
+	a {
+		color: $white;
+		&:hover {
+			color: $white / 1.25;
+		}
+	}
+}
+
+.secondary-content {
+	padding: 1em;
+	font-size: 0.75em;
+	background-color: $menu;
+	color: $white;
+	position: fixed;
+	left: 75%;
+	width: 25%;
+	z-index: 100;
+
+	h1, h2, h3, h4, h5, h6, p, span, label {
+		color: $white;
+	}
+
+	ul.filter-options {
+		list-style-type: none;
+		padding: 0;
+		margin: 1em 0;
+		width: 100%;
+		display: inline-block;
+		li {
+			width: 100%;
+			display: inline-block;
+			margin: 0.25em 0;
+		}
+	}
+
+	.check-wrapper {
+		width: 10%;
+		float: left;
+	}
+
+	.check-label {
+		float: left;
+	}
+
+}

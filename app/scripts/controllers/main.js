@@ -70,22 +70,11 @@ function listCtrl($scope, $rootScope, $filter, Store, geoLocation, $log) {
 					// draw the markers onto the map
 					angular.forEach(json_data.result, function(object) {
 						var html = '<div style="min-width: 300px; height: 150px;"">'
-<<<<<<< HEAD
 									+ '<p class="lead">' + object.name + '<br /><small>Store ID: ' + object.id + ''
 									+ '<br />' + object.address_line_1 + ' ' + ((object.address_line_2 != null) ? object.address_line_2 : "")
-=======
-									+ '<p class="lead">' + object.name + '<br /><small>Store ID: ' + object.id + '' 
-									+ '<br />' + object.address_line_1 + ' ' + ((object.address_line_2 != null) ? object.address_line_2 : "")  
->>>>>>> ef23132b045b8e65fa15698aac273c8494288d58
 									+ '<br />' + $filter('is_open')(object) + '</small></p></div>';
 						$scope.markers.push({ latitude: object.latitude, longitude: object.longitude, infoWindow: html });
 					})
-
-<<<<<<< HEAD
-=======
-					//console.log($scope.markers);
-						
->>>>>>> ef23132b045b8e65fa15698aac273c8494288d58
 				}
 			});
 

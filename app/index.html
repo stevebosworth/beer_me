@@ -43,21 +43,44 @@
             <script src="scripts/vendor/json3.min.js"></script>
         <![endif]-->
 
-        <div id="header-bar" class="row">
-            <div class="small-3 columns">
-                <i class="icon-list icon-large"></i>
-            </div>
-            <div class="small-6 columns">
-                <span id="brand">
-                    <i class="icon-beer"></i> BeerME!
-                </span>
-            </div>
-            <div class="small-3 columns">
-                <a ng-click="toggleSidebar()"><i class="icon-cogs icon-large"></i></a>
-            </div>
-        </div>
+        <div id="wrapper" ng-controller="wrapperCtrl">
 
-        <div id="content" ng-view></div>
+            <div id="header-bar" class="row">
+                <div class="small-3 columns">
+                    <a ng-click="revealMenuBar('left')" alt="Show Menu"> 
+                        <i ng-hide="showMenuBar" class="icon-plus-sign icon-large"></i>
+                        <i ng-show="showMenuBar" class="icon-minus-sign icon-large"></i>                    
+                        Menu
+                </div>
+                <div class="small-6 columns">
+                    <span id="brand">
+                        <i class="icon-beer"></i> BeerME!
+                    </span>
+                </div>
+                <div class="small-3 columns">
+                    <div class="text-right">
+                        <a ng-click="revealMenuBar('right')" alt="Show Filters">
+                            Filters 
+                            <i ng-hide="showOptionsBar" class="icon-plus-sign icon-large"></i>
+                            <i ng-show="showOptionsBar" class="icon-minus-sign icon-large"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div id="menu-bar" ng-show="showMenuBar == true">
+                <ul>
+                    <li>Hello World</li>
+                    <li>Hello World</li>
+                    <li>Hello World</li>
+                    <li>Hello World</li>
+                    <li>Hello World</li>
+                </ul>
+            </div>
+
+            <div id="content" ng-view></div>
+
+        </div>
 
         <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
         <script>

@@ -18,6 +18,44 @@ function setJSON(data) {
 
 // --------------------------------------------------------------------
 /**
+ * menuCtrl
+ *
+ * Used to show the list of all the stores available
+ *
+ */
+
+function wrapperCtrl($scope, $rootScope) {
+
+	$scope.showMenuBar = false;
+	$scope.showOptionsBar = false;
+
+	$scope.revealMenuBar = function(target) {
+
+		switch(true)
+		{
+			case (target == 'left' && $scope.showMenuBar == true):
+				$scope.showMenuBar = false;
+				$scope.showOptionsBar = false;	
+				break;
+			case (target == 'left' && $scope.showMenuBar == false):
+				$scope.showMenuBar = true;
+				$scope.showOptionsBar = false;
+				break;
+			case (target == 'right' && $scope.showOptionsBar == true):
+				$scope.showMenuBar = false;
+				$scope.showOptionsBar = false;				
+				break;
+			case (target == 'right' && $scope.showOptionsBar == false):
+				$scope.showMenuBar = false;
+				$scope.showOptionsBar = true;			
+				break;
+		}
+	}
+
+}
+
+// --------------------------------------------------------------------
+/**
  * listCtrl
  *
  * Used to show the list of all the stores available

@@ -9,7 +9,8 @@
     </div>
 </div>
 
-<div class="secondary-content">
+<div class="options-bar" ng-show="showOptionsBar == true">
+    <h1>Filter Panel</h1>
     <h1>Sort:</h1>
     <select ng-model="orderStores">
         <option value="distance_in_meters">Shortest Distance</option>
@@ -29,7 +30,7 @@
     <ul class="filter-options">
         <li>
             <input id="has_parking" type="checkbox" ng-model="query.has_parking" ng-true-value="true" ng-false-value="">
-            <label for="has_parking"><span></span>Has Parking</label>
+            <label for="has_parking"><span></span>Parking</label>
         </li>
         <li>
             <input id="has_wheelchair_accessability" type="checkbox" ng-model="query.has_wheelchair_accessability" ng-true-value="true" ng-false-value="" >
@@ -43,6 +44,9 @@
             <input id="has_special_occasion_permits" type="checkbox" ng-model="query.has_special_occasion_permits" ng-true-value="true" ng-false-value="" > 
             <label for="has_special_occasion_permits"><span></span>Special Occasion Permits</label>
         </li>
+    </ul>
+
+    <ul class="filter-options">
         <li>
             <input id="has_beer_cold_room" type="checkbox" ng-model="query.has_beer_cold_room" ng-true-value="true" ng-false-value="" > 
             <label for="has_beer_cold_room"><span></span>Cold Beer Room</label>

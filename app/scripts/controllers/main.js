@@ -72,21 +72,18 @@ function listCtrl($scope, $rootScope, $filter, Store, geoLocation, $log) {
 					// draw the markers onto the map
 					angular.forEach(json_data.result, function(object) {
 						var html = '<div style="min-width: 300px; height: 150px;"">'
-									+ '<p class="lead">' + object.name + '<br /><small>Store ID: ' + object.id + '' 
-									+ '<br />' + object.address_line_1 + ' ' + ((object.address_line_2 != null) ? object.address_line_2 : "")  
+									+ '<p class="lead">' + object.name + '<br /><small>Store ID: ' + object.id + ''
+									+ '<br />' + object.address_line_1 + ' ' + ((object.address_line_2 != null) ? object.address_line_2 : "")
 									+ '<br />' + $filter('is_open')(object) + '</small></p></div>';
 						$scope.markers.push({ latitude: object.latitude, longitude: object.longitude, infoWindow: html });
 					})
-
-					//console.log($scope.markers);
-						
 				}
 			});
 
 		}, function() { alert('Failed to connect to GeoLocation'); });
 	}
 
-	// for some reason this fixed my query issue: filtered.length was showing 
+	// for some reason this fixed my query issue: filtered.length was showing
 	// incorrectly in the view, which the next function is reliant on, doesn't make sense
 	// will investigate later
     $scope.$watch('query', function (newValue) {
@@ -148,19 +145,54 @@ function productsListCtrl($scope, Products) {
  * productDetailsCtrl
  *
  * Used to display detailed view of a product
+ * Includes Stock Information and returns 20 closest stores
  *
  */
 
-function productDetailsCtrl($scope, $routeParams, Products) {
+function productDetailsCtrl($scope, $routeParams, geoLocation, Products) {
     //$scope.productId = $routeParams.productId;
+    geoLocation.getCurrentPosition(function (position) {
 
-    // retrieve the data for the selected store
-    Products.getProduct($routeParams.productId).success(function(data) {
-        $scope.product = data.result;
-    }).error(function(data, status) {
-        if (json_data.status == 200){
-            $scope.product = json_data.result;
-            //console.log($scope.product);
-        }
+        $scope.currentLocation = {latitude: position.coords.latitude, longitude: position.coords.longitude};
+        // show users current location on map
+
+        // retrieve the data for the selected store
+        Products.getProduct($routeParams.productId, position, 1).success(function(data) {
+            $scope.product = data.product;
+            $scope.store = data.result;
+        }).error(function(data, status) {
+            if (json_data.status == 200){
+                //set default images
+                if(!json_data.product['image_thumb_url']){
+                    json_data.product['image_thumb_url'] = "img/glyphicons-halflings.png";
+                }
+                $scope.product = json_data.product;
+                $scope.storesList = json_data.result;
+                //console.log($scope.product);
+            }
+        });
     });
+}
+
+// --------------------------------------------------------------------
+/**
+ * Products in Store by Query listCtrl
+ *
+ * Used to display a list of products based on a query.
+ *
+ */
+
+function storesForProductCtrl($scope, $routeParams, Products) {
+
+
+        Products.getStoresForProduct($routeParams.productId).success(function(data){
+            $scope.storesList = data.result;
+            console.log($scope.storesList);
+        }).error(function(data, status) {
+            if (json_data.status == 200){
+                $scope.storesList = json_data.result;
+                console.log($scope.storesList);
+            }
+        });
+        //$scope.productSearch();
 }

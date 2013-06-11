@@ -16,9 +16,12 @@
         <link rel="stylesheet" href="css/font-awesome.min.css"/>
         <link rel="stylesheet" href="css/main.css"/>
 
-        <!-- application scripts -->
+        <!-- angular scripts -->
         <script src="scripts/vendor/angular.min.js"></script>  
-        <script src="scripts/vendor/angular-resource.min.js"></script>  
+        <script src="scripts/vendor/angular-resource.min.js"></script>
+        <script src="scripts/vendor/angular-cookies.min.js"></script>
+
+        <!-- additional scripts -->
         <script src="scripts/foundation.min.js"></script> 
         <script src="scripts/vendor/geoPosition.js" type="text/javascript"></script>
         <script src="http://maps.googleapis.com/maps/api/js?sensor=false&language=en"></script>
@@ -47,10 +50,11 @@
 
             <div id="header-bar" class="row">
                 <div class="small-3 columns">
-                    <a ng-click="revealMenuBar('left')" alt="Show Menu"> 
+                    <a ng-click="revealMenuBar('left')" alt="Show Menu">
                         <i ng-hide="showMenuBar" class="icon-plus-sign icon-large"></i>
                         <i ng-show="showMenuBar" class="icon-minus-sign icon-large"></i>                    
                         Menu
+                    </a>
                 </div>
                 <div class="small-6 columns">
                     <span id="brand">

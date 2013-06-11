@@ -93,7 +93,11 @@
             center: that.center,
             zoom: that.zoom,
             draggable: that.draggable,
-            mapTypeId : google.maps.MapTypeId.ROADMAP
+            mapTypeId : google.maps.MapTypeId.ROADMAP,
+            zoomControl: false,
+            mapTypeControl: false,
+            panControl: false,
+            streetViewControl: false
           }));
           
           google.maps.event.addListener(_instance, "dragstart",
@@ -313,16 +317,16 @@
   googleMapsModule.directive("googleMap", ["$log", "$timeout", "$filter", function ($log, $timeout, 
       $filter) {
 
-    var controller = function ($scope, $element) {
+    var controller = function ($rootScope, $element) {
       
-      var _m = $scope.map;
+      var _m = $rootScope.map;
       
       self.addInfoWindow = function (lat, lng, content) {
         _m.addInfoWindow(lat, lng, content);
       };
     };
 
-    controller.$inject = ['$scope', '$element'];
+    controller.$inject = ['$rootScope', '$element'];
     
     return {
       restrict: "ECA",

@@ -32,7 +32,7 @@
     </select>
 
     <h1>Store Count:</h1>
-    <input type="range" name="radius" ng-model="radius" min="5" max="15"> {{radius}}
+    <input type="range" name="radius" ng-model="radius" ng-change="change()" min="5" max="15"> {{radius}}
     <button ng-click="performSearch()">Update</button>
 
     <h1>Filter:</h1>

@@ -62,9 +62,9 @@ function wrapperCtrl($scope, $rootScope) {
  *
  */
 
-function listCtrl($scope, $rootScope, $filter, Store, geoLocation, $log) {
+function listCtrl($scope, $rootScope, $filter, Finder) {
 
-    // enables new version of google maps
+	// enables new version of google maps
     google.maps.visualRefresh = true;
 
 	// default location is Toronto
@@ -88,36 +88,10 @@ function listCtrl($scope, $rootScope, $filter, Store, geoLocation, $log) {
 
 	$scope.orderStores = 'distance_in_meters';
 
-	$scope.radius = 5;
+
 
 	$scope.performSearch = function() {
-		// get users current location
-		geoLocation.getCurrentPosition(function (position) {
-
-			$scope.currentLocation = { latitude: position.coords.latitude, longitude: position.coords.longitude };
-			// show users current location on map
-			$scope.center = { latitude: position.coords.latitude, longitude: position.coords.longitude };
-			$scope.markers = [];
-
-			// pass the users position to the getStoresList function
-			Store.getStoresList(position, $scope.radius).success(function(data) {
-				$scope.storesList = data.result;
-			}).error(function(data, status) {
-				if (json_data.status == 200) {
-					$scope.storesList = json_data.result;
-
-					// draw the markers onto the map
-					angular.forEach(json_data.result, function(object) {
-						var html = '<div style="min-width: 300px; height: 150px;"">'
-									+ '<p class="lead">' + object.name + '<br /><small>Store ID: ' + object.id + ''
-									+ '<br />' + object.address_line_1 + ' ' + ((object.address_line_2 != null) ? object.address_line_2 : "")
-									+ '<br />' + $filter('is_open')(object) + '</small></p></div>';
-						$scope.markers.push({ latitude: object.latitude, longitude: object.longitude, infoWindow: html });
-					})
-				}
-			});
-
-		}, function() { alert('Failed to connect to GeoLocation'); });
+		Finder.nearbyStores($scope.radius);
 	}
 
 	// for some reason this fixed my query issue: filtered.length was showing
@@ -131,7 +105,11 @@ function listCtrl($scope, $rootScope, $filter, Store, geoLocation, $log) {
     	$scope.markers = newValue;
     }, true);
 
-	$scope.performSearch();
+	Finder.nearbyStores(25);
+
+	$scope.change = function() {
+		//console.log($scope.storesList);
+	}
 
 };
 

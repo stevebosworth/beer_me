@@ -64,8 +64,7 @@ function wrapperCtrl($scope, $rootScope) {
 
 function listCtrl($scope, $rootScope, $filter, Store, geoLocation, $log) {
 
-    // Enable the new Google Maps visuals until it gets enabled by default.
-    // See http://googlegeodevelopers.blogspot.ca/2013/05/a-fresh-new-look-for-maps-api-for-all.html
+    // enables new version of google maps
     google.maps.visualRefresh = true;
 
 	// default location is Toronto

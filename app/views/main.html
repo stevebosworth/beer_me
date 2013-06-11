@@ -1,3 +1,4 @@
+<!-- google map -->
 <div class="primary-content">
     <div class="google-map" 
         center="center"
@@ -9,6 +10,17 @@
     </div>
 </div>
 
+<!-- lower data bar -->
+<div class="data-bar">
+    <ul ng-repeat="store in filtered = (storesList | filter: query | filter: search | orderBy: orderStores)">
+        <li><a href="#/store/{{store.id}}">{{store.name}} &mdash; {{store.city}}</a></li>
+        <li>{{store.address_line_1}} {{store.address_line_2}}</li>
+        <li>Distance: {{store.distance_in_meters | mtokm}}</li>
+        <li>Selection Size: {{store.products_count | inventorydiversity}}</li>
+    </ul>
+</div>
+
+<!-- filter options -->
 <div class="options-bar" ng-show="showOptionsBar == true">
     <h1>Filter Panel</h1>
     <h1>Sort:</h1>
@@ -62,22 +74,6 @@
         <li>
             <input id="has_transit_access" type="checkbox" ng-model="query.has_transit_access" ng-true-value="true" ng-false-value="" > 
             <label for="has_transit_access"><span></span>Transit Access</label>
-        </li>
-    </ul>
-
-
-    <h1>Stores ({{filtered.length}}):</h1>
-    <ul>
-        <li ng-repeat="store in filtered = (storesList | filter: query | filter: search | orderBy: orderStores)">
-            <a href="#/store/{{store.id}}">{{store.name}}</a>
-            <ul>
-                <li>City: {{store.city}}</li>
-                <li>Address: {{store.address_line_1}} {{store.address_line_2}}</li>
-                <li>Distance: {{store.distance_in_meters | mtokm}}</li>
-                <li>Parking: {{store.has_parking | yesno}}</li>
-                <li>Selection Size: {{store.products_count | inventorydiversity}}</li>
-                <li>Status: {{store | is_open}}</li>
-            </ul>
         </li>
     </ul>
 </div>

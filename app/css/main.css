@@ -1,1 +1,12 @@
-/* Will be compiled down to a single stylesheet with your sass files */
+/* ====================================================================
+ * FIX for Bootstrap and Google Maps Info window styes problem 
+ * Adapted from: http://stackoverflow.com/questions/16708324/google-maps-infowindow-close-button-hidden
+ * ====================================================================
+ */
+img[src*="gstatic.com/"], img[src*="googleapis.com/"] {
+  max-width: none; }
+
+/* ====================================================================
+ * Global Styles
+ * ====================================================================
+ */

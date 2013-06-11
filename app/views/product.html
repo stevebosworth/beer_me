@@ -5,8 +5,14 @@
         <ul>
             <li>Price: {{product.price_in_cents / 100}}</li>
             <li>Serving Suggestions: {{product.serving_suggestion}}</li>
+            <li><img src="{{product.image_thumb_url}}" alt=""></li>
             <li></li>
-            <li></li>
+        </ul>
+    </div>
+    <div class="span-4">
+        <h1>Where can I get it nearby?</h1>
+        <ul>
+            <li ng-repeat="store in storesList"><a href="#/store/{{store.id}}">{{store.name}}</a></li>
         </ul>
     </div>
 </div>

@@ -40,7 +40,7 @@ img[src*="gstatic.com/"], img[src*="googleapis.com/"] {
  */
 
 $bg-color: #000;
-$lightblue: #2b6280;
+$lightblue: #2a6180;
 $darkblue: #224e66;
 $menu: #32394a;
 $white: #fff;
@@ -146,21 +146,49 @@ input[type="checkbox"]:checked + label span {
 	// height: 22%;
 	// top: 78%;
 	z-index: 101;
+	font-size: 0.65em;
 
-	ul {
-        width: 100%;
-        overflow-x: scroll;
-        white-space: nowrap;
-    }
+	ul{
+		list-style: none;
+		padding: 5px; 
+	}
 
-	.db-listing {
-		border-right: 2px solid $darkblue;
-        display: inline-block;
-        *display: inline;
-        /*zoom: 1*/
-        margin-top: 20px;
-        padding-right: 20px;
-        float: left;
+	#db-ul-container {
+       overflow-x: scroll;
+       white-space: nowrap;
+       width:100%;
+       margin:0;
+
+       .db-listing {
+			border-right: 2px solid $darkblue;
+	        display: inline-block;
+	        *display: inline;
+	        /*zoom: 1*/
+	        float: left;
+	        color: #3a9141;
+
+			#db-ul-icon {
+		    	width:15%; 
+		    	float:left; 
+		    	margin: 0px;
+		    	// border: dashed red 1px;
+		    }
+
+		    #db-ul-content{
+		    	// border: dashed green 1px;
+		    	width:250px; 
+		    	float:left; 
+		    	overflow:hidden;
+		    	
+		    	.db-title{
+        			font-weight: bold;
+       		 	}
+		    }
+		}
+	}
+
+    .icon-beer{
+    	color: $lightblue;
     }
 }
 

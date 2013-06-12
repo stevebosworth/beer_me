@@ -20,34 +20,14 @@
                 </li>
             </ul>
             <ul id="db-ul-content">
-                <li class="db-title">
-                    <a href="#/store/{{store.id}}">{{store.name}} <br /> {{store.city}}</a>
-                </li>
-                <li>
-                    {{store.address_line_1}} {{store.address_line_2}}
-                </li>
-                <li>
-                    Distance: {{store.distance_in_meters | mtokm}}
-                </li>
-                <li>
-                    Selection Size: {{store.products_count | inventorydiversity}}
-                </li>
+                <li class="db-title"><a href="#/store/{{store.id}}">{{store.name}} <br /> {{store.city}}</a></li>
+                <li>{{store.address_line_1}} {{store.address_line_2}}</li>
+                <li>Distance: {{store.distance_in_meters | mtokm}}</li>
+                <li>Selection Size: {{store.products_count | inventorydiversity}}</li>
             </ul>
         </li>
     </ul>
 </div>
-
-
-
-<!-- lower data bar -->
-<!-- <div class="data-bar">
-    <ul ng-repeat="store in filtered = (storesList | filter: query | filter: search | orderBy: orderStores)">
-        <li><a href="#/store/{{store.id}}">{{store.name}} &mdash; {{store.city}}</a></li>
-        <li>{{store.address_line_1}} {{store.address_line_2}}</li>
-        <li>Distance: {{store.distance_in_meters | mtokm}}</li>
-        <li>Selection Size: {{store.products_count | inventorydiversity}}</li>
-    </ul>
-</div> -->
 
 <!-- filter options -->
 <div class="options-bar" ng-show="showOptionsBar == true">
@@ -61,13 +41,13 @@
     </select>
 
     <h1>Store Count:</h1>
-    <input type="range" name="radius" ng-model="radius" ng-change="change()" min="5" max="15"> {{radius}}
+    <input type="range" name="stores" ng-model="stores" min="5" max="25"> {{stores}}
     <button ng-click="performSearch()">Update</button>
 
     <h1>Filter:</h1>
     <input type="text" ng-model="search" placeholder="Type a keyword" />
 
-    <h1>Advanced Filters:</h1>
+    <h1>Advanced Filters {{filtered.length}}:</h1>
     <ul class="filter-options">
         <li>
             <input id="has_parking" type="checkbox" ng-model="query.has_parking" ng-true-value="true" ng-false-value="">

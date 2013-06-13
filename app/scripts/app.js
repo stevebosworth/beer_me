@@ -9,7 +9,7 @@
  *
  */
 
-angular.module('beerMeApp', ['beerMeServices', 'beerMeFilters', 'google-maps'])
+angular.module('beerMeApp', ['beerMeServices', 'beerMeFilters', 'facebookService', 'google-maps'])
 
     // --------------------------------------------------------------------
     /**

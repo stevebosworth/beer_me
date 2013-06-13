@@ -1,3 +1,5 @@
+
+
 <!-- google map -->
 <div class="primary-content">
     <div class="google-map" 
@@ -22,6 +24,9 @@
 
 <!-- filter options -->
 <div class="options-bar" ng-show="showOptionsBar == true">
+    <div>
+    {{storeList.result}}
+    </div>
     <h1>Filter Panel</h1>
     <h1>Sort:</h1>
     <select ng-model="orderStores">

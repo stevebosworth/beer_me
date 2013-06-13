@@ -38,17 +38,17 @@ html, body {
   color: white;
   background-color: #224e66;
   /* Fallback Color */
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#2b6280), to(#224e66));
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#2a6180), to(#224e66));
   /* Saf4+, Chrome */
-  background-image: -webkit-linear-gradient(top, #2b6280, #224e66);
+  background-image: -webkit-linear-gradient(top, #2a6180, #224e66);
   /* Chrome 10+, Saf5.1+, iOS 5+ */
-  background-image: -moz-linear-gradient(top, #2b6280, #224e66);
+  background-image: -moz-linear-gradient(top, #2a6180, #224e66);
   /* FF3.6 */
-  background-image: -ms-linear-gradient(top, #2b6280, #224e66);
+  background-image: -ms-linear-gradient(top, #2a6180, #224e66);
   /* IE10 */
-  background-image: -o-linear-gradient(top, #2b6280, #224e66);
+  background-image: -o-linear-gradient(top, #2a6180, #224e66);
   /* Opera 11.10+ */
-  background-image: linear-gradient(top, #2b6280, #224e66);
+  background-image: linear-gradient(top, #2a6180, #224e66);
   filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='$fromColor', EndColorStr='$toColor'); }
   #header-bar #brand {
     font-size: 1.5em;
@@ -108,20 +108,38 @@ input[type="checkbox"]:checked + label span {
   z-index: 1; }
 
 .data-bar {
-  position: fixed;
-  width: 100%;
-  height: 15%;
   background-color: white;
-  top: 85%;
-  z-index: 100; }
+  border-top: solid 2px #224e66;
+  bottom: 0px;
+  position: absolute;
+  z-index: 101;
+  font-size: 0.65em; }
   .data-bar ul {
-    height: 100%;
-    border-right: 1px solid #32394a;
-    float: left;
-    width: 25%;
-    list-style-type: none;
-    padding: 0.5em 2em;
+    list-style: none;
+    padding: 5px; }
+  .data-bar #db-ul-container {
+    white-space: nowrap;
+    width: 100%;
     margin: 0; }
+    .data-bar #db-ul-container .db-listing {
+      border-right: 2px solid #224e66;
+      display: inline-block;
+      *display: inline;
+      /*zoom: 1*/
+      float: left;
+      color: #3a9141; }
+      .data-bar #db-ul-container .db-listing #db-ul-icon {
+        width: 15%;
+        float: left;
+        margin: 0px; }
+      .data-bar #db-ul-container .db-listing #db-ul-content {
+        width: 250px;
+        float: left;
+        overflow: hidden; }
+        .data-bar #db-ul-container .db-listing #db-ul-content .db-title {
+          font-weight: bold; }
+  .data-bar .icon-beer {
+    color: #2a6180; }
 
 .options-bar {
   padding: 1em;

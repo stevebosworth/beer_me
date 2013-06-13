@@ -8,7 +8,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
         <title>Beer Me Application</title>
         <meta name="description" content=""/>
-        <meta name="viewport" content="width=device-width"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <!-- styles -->
         <link rel="stylesheet" href="css/normalize.css"/>
@@ -56,10 +56,9 @@
 
             <div id="header-bar" class="row">
                 <div class="small-3 columns">
-                    <a ng-click="revealMenuBar('left')" alt="Show Menu">
-                        <i ng-hide="showMenuBar" class="icon-plus-sign icon-large"></i>
-                        <i ng-show="showMenuBar" class="icon-minus-sign icon-large"></i>                    
-                        Menu
+                    <a class="menu-icon" ng-click="revealMenuBar('left')" alt="Show Menu">
+                        <i class="icon-reorder icon-large"></i>                  
+                        <span class="title"> Menu</span>
                     </a>
                 </div>
                 <div class="small-6 columns">
@@ -69,8 +68,8 @@
                 </div>
                 <div class="small-3 columns">
                     <div class="text-right">
-                        <a ng-click="revealMenuBar('right')" alt="Show Filters">
-                            Filters 
+                        <a class="menu-icon" ng-click="revealMenuBar('right')" alt="Show Filters">
+                            <span class="title">Filters </span>
                             <i ng-hide="showOptionsBar" class="icon-plus-sign icon-large"></i>
                             <i ng-show="showOptionsBar" class="icon-minus-sign icon-large"></i>
                         </a>
@@ -80,11 +79,11 @@
 
             <div id="menu-bar" ng-show="showMenuBar == true">
                 <ul>
-                    <li>Hello World</li>
-                    <li>Hello World</li>
-                    <li>Hello World</li>
-                    <li>Hello World</li>
-                    <li>Hello World</li>
+                    <li><input type="text" placeholder="Search by location or product name..."/></li>
+                    <li>Username</li>
+                    <li>Favourites</li>
+                    <li>Nearby</li>
+                    <li>Logout</li>
                 </ul>
             </div>
 

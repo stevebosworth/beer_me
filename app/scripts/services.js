@@ -70,19 +70,28 @@ angular.module('beerMeServices', ['ngResource'])
                     }).error(function(data, status) {
                         if (json_data.status == 200) {
                             $rootScope.storesList = json_data.result;
-
-                            // draw the markers onto the map
-                            for (var i = json_data.result.length - 1; i >= 0; i--) {
-                                var html = '<div style="min-width: 300px; height: 150px;"">'
-                                            + '<p class="lead">' + this.name + '<br /><small>Store ID: ' + this.id + ''
-                                            + '<br />' + this.address_line_1 + ' ' + ((this.address_line_2 != null) ? this.address_line_2 : "")
-                                            + '<br />' + $filter('is_open')(this) + '</small></p></div>';
-                                $rootScope.markers.push({ latitude: this.latitude, longitude: this.longitude, infoWindow: html });
-                            };
                         }
                     });
 
                 }, function() { alert('Failed to connect to GeoLocation'); });
+            },
+            drawMarkers: function(stores, data) {
+                for (var i = 0; i < stores; i++) {
+                    var setIcon;
+                    var html = '<div class="info-window">'
+                                + '<a href="#/store/' + data[i].id + '"><span>LCBO ' + data[i].name + '</span></a><ul>'
+                                + '<li>' + data[i].telephone + '</li>'
+                                + '<li>' + data[i].city + '</li>'
+                                + '<li>' + $filter('is_open')(data[i]) + '</li>'
+                                + '</ul></div>';
+                    // decide which icon is required
+                    var state;
+                    ($filter('is_open')(data[i]) == "Open") ? state = "o" : state = "c";
+                    console.log("redrawing: " + i);
+                    var setIcon = "img/icons/" + (i + 1) + state + ".png";
+                    console.log(setIcon);
+                    $rootScope.markers.push({ latitude: data[i].latitude, longitude: data[i].longitude, infoWindow: html, icon: setIcon });
+                };                 
             }
         }
     })    
@@ -139,6 +148,8 @@ angular.module('beerMeServices', ['ngResource'])
     *
     * Adapted from Brian Ford's tutorial: Angular + PhoneGap
     * http://briantford.com/blog/angular-phonegap.html
+    * - Creates gpsCookie when user looks up location
+    * - Need to complete the control statement for cookie
     *
     */
 

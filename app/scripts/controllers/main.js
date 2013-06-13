@@ -51,7 +51,6 @@ function wrapperCtrl($scope, $rootScope) {
 				break;
 		}
 	}
-
 }
 
 // --------------------------------------------------------------------
@@ -67,50 +66,42 @@ function listCtrl($scope, $rootScope, $filter, Finder) {
 	// enables new version of google maps
     google.maps.visualRefresh = true;
 
-	// default location is Toronto
+	// default settings
+	$scope.stores = 5;
+	$scope.sidebarVisible = false;
+	$scope.zoom = 12;
+	$scope.orderStores = 'distance_in_meters';
 	$scope.center = {
+		// toronto
 		latitude: 43.67023,
 		longitude: -79.38676
-	};
+	};	
 
-	$scope.sidebarVisible = false;
-
-	// default zoom
-	$scope.zoom = 12;
-
-	// $scope.eventsProperty = {
-	// 	click: function (mapModel, eventName, originalEventArgs) {
-	// 		// 'this' is the directive's scope
-	// 		$log.log("user defined event on map directive with scope", this);
-	// 		$log.log("user defined event: " + eventName, mapModel, originalEventArgs);
-	// 	}
-	// };
-
-	$scope.orderStores = 'distance_in_meters';
-
-
+	// get 25 stores on initial load
+	Finder.nearbyStores(25);
 
 	$scope.performSearch = function() {
-		Finder.nearbyStores($scope.radius);
-	}
+		// reset the markers
+		$rootScope.markers = [];
 
-	// for some reason this fixed my query issue: filtered.length was showing
-	// incorrectly in the view, which the next function is reliant on, doesn't make sense
-	// will investigate later
-    $scope.$watch('query', function (newValue) {
-    }, true);
+		// draw the new markers
+        Finder.drawMarkers($scope.stores, $scope.storesList);   
+	}
 
     // watch the filtered expression and change the map based on new input
     $scope.$watch('filtered', function (newValue) {
-    	$scope.markers = newValue;
+
+    	// reset the markers
+    	$rootScope.markers = [];
+
+    	// this workaround resolves the issue with newValue.length being less than $scope.stores
+    	// without it, the loop tries to draw stores that do not exist
+    	var storesToDraw;
+    	(newValue.length < $scope.stores) ? storesToDraw = newValue.length : storesToDraw = $scope.stores;
+
+    	// draw the filtered markers
+    	Finder.drawMarkers(storesToDraw, newValue);
     }, true);
-
-	Finder.nearbyStores(25);
-
-	$scope.change = function() {
-		//console.log($scope.storesList);
-	}
-
 };
 
 // --------------------------------------------------------------------

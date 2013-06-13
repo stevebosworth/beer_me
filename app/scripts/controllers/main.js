@@ -24,7 +24,7 @@ function setJSON(data) {
  *
  */
 
-function wrapperCtrl($scope, $rootScope) {
+function wrapperCtrl($scope) {
 
 	$scope.showMenuBar = false;
 	$scope.showOptionsBar = false;
@@ -61,14 +61,14 @@ function wrapperCtrl($scope, $rootScope) {
  *
  */
 
-function listCtrl($scope, $rootScope, $filter, Finder) {
+function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster) {
 
 	// enables new version of google maps
     google.maps.visualRefresh = true;
 
 	// default settings
 	$scope.stores = 5;
-	$scope.sidebarVisible = false;
+	//$scope.sidebarVisible = false;
 	$scope.zoom = 12;
 	$scope.orderStores = 'distance_in_meters';
 	$scope.center = {
@@ -80,6 +80,10 @@ function listCtrl($scope, $rootScope, $filter, Finder) {
 	// get 25 stores on initial load
 	Finder.nearbyStores(25);
 
+    // var aString = JSON.stringify($scope.center);
+    // console.log(aString, "JSON.stringify result");
+    // console.log(JSON.parse(aString), "JSON.parse result");
+
 	$scope.performSearch = function() {
 		// reset the markers
 		$rootScope.markers = [];
@@ -90,6 +94,8 @@ function listCtrl($scope, $rootScope, $filter, Finder) {
 
     // watch the filtered expression and change the map based on new input
     $scope.$watch('filtered', function (newValue) {
+
+        console.log('triggered');
 
     	// reset the markers
     	$rootScope.markers = [];

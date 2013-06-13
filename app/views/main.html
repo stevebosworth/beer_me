@@ -15,7 +15,8 @@
 <!-- lower data bar -->
 <div class="data-bar">
     <ul id="db-ul-container">
-        <li class="db-listing" ng-repeat="store in filtered = (storesList | filter: query | filter: search | orderBy: orderStores)">
+        <li class="db-listing" ng-repeat="store in filtered = (storesList | filter: query | filter: search | orderBy: orderStores | limitTo: stores)">
+        <!-- <li class="db-listing" ng-repeat="store in storesList"> -->
             <ul id="db-ul-icon">
                 <li>
                     <i class="icon-beer icon-4x"></i>
@@ -32,12 +33,12 @@
 </div>
 
 <!-- filter options -->
-<div class="options-bar" ng-show="showOptionsBar == true">
+<div class="options-bar" ng-show="showOptionsBar == true" ng-animate="'fade'"  style="display: none;">
     <div>
     {{storeList.result}}
     </div>
-    <h1>Filter Panel</h1>
-    <h1>Sort:</h1>
+    <p>Filter Panel</p>
+    <p>Sort:</p>
     <select ng-model="orderStores">
         <option value="distance_in_meters">Shortest Distance</option>
         <option value="name">Alphabetical</option>
@@ -45,14 +46,14 @@
         <option value="-inventory_volume_in_milliliters">Inventory Volume</option>
     </select>
 
-    <h1>Store Count:</h1>
+    <p>Store Count:</p>
     <input type="range" name="stores" ng-model="stores" min="5" max="25"> {{stores}}
-    <button ng-click="performSearch()">Update</button>
+    <!-- <button ng-click="performSearch()">Update</button> -->
 
-    <h1>Filter:</h1>
+    <p>Filter:</p>
     <input type="text" ng-model="search" placeholder="Type a keyword" />
 
-    <h1>Advanced Filters {{filtered.length}}:</h1>
+    <p>Advanced Filters {{filtered.length}}:</p>
     <ul class="filter-options">
         <li>
             <input id="has_parking" type="checkbox" ng-model="query.has_parking" ng-true-value="true" ng-false-value="">

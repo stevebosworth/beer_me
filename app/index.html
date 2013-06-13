@@ -47,11 +47,6 @@
             <script src="scripts/vendor/es5-shim.min.js"></script>
             <script src="scripts/vendor/json3.min.js"></script>
         <![endif]-->
-        <div>
-            <input type="button" class="btn btn-info" ng-hide="fbAuthorized" ng-click="fb.login()" value="Login with Facebook" />
-            <input type="button" class="btn btn-info" ng-show="fbAuthorized" ng-click="fb.logout()" value="Logout" />
-            {{fbUser.name}}
-        </div>
         <div id="wrapper" ng-controller="wrapperCtrl">
 
             <div id="header-bar" class="row">
@@ -77,17 +72,24 @@
                 </div>
             </div>
 
-            <div id="menu-bar" ng-show="showMenuBar == true">
+            <div id="menu-bar" ng-show="showMenuBar == true" ng-animate="'fade'"  style="display: none;">
                 <ul>
+
                     <li><input type="text" placeholder="Search by location or product name..."/></li>
-                    <li>Username</li>
-                    <li>Favourites</li>
-                    <li>Nearby</li>
-                    <li>Logout</li>
+                    <li>
+                        <input type="button" class="btn btn-info" ng-hide="fbAuthorized" ng-click="fb.login()" value="Login with Facebook" />
+                        <input type="button" class="btn btn-info" ng-show="fbAuthorized" ng-click="fb.logout()" value="Logout" />
+                        {{fbUser.name}}
+                    </li>
+                    <li><hr/></li>
+                    <li><a href="./#/">Nearby</a></li>
+                    <li ng-show="fbAuthorized"><hr/></li>
+                    <li ng-show="fbAuthorized">Favourites</li>
+                    <li ng-show="fbAuthorized">Logout</li>
                 </ul>
             </div>
 
-            <div id="content" ng-view></div>
+            <div id="content" ng-view ></div>
 
         </div>
 

@@ -52,6 +52,20 @@ angular.module('beerMeFilters', [])
 
 	// --------------------------------------------------------------------
 	/**
+	 * slice
+	 *
+	 * Allows us to filter ng-repeater based # of records requested
+	 *
+	 */
+
+	.filter('slice', function() {
+		return function(arr, start, end) {
+			return arr.slice(start, end);
+		};
+	})
+
+	// --------------------------------------------------------------------
+	/**
 	 * inventorydiversity
 	 *
 	 * Converts the store product count to a corresponding string

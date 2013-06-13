@@ -52,13 +52,23 @@ angular.module('beerMeServices', ['ngResource'])
     *
     */
 
-    .factory('Finder', function ($rootScope, geoLocation, Store, $filter) {
+    .factory('Finder', function ($rootScope, geoLocation, Store, CookieMonster, $filter) {
         return {
             // returns data for closest 25 stores
             nearbyStores: function(radius) {
-                // get users current location
-                geoLocation.getCurrentPosition(function (position) {
-
+                // check to see if we have the users location cached
+                if(!CookieMonster.checkCookie("cachedLocation")) {
+                    console.log("Read from GeoLocation");
+                    // get users current location
+                    geoLocation.getCurrentPosition(function (position) {
+                        processData(position);
+                    }, function() { alert('Failed to connect to GeoLocation'); });
+                } else {
+                    //console.log("Read from cookie");
+                    processData(CookieMonster.readLocation());                    
+                }                
+                // after position is established
+                function processData(position) {
                     $rootScope.currentLocation = { latitude: position.coords.latitude, longitude: position.coords.longitude };
                     // show users current location on map
                     $rootScope.center = { latitude: position.coords.latitude, longitude: position.coords.longitude };
@@ -71,9 +81,8 @@ angular.module('beerMeServices', ['ngResource'])
                         if (json_data.status == 200) {
                             $rootScope.storesList = json_data.result;
                         }
-                    });
-
-                }, function() { alert('Failed to connect to GeoLocation'); });
+                    });                    
+                }
             },
             drawMarkers: function(stores, data) {
                 for (var i = 0; i < stores; i++) {
@@ -87,9 +96,8 @@ angular.module('beerMeServices', ['ngResource'])
                     // decide which icon is required
                     var state;
                     ($filter('is_open')(data[i]) == "Open") ? state = "o" : state = "c";
-                    console.log("redrawing: " + i);
+                    //console.log("redrawing: " + i);
                     var setIcon = "img/icons/" + (i + 1) + state + ".png";
-                    console.log(setIcon);
                     $rootScope.markers.push({ latitude: data[i].latitude, longitude: data[i].longitude, infoWindow: html, icon: setIcon });
                 };                 
             }
@@ -107,7 +115,6 @@ angular.module('beerMeServices', ['ngResource'])
 
     .factory('CookieMonster', function ($http) {
         return {
-            // create a yummy cookie
             createCookie: function(name, value, days) {
                 if (days) {
                     var date = new Date();
@@ -117,19 +124,24 @@ angular.module('beerMeServices', ['ngResource'])
                 else var expires = "";
                 document.cookie = name+"="+value+expires+"; path=/";
             },
-            // allows us to read a cookie
             readCookie: function(name) {
                 var nameEQ = name + "=";
                 var ca = document.cookie.split(';');
-                for(var i=0;i < ca.length;i++) {
+                for(var i = 0; i < ca.length; i++ ) {
                     var c = ca[i];
                     while (c.charAt(0)==' ') c = c.substring(1,c.length);
                     if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
                 }
                 return null; 
             },
+            checkCookie: function(name) {
+                if(document.cookie.indexOf(name) >= 0)
+                    return true;
+                else
+                    return false;
+            },
             eraseCookie: function(name) {
-                createCookie(name, "", -1);
+                this.createCookie(name, "", -1);
             },
             gpsCookie: function(location) {
                 // gps cookies last 10 minutes, to cache the users location temporarily
@@ -138,6 +150,13 @@ angular.module('beerMeServices', ['ngResource'])
 
                 // Date()'s toGMTSting() method will format the date correctly for a cookie
                 document.cookie = "cachedLocation=" + location + "; expires=" + expires.toGMTString();     
+            },
+            readLocation: function() {
+                // returns an object of the users location if it exists
+                if(this.checkCookie("cachedLocation"))
+                    return JSON.parse(this.readCookie("cachedLocation"));
+                else
+                    return false;
             }
         }
     })    
@@ -165,7 +184,7 @@ angular.module('beerMeServices', ['ngResource'])
                         $rootScope.$apply(function () {
                             onSuccess.apply(that, args);
                             //console.log(args[0].coords.latitude + ',' + args[0].coords.longitude);
-                            CookieMonster.gpsCookie(args[0].coords.latitude + ',' + args[0].coords.longitude);
+                            CookieMonster.gpsCookie(JSON.stringify( { coords:  { latitude: args[0].coords.latitude, longitude: args[0].coords.longitude } } ));
                         });
                     }
                 }, function () {
@@ -178,7 +197,7 @@ angular.module('beerMeServices', ['ngResource'])
                         });
                     }
                 },
-                options);
+                options);                
             }
         };
     })

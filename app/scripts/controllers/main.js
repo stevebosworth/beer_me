@@ -24,8 +24,7 @@ function setJSON(data) {
  *
  */
 
-function wrapperCtrl($scope, $rootScope) {
-
+function wrapperCtrl($scope, $rootScope, parse) {
 	$scope.showMenuBar = false;
 	$scope.showOptionsBar = false;
 
@@ -201,4 +200,9 @@ function storesForProductCtrl($scope, $routeParams, Products) {
             }
         });
         //$scope.productSearch();
+}
+
+function facebookCtrl($scope, facebook, parse) {
+    $scope.login = facebook.login();
+    $scope.logout = facebook.logout();
 }

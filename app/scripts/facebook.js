@@ -6,7 +6,7 @@ angular.module('facebookService', [])
 		$rootScope.fbUser = {};
 		$rootScope.fbAuthorized = false;
 		$rootScope.fb = facebook;
-	
+
 		$window.fbAsyncInit = function() {
 			// init the FB JS SDK
 			FB.init({
@@ -35,8 +35,8 @@ angular.module('facebookService', [])
 	}
 ])
 
-.service('facebook', ['$rootScope',
-	function($rootScope) {
+.service('facebook', ['$rootScope', 'parse', '$q',
+	function($rootScope, parse, $q) {
 
 		this.observeResponseChange = function() {
 			var self = this;
@@ -53,10 +53,11 @@ angular.module('facebookService', [])
 		};
 
 		this.getInfo = function() {
-			FB.api('/me', function(response) {
+			FB.api('/me?fields=first_name,last_name,email,picture.type(large)', function(response) {
 				$rootScope.$apply(function() {
 					$rootScope.fbUser = response;
-					$rootScope.fbAuthorized = true;
+					if(response && !response.error)
+						$rootScope.fbAuthorized = true;
 				})
 			});
 		};
@@ -66,16 +67,40 @@ angular.module('facebookService', [])
 			var self = this;
 			FB.login(function(response) {
 				self.getInfo();
+
+				//Add to param
+				FB.api('/me?fields=first_name,last_name,email,picture.type(large)', function(response) {
+					$rootScope.$apply(function() {
+						
+						//create json object to be entered into db
+						var userData = {
+							email: response.email,
+							firstName: response.first_name,
+							lastName: response.last_name,
+							facebookId: response.id,
+							picture: response.picture.data.url
+						}
+
+						//add to users table
+						parse.add('Users', userData);
+					})
+				});
 			});
 		};
 
 		this.logout = function() {
 			FB.logout(function() {
 				$rootScope.$apply(function() {
-					$rootScope.fbUser  = {};
+					$rootScope.fbUser = {};
 					$rootScope.fbAuthorized = false;
 				});
 			});
 		};
+
+		this.idExist = function(facebookId) {
+			var deferred = $q.defer();
+
+			
+		}
 	}
 ]);

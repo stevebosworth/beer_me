@@ -80,25 +80,13 @@ function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster) {
 	// get 25 stores on initial load
 	Finder.nearbyStores(25);
 
-    // var aString = JSON.stringify($scope.center);
-    // console.log(aString, "JSON.stringify result");
-    // console.log(JSON.parse(aString), "JSON.parse result");
-
-	$scope.performSearch = function() {
-		// reset the markers
-		$rootScope.markers = [];
-
-		// draw the new markers
-        Finder.drawMarkers($scope.stores, $scope.storesList);   
-	}
-
     // watch the filtered expression and change the map based on new input
     $scope.$watch('filtered', function (newValue) {
 
-        console.log('triggered');
+        var whereami = CookieMonster.readLocation();
 
-    	// reset the markers
-    	$rootScope.markers = [];
+    	// reset the markers, place the users location in as a marker
+    	$rootScope.markers = [ { latitude: whereami.coords.latitude, longitude: whereami.coords.longitude,  } ];
 
     	// this workaround resolves the issue with newValue.length being less than $scope.stores
     	// without it, the loop tries to draw stores that do not exist

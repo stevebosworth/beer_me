@@ -8,6 +8,10 @@
 
 angular.module('beerMeServices', ['ngResource'])
 
+    .run(function($rootScope, $location) {
+        $rootScope.pageLocation = $location;
+    })
+
     // --------------------------------------------------------------------
     /**
     * Store

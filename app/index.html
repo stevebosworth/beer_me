@@ -17,9 +17,11 @@
         <link rel="stylesheet" href="css/main.css"/>
 
         <!-- angular scripts -->
-        <script src="scripts/vendor/angular.min.js"></script>  
-        <script src="scripts/vendor/angular-resource.min.js"></script>
-        <script src="scripts/vendor/angular-cookies.min.js"></script>
+        <!-- <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script> -->
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular.min.js"></script>
+        <script src="scripts/angular/angular.min.js"></script>  <!-- local angular files are 1.1.5 -->
+        <script src="scripts/angular/angular-resource.min.js"></script> <!-- local angular files are 1.1.5 -->
+        <script src="scripts/angular/angular-cookies.min.js"></script> <!-- local angular files are 1.1.5 -->
 
         <!-- additional scripts -->
         <script src="scripts/foundation.min.js"></script> 
@@ -63,7 +65,7 @@
                 </div>
                 <div class="small-3 columns">
                     <div class="text-right">
-                        <a class="menu-icon" ng-click="revealMenuBar('right')" alt="Show Filters">
+                        <a class="menu-icon" ng-click="revealMenuBar('right')" alt="Show Filters" ng-hide="(pageLocation.path() != '/')">
                             <span class="title">Filters </span>
                             <i ng-hide="showOptionsBar" class="icon-plus-sign icon-large"></i>
                             <i ng-show="showOptionsBar" class="icon-minus-sign icon-large"></i>
@@ -91,6 +93,7 @@
 
             <div id="content" ng-view ></div>
 
+            <div id="fb-root"></div>
         </div>
 
         <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->

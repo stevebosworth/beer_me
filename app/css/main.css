@@ -26,6 +26,25 @@ html, body {
 .row {
   max-width: 100%; }
 
+.fade-hide, .fade-show {
+  -webkit-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
+  -ms-transition: all 0.2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out; }
+
+.fade-hide {
+  opacity: 1; }
+
+.fade-hide.fade-hide-active {
+  opacity: 0; }
+
+.fade-show {
+  opacity: 0; }
+
+.fade-show.fade-show-active {
+  opacity: 1; }
+
 /* ====================================================================
  * Navigation Styles
  * ====================================================================
@@ -62,16 +81,25 @@ html, body {
 
 #content {
   height: 100%;
+  float: left;
   padding-top: 2.25em; }
 
-#menu-bar {
+#menu-bar, .options-bar {
   height: 100%;
   position: fixed;
-  width: 75%;
-  background-color: rgba(75, 75, 75, 0.85);
   z-index: 100;
-  padding: 1em;
-  color: white; }
+  width: 17em;
+  background-color: rgba(75, 75, 75, 0.85);
+  padding: 3em 1em 1em 1em;
+  color: white;
+  margin: 0; }
+  #menu-bar ul, .options-bar ul {
+    padding: 0;
+    margin: 0;
+    list-style-type: none; }
+
+#menu-bar {
+  left: 0; }
 
 /* ====================================================================
  * Custom Checkboxes
@@ -97,20 +125,16 @@ input[type="checkbox"]:checked + label span {
  * ====================================================================
  */
 .primary-content {
-  -webkit-transition: all 1s ease-in-out;
-  -moz-transition: all 1s ease-in-out;
-  -ms-transition: all 1s ease-in-out;
-  -o-transition: all 1s ease-in-out;
-  transition: all 1s ease-in-out;
   width: 100%;
-  height: 85%;
+  height: 100%;
   position: fixed;
   z-index: 1; }
 
 .data-bar {
+  min-width: 100%;
   background-color: white;
   border-top: solid 2px #224e66;
-  bottom: 0px;
+  bottom: 0;
   position: absolute;
   z-index: 101;
   font-size: 0.65em; }
@@ -128,29 +152,29 @@ input[type="checkbox"]:checked + label span {
       /*zoom: 1*/
       float: left;
       color: #3a9141; }
-      .data-bar #db-ul-container .db-listing #db-ul-icon {
-        width: 15%;
+      .data-bar #db-ul-container .db-listing .db-div-icon {
+        margin-left: 2em;
+        position: relative;
+        text-align: center;
         float: left;
-        margin: 0px; }
-      .data-bar #db-ul-container .db-listing #db-ul-content {
-        width: 250px;
+        height: 100%; }
+        .data-bar #db-ul-container .db-listing .db-div-icon .index-number {
+          position: absolute;
+          color: white;
+          top: 20%;
+          left: 56%; }
+      .data-bar #db-ul-container .db-listing .db-ul-content {
+        min-width: 200px;
+        padding: 0 1em;
         float: left;
         overflow: hidden; }
-        .data-bar #db-ul-container .db-listing #db-ul-content .db-title {
+        .data-bar #db-ul-container .db-listing .db-ul-content .db-title {
           font-weight: bold; }
   .data-bar .icon-beer {
     color: #2a6180; }
 
 .options-bar {
-  padding: 1em;
-  font-size: 0.75em;
-  background-color: rgba(75, 75, 75, 0.85);
-  color: white;
-  position: fixed;
-  left: 25%;
-  width: 75%;
-  height: 85%;
-  z-index: 100; }
+  right: 0; }
   .options-bar h1, .options-bar h2, .options-bar h3, .options-bar h4, .options-bar h5, .options-bar h6, .options-bar p, .options-bar span, .options-bar label {
     color: white; }
   .options-bar ul.filter-options {

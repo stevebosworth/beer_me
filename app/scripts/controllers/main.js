@@ -24,7 +24,7 @@ function setJSON(data) {
  *
  */
 
-function wrapperCtrl($scope, $rootScope, parse) {
+function wrapperCtrl($scope) {
 	$scope.showMenuBar = false;
 	$scope.showOptionsBar = false;
 
@@ -60,14 +60,14 @@ function wrapperCtrl($scope, $rootScope, parse) {
  *
  */
 
-function listCtrl($scope, $rootScope, $filter, Finder) {
+function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster) {
 
 	// enables new version of google maps
     google.maps.visualRefresh = true;
 
 	// default settings
 	$scope.stores = 5;
-	$scope.sidebarVisible = false;
+	//$scope.sidebarVisible = false;
 	$scope.zoom = 12;
 	$scope.orderStores = 'distance_in_meters';
 	$scope.center = {
@@ -79,19 +79,13 @@ function listCtrl($scope, $rootScope, $filter, Finder) {
 	// get 25 stores on initial load
 	Finder.nearbyStores(25);
 
-	$scope.performSearch = function() {
-		// reset the markers
-		$rootScope.markers = [];
-
-		// draw the new markers
-        Finder.drawMarkers($scope.stores, $scope.storesList);   
-	}
-
     // watch the filtered expression and change the map based on new input
     $scope.$watch('filtered', function (newValue) {
 
-    	// reset the markers
-    	$rootScope.markers = [];
+        var whereami = CookieMonster.readLocation();
+
+    	// reset the markers, place the users location in as a marker
+    	$rootScope.markers = [ { latitude: whereami.coords.latitude, longitude: whereami.coords.longitude,  } ];
 
     	// this workaround resolves the issue with newValue.length being less than $scope.stores
     	// without it, the loop tries to draw stores that do not exist

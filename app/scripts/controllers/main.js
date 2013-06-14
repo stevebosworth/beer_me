@@ -60,40 +60,64 @@ function wrapperCtrl($scope) {
  *
  */
 
-function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster) {
+function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster, $log) {
 
 	// enables new version of google maps
     google.maps.visualRefresh = true;
 
 	// default settings
 	$scope.stores = 5;
-	//$scope.sidebarVisible = false;
 	$scope.zoom = 12;
 	$scope.orderStores = 'distance_in_meters';
-	$scope.center = {
-		// toronto
-		latitude: 43.67023,
-		longitude: -79.38676
-	};	
 
-	// get 25 stores on initial load
-	Finder.nearbyStores(25);
+    // get 25 stores on initial load
+    Finder.nearbyStores(25);
+
+    var whereami = CookieMonster.readLocation();
+
+	$scope.center = {
+		latitude: whereami.coords.latitude,
+		longitude: whereami.coords.longitude
+	};
+
+    $scope.getStoreInfo = function(obj) {
+        $scope.storeInfo = obj;
+        $scope.center = {
+            latitude: obj.latitude,
+            longitude: obj.longitude
+        }   
+    }  
+
+    // once data is loaded, load the sliced array into the view
+    $scope.$watch('storesList', function(storesListValue) {
+        if(storesListValue != undefined) {
+            $scope.storesWithLimit = $rootScope.storesList.slice(0, $scope.stores);
+        }
+    });
+
+    // wait for user to change the value of the stores listing and reassign the array based on values
+    // stored still in storesList
+    $scope.$watch('stores', function(storesValue) {
+        if(storesValue != undefined) {
+            $scope.storesWithLimit = $rootScope.storesList.slice(0, $scope.stores);
+        }
+    });    
 
     // watch the filtered expression and change the map based on new input
-    $scope.$watch('filtered', function (newValue) {
+    $scope.$watch('filtered', function (filteredValue) {
+        // watch checks on load, when data does not exist yet
+        if(filteredValue != undefined) {
+        	// reset the markers, place the users location in as a marker
+        	$rootScope.markers = [ { latitude: whereami.coords.latitude, longitude: whereami.coords.longitude, icon: 'img/icons/current_location.png'  } ];
 
-        var whereami = CookieMonster.readLocation();
+        	// this workaround resolves the issue with filteredValue.length being less than $scope.stores
+        	// without it, the loop tries to draw stores that do not exist
+        	var storesToDraw = 5;
+        	(filteredValue.length < $scope.stores) ? storesToDraw = filteredValue.length : storesToDraw = $scope.stores;
 
-    	// reset the markers, place the users location in as a marker
-    	$rootScope.markers = [ { latitude: whereami.coords.latitude, longitude: whereami.coords.longitude,  } ];
-
-    	// this workaround resolves the issue with newValue.length being less than $scope.stores
-    	// without it, the loop tries to draw stores that do not exist
-    	var storesToDraw;
-    	(newValue.length < $scope.stores) ? storesToDraw = newValue.length : storesToDraw = $scope.stores;
-
-    	// draw the filtered markers
-    	Finder.drawMarkers(storesToDraw, newValue);
+        	// draw the filtered markers
+        	Finder.drawMarkers(storesToDraw, filteredValue);
+        }
     }, true);
 };
 

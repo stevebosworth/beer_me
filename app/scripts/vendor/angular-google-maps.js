@@ -184,8 +184,7 @@
         });
       };
       
-      this.addMarker = function (lat, lng, icon, infoWindowContent, label, url,
-          thumbnail) {
+      this.addMarker = function (lat, lng, icon, infoWindowContent, label, url, thumbnail) {
         
         if (that.findMarker(lat, lng) != null) {
           return;
@@ -194,6 +193,7 @@
         var marker = new google.maps.Marker({
           position: new google.maps.LatLng(lat, lng),
           map: _instance,
+          animation: google.maps.Animation.DROP,
           icon: icon
         });
         
@@ -211,11 +211,19 @@
           });
 
           google.maps.event.addListener(marker, 'click', function() {
-            if (currentInfoWindow != null) {
-              currentInfoWindow.close();
-            }
-            infoWindow.open(_instance, marker);
-            currentInfoWindow = infoWindow;
+          //   // if (currentInfoWindow != null) {
+          //   //   currentInfoWindow.close();
+          //   // }
+          //   // infoWindow.open(_instance, marker);
+          //   // currentInfoWindow = infoWindow;
+
+            // overwrite the default behaviour for infoWindows
+            // when user clicks icon on map, launch modal containing store info
+            var modal_scope = angular.element($("#myModal")).scope();
+            modal_scope.$apply(function () {
+              modal_scope.storeInfo = JSON.parse(infoWindowContent);
+            });
+            $('#myModal').foundation('reveal', 'open');
           });
         }
         

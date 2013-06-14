@@ -1,5 +1,3 @@
-
-
 <!-- google map -->
 <div class="primary-content">
     <div class="google-map" 
@@ -8,27 +6,30 @@
         markers="markers"
         draggable="true"
         fit="true"
+        events="eventsProperty"
         style="height: 100%; width: 100%">
     </div>
 </div>
 
-<!-- lower data bar -->
-<div class="data-bar">
-    <ul id="db-ul-container">
-        <li class="db-listing" ng-repeat="store in filtered = (storesList | filter: query | filter: search | orderBy: orderStores | limitTo: stores)">
-        <!-- <li class="db-listing" ng-repeat="store in storesList"> -->
-            <div class="db-div-icon">
-                <i class="icon-beer icon-4x" style="width: 100%; height: 100%;"></i>
-                <span class="index-number">{{$index + 1}}</span>
-            </div>
-            <ul class="db-ul-content">
-                <li class="db-title"><a href="#/store/{{store.id}}">{{store.name}} <br /> {{store.city}}</a></li>
-                <li>{{store.address_line_1}} {{store.address_line_2}}</li>
-                <li>Distance: {{store.distance_in_meters | mtokm}}</li>
-                <li>Selection Size: {{store.products_count | inventorydiversity}}</li>
-            </ul>
-        </li>
+<!-- store info panel -->
+<div id="myModal" class="reveal-modal">
+    <h2>Details for Store #{{storeInfo.id}}</h2>
+    <h3>{{storeInfo.name}}</h3>
+    <ul>
+        <li>{{storeInfo.address_line_1}} {{storeInfo.address_line_2}}</li>
+        <li>{{storeInfo.postal_code}}</li>
+        <li>{{storeInfo.city}}</li>
+        <li>{{storeInfo.telephone}}</li>
+        <li>Parking: {{storeInfo.has_parking | checkmark }}</li>
+        <li>Wheelchair Accessible: {{storeInfo.has_wheelchair_accessability | checkmark }}</li>
+        <li>Product Consultant: {{storeInfo.has_product_consultant | checkmark }}</li>
+        <li>Special Occassions Permits: {{storeInfo.has_special_occasion_permits | checkmark }}</li>
+        <li>Cold Beer Room: {{storeInfo.has_beer_cold_room | checkmark }}</li>
+        <li>Vintages Corner: {{storeInfo.has_vintages_corner | checkmark }}</li>
+        <li>Tasting Bar: {{storeInfo.has_tasting_bar | checkmark }}</li>
+        <li>Transit Access: {{storeInfo.has_transit_access | checkmark }}</li>                     
     </ul>
+    <a class="close-reveal-modal">&#215;</a>
 </div>
 
 <!-- filter options -->
@@ -88,6 +89,33 @@
         <li>
             <input id="has_transit_access" type="checkbox" ng-model="query.has_transit_access" ng-true-value="true" ng-false-value="" > 
             <label for="has_transit_access"><span></span>Transit Access</label>
+        </li>
+    </ul>
+</div>
+
+<!-- lower data bar -->
+<div class="data-bar">
+    <ul id="db-ul-container">
+        <li class="db-listing" ng-repeat="store in filtered = (storesWithLimit | filter: query | filter: search | orderBy: orderStores | limitTo: stores)">
+        <!-- <li class="db-listing" ng-repeat="store in storesList"> -->
+                <div class="db-div-icon">
+                    <a data-reveal-id="myModal" ng-click="getStoreInfo({{store}})">
+                        <i class="icon-beer icon-4x" style="width: 100%; height: 100%;"></i>
+                        <span class="index-number">{{$index + 1}}</span>
+                    </a>
+                    <p><a ng-click="getStoreInfo({{store}})"<i class="icon-pushpin icon-2x"></i></a></p>
+                </div>
+                <ul class="db-ul-content">
+                    <a data-reveal-id="myModal" ng-click="getStoreInfo({{store}})">
+                        <li class="db-title">
+                            {{store.name}} <br /> {{store.city}}
+                        </li>
+                    </a>
+                    <li>{{store.address_line_1}} {{store.address_line_2}}</li>
+                    <li>Distance: {{store.distance_in_meters | mtokm}}</li>
+                    <li>Selection Size: {{store.products_count | inventorydiversity}}</li>
+                </ul>
+
         </li>
     </ul>
 </div>

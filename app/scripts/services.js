@@ -91,18 +91,19 @@ angular.module('beerMeServices', ['ngResource'])
             drawMarkers: function(stores, data) {
                 for (var i = 0; i < stores; i++) {
                     var obj = {};
-                    var html = '<div class="info-window">'
-                                + '<a href="#/store/' + data[i].id + '"><span>LCBO ' + data[i].name + '</span></a><ul>'
-                                + '<li>' + data[i].telephone + '</li>'
-                                + '<li>' + data[i].city + '</li>'
-                                + '<li>' + $filter('is_open')(data[i]) + '</li>'
-                                + '</ul></div>';
+                    // -- deprecated after switching to popup modal --
+                    // var html = '<div class="info-window">'
+                    //             + '<h2>LCBO ' + data[i].name + '</h2><ul>'
+                    //             + '<li>' + data[i].telephone + '</li>'
+                    //             + '<li>' + data[i].city + '</li>'
+                    //             + '<li>' + $filter('is_open')(data[i]) + '</li>'
+                    //             + '</ul></div>';
                     // decide which icon is required
                     var state;
-                    ($filter('is_open')(data[i]) == "Open") ? state = "o" : state = "c";
+                    ($filter('is_open')(data[i]) == "Open") ? state = "open" : state = "closed";
                     //console.log("redrawing: " + i);
-                    var setIcon = "img/icons/" + (i + 1) + state + ".png";
-                    obj = { latitude: data[i].latitude, longitude: data[i].longitude, infoWindow: html, icon: setIcon }
+                    var setIcon = "img/icons/" + state + ".png";
+                    obj = { latitude: data[i].latitude, longitude: data[i].longitude, infoWindow: JSON.stringify(data[i]), icon: setIcon, title: data[i].name }
                     //console.log(obj);
                     $rootScope.markers.push(obj);
                 };                 

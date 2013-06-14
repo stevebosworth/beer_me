@@ -87,12 +87,12 @@ html, body {
 #menu-bar, .options-bar {
   height: 100%;
   position: fixed;
-  z-index: 100;
   width: 17em;
   background-color: rgba(75, 75, 75, 0.85);
   padding: 3em 1em 1em 1em;
   color: white;
-  margin: 0; }
+  margin: 0;
+  z-index: 100; }
   #menu-bar ul, .options-bar ul {
     padding: 0;
     margin: 0;
@@ -124,19 +124,22 @@ input[type="checkbox"]:checked + label span {
  * Nearby Finder
  * ====================================================================
  */
+#zoomOut {
+  position: fixed;
+  top: 5%;
+  left: 5%; }
+
 .primary-content {
   width: 100%;
-  height: 100%;
-  position: fixed;
-  z-index: 1; }
+  height: 85%;
+  position: fixed; }
 
 .data-bar {
   min-width: 100%;
   background-color: white;
   border-top: solid 2px #224e66;
   bottom: 0;
-  position: absolute;
-  z-index: 101;
+  position: fixed;
   font-size: 0.65em; }
   .data-bar ul {
     list-style: none;

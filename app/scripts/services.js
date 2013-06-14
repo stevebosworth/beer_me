@@ -90,7 +90,7 @@ angular.module('beerMeServices', ['ngResource'])
             },
             drawMarkers: function(stores, data) {
                 for (var i = 0; i < stores; i++) {
-                    var setIcon;
+                    var obj = {};
                     var html = '<div class="info-window">'
                                 + '<a href="#/store/' + data[i].id + '"><span>LCBO ' + data[i].name + '</span></a><ul>'
                                 + '<li>' + data[i].telephone + '</li>'
@@ -102,7 +102,9 @@ angular.module('beerMeServices', ['ngResource'])
                     ($filter('is_open')(data[i]) == "Open") ? state = "o" : state = "c";
                     //console.log("redrawing: " + i);
                     var setIcon = "img/icons/" + (i + 1) + state + ".png";
-                    $rootScope.markers.push({ latitude: data[i].latitude, longitude: data[i].longitude, infoWindow: html, icon: setIcon });
+                    obj = { latitude: data[i].latitude, longitude: data[i].longitude, infoWindow: html, icon: setIcon }
+                    //console.log(obj);
+                    $rootScope.markers.push(obj);
                 };                 
             }
         }

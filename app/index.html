@@ -29,11 +29,12 @@
             <script src="scripts/vendor/json3.min.js"></script>
         <![endif]-->
         <div id="wrapper" ng-controller="wrapperCtrl">
+
             <div id="header-bar" class="row">
                 <div class="small-3 columns">
                     <a class="menu-icon" ng-click="revealMenuBar('left')" alt="Show Menu">
                         <i class="icon-reorder icon-large"></i>                  
-                        <span class="title"> Menu  </span>
+                        <span class="title"> Menu</span>
                     </a>
                 </div>
                 <div class="small-6 columns">
@@ -43,7 +44,7 @@
                 </div>
                 <div class="small-3 columns">
                     <div class="text-right">
-                        <a class="menu-icon" ng-click="revealMenuBar('right')" alt="Show Filters">
+                        <a class="menu-icon" ng-click="revealMenuBar('right')" alt="Show Filters" ng-hide="(pageLocation.path() != '/')">
                             <span class="title">Filters </span>
                             <i ng-hide="showOptionsBar" class="icon-plus-sign icon-large"></i>
                             <i ng-show="showOptionsBar" class="icon-minus-sign icon-large"></i>
@@ -60,15 +61,22 @@
                         {{fbUser.name}} 
                     </li>                    
                     <li><input type="text" placeholder="Search by location or product name..."/></li>
-                    <li>Username</li>
-                    <li>Favourites</li>
-                    <li>Nearby</li>
-                    <li>Logout</li>
+                    <li>
+                        <input type="button" class="btn btn-info" ng-hide="fbAuthorized" ng-click="fb.login()" value="Login with Facebook" />
+                        <input type="button" class="btn btn-info" ng-show="fbAuthorized" ng-click="fb.logout()" value="Logout" />
+                        {{fbUser.name}}
+                    </li>
+                    <li><hr/></li>
+                    <li><a href="./#/">Nearby</a></li>
+                    <li ng-show="fbAuthorized"><hr/></li>
+                    <li ng-show="fbAuthorized">Favourites</li>
+                    <li ng-show="fbAuthorized">Logout</li>
                 </ul>
             </div>
 
-            <div id="content" ng-view></div>
+            <div id="content" ng-view ></div>
 
+            <div id="fb-root"></div>
         </div>
 
         <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->

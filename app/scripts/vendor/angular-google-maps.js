@@ -218,10 +218,12 @@
           //   // currentInfoWindow = infoWindow;
 
             // overwrite the default behaviour for infoWindows
-            // when user clicks icon on map, launch modal containing store info
+            // when user clicks icon on map, launch modal containing store info, center map on store
             var modal_scope = angular.element($("#myModal")).scope();
             modal_scope.$apply(function () {
-              modal_scope.storeInfo = JSON.parse(infoWindowContent);
+              var data = JSON.parse(infoWindowContent);
+              modal_scope.storeInfo = data;
+              modal_scope.center = { latitude: data.latitude, longitude: data.longitude };
             });
             $('#myModal').foundation('reveal', 'open');
           });

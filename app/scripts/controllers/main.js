@@ -70,7 +70,7 @@ function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster, $log) {
     google.maps.visualRefresh = true;
 
 	// default settings
-	$scope.stores = 5;
+	$rootScope.stores = 5;
 	$scope.zoom = 12;
 	$scope.orderStores = 'distance_in_meters';
 
@@ -154,19 +154,17 @@ function searchCtrl($scope, $rootScope, $routeParams, Store, $timeout, Finder, C
                         $scope.store = data.result; })
                     .error(function(data, status) {
                         if (json_data.status == 200) {
-                            $rootScope.storesList = json_data.result;
-                            $rootScope.stores = json_data.result.length;
+                            // once we apply the new data to storesList, the entire application will update
+                            $rootScope.storesList = json_data.result; 
                             //console.log($scope.searchResults);
 
                             $scope.searchSpinner = false; // hide spinner
                             $scope.searchComplete = true; // show results
 
                             if($rootScope.storesList.length > 0) {
+                                $rootScope.stores = $rootScope.storesList.length; // make sure results are visible on map
                                 $scope.searchResultTitle = "Search Results:";
                                 $scope.searchText = ""; // empty search bar
-                                var whereami = CookieMonster.readLocation();
-                                $rootScope.markers = [ { latitude: whereami.coords.latitude, longitude: whereami.coords.longitude, icon: 'img/icons/current_location.png'  } ];
-                                //Finder.drawMarkers($scope.storesList.length, $scope.storesList);
                             } else {
                                 $scope.searchResultTitle = "No match found";
                             }

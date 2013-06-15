@@ -70,7 +70,7 @@
                     </li>                    
                     <li ng-show="searchComplete"><a href="#" ng-click="resetHome()">Return to Local Search</a></li>
                     <li ng-show="fbAuthorized"><hr/></li>
-                    <li ng-show="fbAuthorized">{{fbUser.first_name + ' ' + fbUser.last_name}}</li>
+                    <li ng-show="fbAuthorized"><img style="width:40px; height:40px" src="{{fbUser.picture.data.url}}" /> {{fbUser.first_name + ' ' + fbUser.last_name}}</li>
                     <li ng-show="fbAuthorized">Favourites</li>
                     <li ng-show="fbAuthorized"><a href="#" ng-click="fb.logout()">Logout</a></li>
                 </ul>

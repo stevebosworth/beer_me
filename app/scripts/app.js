@@ -22,6 +22,7 @@ angular.module('beerMeApp', ['beerMeServices', 'beerMeFilters', 'facebookService
      */
 
     .config(function($httpProvider){
+        $httpProvider.defaults.useXDomain = true;
         delete $httpProvider.defaults.headers.common['X-Requested-With'];
     })
 

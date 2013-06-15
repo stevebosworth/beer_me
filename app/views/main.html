@@ -12,7 +12,7 @@
 </div>
 
 <!-- store info panel -->
-<div id="myModal" class="reveal-modal">
+<div id="myModal" class="reveal-modal" ng-controller="storeDetails">
     <h2>Details for Store #{{storeInfo.id}}</h2>
     <h3>{{storeInfo.name}}</h3>
     <ul>
@@ -27,7 +27,8 @@
         <li>Cold Beer Room: {{storeInfo.has_beer_cold_room | checkmark }}</li>
         <li>Vintages Corner: {{storeInfo.has_vintages_corner | checkmark }}</li>
         <li>Tasting Bar: {{storeInfo.has_tasting_bar | checkmark }}</li>
-        <li>Transit Access: {{storeInfo.has_transit_access | checkmark }}</li>                     
+        <li>Transit Access: {{storeInfo.has_transit_access | checkmark }}</li>
+        <li><a ng-click="saveReview()">Save Review</a></li> {{reviewEntry}}                   
     </ul>
     <a class="close-reveal-modal">&#215;</a>
 </div>

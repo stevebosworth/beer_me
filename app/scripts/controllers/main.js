@@ -85,7 +85,7 @@ function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster, $log) {
     $rootScope.getStoreInfo = function(obj) {
         $scope.zoom = 17;
         $rootScope.revealMenuBar('none');
-        $scope.storeInfo = obj;
+        $rootScope.storeInfo = obj;
         $scope.center = {
             latitude: obj.latitude,
             longitude: obj.longitude
@@ -133,7 +133,7 @@ function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster, $log) {
  *
  */
 
-function searchCtrl($scope, $rootScope, $routeParams, Store, $timeout, Finder, CookieMonster) {
+function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster) {
 
     // watch searchText for user input
     var timer = false; // required
@@ -186,6 +186,30 @@ function searchCtrl($scope, $rootScope, $routeParams, Store, $timeout, Finder, C
         $rootScope.stores = 5;
         Finder.nearbyStores(25);        
     }
+}
+
+// --------------------------------------------------------------------
+/**
+ * storeDetails
+ *
+ * Used by store modal popup
+ *
+ */
+
+function storeDetails($scope, $rootScope, parse, Store, $timeout, Finder, CookieMonster) {
+
+    $scope.saveReview = function() {
+        alert(parse.update("Stores", 
+            { 
+                "storeId": $scope.storeInfo.id, 
+                "rating": {
+                    "__op": "Add",
+                    "objects": ["5"]
+                }
+            } 
+        ));
+    }
+
 }
 
 // --------------------------------------------------------------------

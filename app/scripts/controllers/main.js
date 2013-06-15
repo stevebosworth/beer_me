@@ -77,11 +77,9 @@ function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster, $log) {
     // get 25 stores on initial load
     Finder.nearbyStores(25);
 
-    var whereami = CookieMonster.readLocation();
-
 	$scope.center = {
-		latitude: whereami.coords.latitude,
-		longitude: whereami.coords.longitude
+		latitude: 73,
+		longitude: 42
 	};
 
     $rootScope.getStoreInfo = function(obj) {
@@ -104,7 +102,7 @@ function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster, $log) {
     // wait for user to change the value of the stores listing and reassign the array based on values
     // stored still in storesList
     $scope.$watch('stores', function(storesValue) {
-        if(storesValue != undefined) {
+        if(typeof $scope.storesList !== "undefined") {
             $scope.storesWithLimit = $scope.storesList.slice(0, $scope.stores);
         }
     });    
@@ -112,9 +110,9 @@ function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster, $log) {
     // watch the filtered expression and change the map based on new input
     $scope.$watch('filtered', function (filteredValue) {
         // watch checks on load, when data does not exist yet
-        if(filteredValue != undefined) {
+        if(typeof filteredValue !== "undefined") {
         	// reset the markers, place the users location in as a marker
-        	$rootScope.markers = [ { latitude: whereami.coords.latitude, longitude: whereami.coords.longitude, icon: 'img/icons/current_location.png'  } ];
+        	$rootScope.markers = [ { latitude: $rootScope.currentLocation.coords.latitude, longitude: $rootScope.currentLocation.coords.longitude, icon: 'img/icons/current_location.png'  } ];
 
         	// this workaround resolves the issue with filteredValue.length being less than $scope.stores
         	// without it, the loop tries to draw stores that do not exist
@@ -141,39 +139,41 @@ function searchCtrl($scope, $rootScope, $routeParams, Store, $timeout, Finder, C
     var timer = false; // required
     $scope.$watch('searchText', function() {
         // make sure search is long enough
-        if($scope.searchText.length > 5) {
-            // do not search until user has stopped typing
-            if(timer) {
-                $timeout.cancel(timer)
-            }  
-            timer = $timeout(function(){
-                $scope.searchSpinner = true; // show spinner
-                // perform the search
-                Store.searchStores($scope.searchText)
-                    .success(function(data) {
-                        $scope.store = data.result; })
-                    .error(function(data, status) {
-                        if (json_data.status == 200) {
-                            // once we apply the new data to storesList, the entire application will update
-                            $rootScope.storesList = json_data.result; 
-                            //console.log($scope.searchResults);
+        if(typeof $scope.searchText !== "undefined") {
+            if($scope.searchText.length > 5) {
+                // do not search until user has stopped typing
+                if(timer) {
+                    $timeout.cancel(timer)
+                }  
+                timer = $timeout(function(){
+                    $scope.searchSpinner = true; // show spinner
+                    // perform the search
+                    Store.searchStores($scope.searchText)
+                        .success(function(data) {
+                            $scope.store = data.result; })
+                        .error(function(data, status) {
+                            if (json_data.status == 200) {
+                                // once we apply the new data to storesList, the entire application will update
+                                $rootScope.storesList = json_data.result; 
+                                //console.log($scope.searchResults);
 
-                            $scope.searchSpinner = false; // hide spinner
-                            $scope.searchComplete = true; // show results
+                                $scope.searchSpinner = false; // hide spinner
+                                $scope.searchComplete = true; // show results
 
-                            if($rootScope.storesList.length > 0) {
-                                $rootScope.stores = $rootScope.storesList.length; // make sure results are visible on map
-                                $scope.searchResultTitle = "Search Results:";
-                                $scope.searchText = ""; // empty search bar
-                            } else {
-                                $scope.searchResultTitle = "No match found";
+                                if($rootScope.storesList.length > 0) {
+                                    $rootScope.stores = $rootScope.storesList.length; // make sure results are visible on map
+                                    $scope.searchResultTitle = "Search Results:";
+                                    $scope.searchText = ""; // empty search bar
+                                } else {
+                                    $scope.searchResultTitle = "No match found";
+                                }
                             }
-                        }
-                });
+                    });
 
-            }, 1000) // set delay        
-        } else {
-            $scope.searchSpinner = false;
+                }, 1000) // set delay        
+            } else {
+                $scope.searchSpinner = false;
+            }
         }
     });
 

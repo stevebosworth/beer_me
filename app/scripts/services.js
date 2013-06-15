@@ -74,12 +74,11 @@ angular.module('beerMeServices', ['ngResource'])
                 // } 
 
                 geoLocation.getCurrentPosition(function (position) {
-                    console.log(position);
+                    $rootScope.currentLocation = position;
                     processData(position);
                 }, function() { alert('Failed to connect to GeoLocation'); });                               
                 // after position is established
                 function processData(position) {
-                    $rootScope.currentLocation = { latitude: position.coords.latitude, longitude: position.coords.longitude };
                     // show users current location on map
                     $rootScope.center = { latitude: position.coords.latitude, longitude: position.coords.longitude };
                     $rootScope.markers = [];
@@ -196,8 +195,9 @@ angular.module('beerMeServices', ['ngResource'])
                     if (onSuccess) {
                         $rootScope.$apply(function () {
                             onSuccess.apply(that, args);
+                            //$rootScope.currentLocation = { coords:  { latitude: args[0].coords.latitude, longitude: args[0].coords.longitude } };
                             //console.log(args[0].coords.latitude + ',' + args[0].coords.longitude);
-                            CookieMonster.gpsCookie(JSON.stringify( { coords:  { latitude: args[0].coords.latitude, longitude: args[0].coords.longitude } } ));
+                            //CookieMonster.gpsCookie(JSON.stringify( { coords:  { latitude: args[0].coords.latitude, longitude: args[0].coords.longitude } } ));
                         });
                     }
                 }, function () {

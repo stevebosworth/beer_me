@@ -9,7 +9,7 @@
  *
  */
 
-angular.module('beerMeApp', ['beerMeServices', 'beerMeFilters', 'facebookService', 'parseService' ,'google-maps'])
+angular.module('beerMeApp', ['beerMeServices', 'beerMeFilters', 'facebookService', 'beerMeDirectives', 'parseService' ,'google-maps'])
 
     // --------------------------------------------------------------------
     /**
@@ -37,10 +37,6 @@ angular.module('beerMeApp', ['beerMeServices', 'beerMeFilters', 'facebookService
         .when('/', {
             templateUrl: 'views/main.html',
             controller: 'listCtrl'
-        })
-        .when('/store/:storeId', {
-            templateUrl: 'views/details.html',
-            controller: 'detailsCtrl'
         })
         .when('/products', {
             templateUrl: 'views/products.html',

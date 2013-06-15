@@ -36,9 +36,9 @@ angular.module('beerMeServices', ['ngResource'])
                 })
             },
             // returns data for a store
-            getStore: function(id) {
+            searchStores: function(searchTerm, per_page) {
                 return $http({
-                    url: 'http://lcboapi.com/stores/' + id,
+                    url: 'http://lcboapi.com/stores/?q=' + searchTerm + '&per_page=25',
                     method: 'JSONP',
                     params: {
                         callback: 'setJSON'
@@ -61,19 +61,24 @@ angular.module('beerMeServices', ['ngResource'])
             // returns data for closest 25 stores
             nearbyStores: function(radius) {
                 // check to see if we have the users location cached
-                if(!CookieMonster.checkCookie("cachedLocation")) {
-                    console.log("Read from GeoLocation");
-                    // get users current location
-                    geoLocation.getCurrentPosition(function (position) {
-                        processData(position);
-                    }, function() { alert('Failed to connect to GeoLocation'); });
-                } else {
-                    //console.log("Read from cookie");
-                    processData(CookieMonster.readLocation());                    
-                }                
+                // if(!CookieMonster.checkCookie("cachedLocation")) {
+                //     console.log("Read from GeoLocation");
+                //     // get users current location
+                //     geoLocation.getCurrentPosition(function (position) {
+                //         console.log(position);
+                //         processData(position);
+                //     }, function() { alert('Failed to connect to GeoLocation'); });
+                // } else {
+                //     //console.log("Read from cookie");
+                //     processData(CookieMonster.readLocation());                    
+                // } 
+
+                geoLocation.getCurrentPosition(function (position) {
+                    $rootScope.currentLocation = position;
+                    processData(position);
+                }, function() { alert('Failed to connect to GeoLocation'); });                               
                 // after position is established
                 function processData(position) {
-                    $rootScope.currentLocation = { latitude: position.coords.latitude, longitude: position.coords.longitude };
                     // show users current location on map
                     $rootScope.center = { latitude: position.coords.latitude, longitude: position.coords.longitude };
                     $rootScope.markers = [];
@@ -91,18 +96,19 @@ angular.module('beerMeServices', ['ngResource'])
             drawMarkers: function(stores, data) {
                 for (var i = 0; i < stores; i++) {
                     var obj = {};
-                    var html = '<div class="info-window">'
-                                + '<a href="#/store/' + data[i].id + '"><span>LCBO ' + data[i].name + '</span></a><ul>'
-                                + '<li>' + data[i].telephone + '</li>'
-                                + '<li>' + data[i].city + '</li>'
-                                + '<li>' + $filter('is_open')(data[i]) + '</li>'
-                                + '</ul></div>';
+                    // -- deprecated after switching to popup modal --
+                    // var html = '<div class="info-window">'
+                    //             + '<h2>LCBO ' + data[i].name + '</h2><ul>'
+                    //             + '<li>' + data[i].telephone + '</li>'
+                    //             + '<li>' + data[i].city + '</li>'
+                    //             + '<li>' + $filter('is_open')(data[i]) + '</li>'
+                    //             + '</ul></div>';
                     // decide which icon is required
                     var state;
-                    ($filter('is_open')(data[i]) == "Open") ? state = "o" : state = "c";
+                    ($filter('is_open')(data[i]) == "Open") ? state = "open" : state = "closed";
                     //console.log("redrawing: " + i);
-                    var setIcon = "img/icons/" + (i + 1) + state + ".png";
-                    obj = { latitude: data[i].latitude, longitude: data[i].longitude, infoWindow: html, icon: setIcon }
+                    var setIcon = "img/icons/" + state + ".png";
+                    obj = { latitude: data[i].latitude, longitude: data[i].longitude, infoWindow: JSON.stringify(data[i]), icon: setIcon, title: data[i].name }
                     //console.log(obj);
                     $rootScope.markers.push(obj);
                 };                 
@@ -189,8 +195,9 @@ angular.module('beerMeServices', ['ngResource'])
                     if (onSuccess) {
                         $rootScope.$apply(function () {
                             onSuccess.apply(that, args);
+                            //$rootScope.currentLocation = { coords:  { latitude: args[0].coords.latitude, longitude: args[0].coords.longitude } };
                             //console.log(args[0].coords.latitude + ',' + args[0].coords.longitude);
-                            CookieMonster.gpsCookie(JSON.stringify( { coords:  { latitude: args[0].coords.latitude, longitude: args[0].coords.longitude } } ));
+                            //CookieMonster.gpsCookie(JSON.stringify( { coords:  { latitude: args[0].coords.latitude, longitude: args[0].coords.longitude } } ));
                         });
                     }
                 }, function () {

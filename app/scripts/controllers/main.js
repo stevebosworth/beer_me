@@ -24,11 +24,11 @@ function setJSON(data) {
  *
  */
 
-function wrapperCtrl($scope) {
+function wrapperCtrl($scope, $rootScope) {
 	$scope.showMenuBar = false;
 	$scope.showOptionsBar = false;
 
-	$scope.revealMenuBar = function(target) {
+	$rootScope.revealMenuBar = function(target) {
 
 		switch(true)
 		{
@@ -48,6 +48,10 @@ function wrapperCtrl($scope) {
 				$scope.showMenuBar = false;
 				$scope.showOptionsBar = true;			
 				break;
+            case (target == 'none'):
+                $scope.showMenuBar = false;
+                $scope.showOptionsBar = false;
+                break;
 		}
 	}
 }
@@ -60,61 +64,128 @@ function wrapperCtrl($scope) {
  *
  */
 
-function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster) {
+function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster, $log) {
 
 	// enables new version of google maps
     google.maps.visualRefresh = true;
 
 	// default settings
-	$scope.stores = 5;
-	//$scope.sidebarVisible = false;
+	$rootScope.stores = 5;
 	$scope.zoom = 12;
 	$scope.orderStores = 'distance_in_meters';
-	$scope.center = {
-		// toronto
-		latitude: 43.67023,
-		longitude: -79.38676
-	};	
 
-	// get 25 stores on initial load
-	Finder.nearbyStores(25);
+    // get 25 stores on initial load
+    Finder.nearbyStores(25);
+
+	$scope.center = {
+		latitude: 73,
+		longitude: 42
+	};
+
+    $rootScope.getStoreInfo = function(obj) {
+        $scope.zoom = 17;
+        $rootScope.revealMenuBar('none');
+        $scope.storeInfo = obj;
+        $scope.center = {
+            latitude: obj.latitude,
+            longitude: obj.longitude
+        }   
+    }
+
+    // once data is loaded, load the sliced array into the view
+    $scope.$watch('storesList', function(storesListValue) {
+        if(storesListValue != undefined) {
+            $scope.storesWithLimit = $scope.storesList.slice(0, $scope.stores);
+        }
+    });
+
+    // wait for user to change the value of the stores listing and reassign the array based on values
+    // stored still in storesList
+    $scope.$watch('stores', function(storesValue) {
+        if(typeof $scope.storesList !== "undefined") {
+            $scope.storesWithLimit = $scope.storesList.slice(0, $scope.stores);
+        }
+    });    
 
     // watch the filtered expression and change the map based on new input
-    $scope.$watch('filtered', function (newValue) {
+    $scope.$watch('filtered', function (filteredValue) {
+        // watch checks on load, when data does not exist yet
+        if(typeof filteredValue !== "undefined") {
+        	// reset the markers, place the users location in as a marker
+        	$rootScope.markers = [ { latitude: $rootScope.currentLocation.coords.latitude, longitude: $rootScope.currentLocation.coords.longitude, icon: 'img/icons/current_location.png'  } ];
 
-        var whereami = CookieMonster.readLocation();
+        	// this workaround resolves the issue with filteredValue.length being less than $scope.stores
+        	// without it, the loop tries to draw stores that do not exist
+        	var storesToDraw = 5;
+        	(filteredValue.length < $scope.stores) ? storesToDraw = filteredValue.length : storesToDraw = $scope.stores;
 
-    	// reset the markers, place the users location in as a marker
-    	$rootScope.markers = [ { latitude: whereami.coords.latitude, longitude: whereami.coords.longitude,  } ];
-
-    	// this workaround resolves the issue with newValue.length being less than $scope.stores
-    	// without it, the loop tries to draw stores that do not exist
-    	var storesToDraw;
-    	(newValue.length < $scope.stores) ? storesToDraw = newValue.length : storesToDraw = $scope.stores;
-
-    	// draw the filtered markers
-    	Finder.drawMarkers(storesToDraw, newValue);
+        	// draw the filtered markers
+        	Finder.drawMarkers(storesToDraw, filteredValue);
+        }
     }, true);
 };
 
 // --------------------------------------------------------------------
 /**
- * detailsCtrl
+ * searchCtrl
  *
- * Used to display data of the selected store
+ * Used by the sidebar to perform searches
  *
  */
 
-function detailsCtrl($scope, $rootScope, $routeParams, Store) {
-	$scope.storeId = $routeParams.storeId;
+function searchCtrl($scope, $rootScope, $routeParams, Store, $timeout, Finder, CookieMonster) {
 
-	// retrieve the data for the selected store
-	Store.getStore($routeParams.storeId).success(function(data) {
-		$scope.store = data.result;
-	}).error(function(data, status) {
-		if (json_data.status == 200)
-			$scope.store = json_data.result;
-	});
+    // watch searchText for user input
+    var timer = false; // required
+    $scope.$watch('searchText', function() {
+        // make sure search is long enough
+        if(typeof $scope.searchText !== "undefined") {
+            if($scope.searchText.length > 5) {
+                // do not search until user has stopped typing
+                if(timer) {
+                    $timeout.cancel(timer)
+                }  
+                timer = $timeout(function(){
+                    $scope.searchSpinner = true; // show spinner
+                    // perform the search
+                    Store.searchStores($scope.searchText)
+                        .success(function(data) {
+                            $scope.store = data.result; })
+                        .error(function(data, status) {
+                            if (json_data.status == 200) {
+                                // once we apply the new data to storesList, the entire application will update
+                                $rootScope.storesList = json_data.result; 
+                                //console.log($scope.searchResults);
+
+                                $scope.searchSpinner = false; // hide spinner
+                                $scope.searchComplete = true; // show results
+
+                                if($rootScope.storesList.length > 0) {
+                                    $rootScope.stores = $rootScope.storesList.length; // make sure results are visible on map
+                                    $scope.searchResultTitle = "Search Results:";
+                                    $scope.searchText = ""; // empty search bar
+                                } else {
+                                    $scope.searchResultTitle = "No match found";
+                                }
+                            }
+                    });
+
+                }, 1000) // set delay        
+            } else {
+                $scope.searchSpinner = false;
+            }
+        }
+    });
+
+    $scope.resetHome = function () {
+        $scope.searchText = "";
+        // return user back to default search
+        $scope.searchComplete = false;
+        $rootScope.revealMenuBar('none');
+        // get 25 stores on initial load
+        $rootScope.stores = 5;
+        Finder.nearbyStores(25);        
+    }
 }
 
 // --------------------------------------------------------------------

@@ -65,7 +65,7 @@ angular.module('parseService', [])
 				if(response.length > 0)
 					return response[0];
 				else
-					return [];
+					return null;
 			});
 		}
 	}

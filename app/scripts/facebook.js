@@ -45,7 +45,6 @@ angular.module('facebookService', [])
 					case 'connected':
 						self.getInfo();
 						break;
-
 					default:
 						$rootScope.fbAuthorized = false;
 				}
@@ -56,7 +55,7 @@ angular.module('facebookService', [])
 			FB.api('/me?fields=first_name,last_name,email,picture.type(large)', function(response) {
 				$rootScope.$apply(function() {
 					$rootScope.fbUser = response;
-					if(response && !response.error)
+					if (response && !response.error)
 						$rootScope.fbAuthorized = true;
 				})
 			});
@@ -67,23 +66,28 @@ angular.module('facebookService', [])
 			var self = this;
 			FB.login(function(response) {
 				self.getInfo();
-
+				
 				//Add to param
 				FB.api('/me?fields=first_name,last_name,email,picture.type(large)', function(response) {
 					$rootScope.$apply(function() {
-						
-						//create json object to be entered into db
-						var userData = {
-							email: response.email,
-							firstName: response.first_name,
-							lastName: response.last_name,
-							facebookId: response.id,
-							picture: response.picture.data.url
-						}
-
-						//add to users table
-						parse.add('Users', userData);
-					})
+						self.idExist(response.id).then(function(exist) {
+							
+							if(!exist) {
+								
+								//create json object to be entered into db
+								var userData = {
+									email: response.email,
+									firstName: response.first_name,
+									lastName: response.last_name,
+									facebookId: response.id,
+									picture: response.picture.data.url
+								}
+								
+								//add to users table
+								parse.add('Users', userData);
+							}
+						});					
+					});
 				});
 			});
 		};
@@ -98,9 +102,12 @@ angular.module('facebookService', [])
 		};
 
 		this.idExist = function(facebookId) {
-			var deferred = $q.defer();
-
-			
+			return parse.getRowByColumn('Users', 'facebookId', facebookId).then(function(data) {
+				if (data != null)
+					return true;
+				else
+					return false;
+			});
 		}
 	}
 ]);

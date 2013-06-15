@@ -4,8 +4,8 @@ angular.module('parseService', [])
 	function($rootScope, $http) {
 		var self = this;
 		var baseUrl = 'https://api.parse.com/1/classes/';
-		var applicationKey = 'bCuTOxMFh7ebBVAXUzSzNTTZVBoKuRxtu7IX5ZN7';
-		var apiKey = 'Y1ah1kDdKb2ZPeVtAxy1hOHXnogg3rktS2SsSZmr';
+		var applicationKey = 'maiqvOeWeNT1D8J1QgftguTE6wmOpcKhXfioe1S2';
+		var apiKey = 'rcfocQkhqSiYPpw7OXNkxKqGZE1q4akU4xGo13qT';
 
 
 		this.request = function(method, className, data, id) {

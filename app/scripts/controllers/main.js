@@ -24,11 +24,11 @@ function setJSON(data) {
  *
  */
 
-function wrapperCtrl($scope) {
+function wrapperCtrl($scope, $rootScope) {
 	$scope.showMenuBar = false;
 	$scope.showOptionsBar = false;
 
-	$scope.revealMenuBar = function(target) {
+	$rootScope.revealMenuBar = function(target) {
 
 		switch(true)
 		{
@@ -48,6 +48,10 @@ function wrapperCtrl($scope) {
 				$scope.showMenuBar = false;
 				$scope.showOptionsBar = true;			
 				break;
+            case (target == 'none'):
+                $scope.showMenuBar = false;
+                $scope.showOptionsBar = false;
+                break;
 		}
 	}
 }
@@ -80,18 +84,20 @@ function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster, $log) {
 		longitude: whereami.coords.longitude
 	};
 
-    $scope.getStoreInfo = function(obj) {
+    $rootScope.getStoreInfo = function(obj) {
+        $scope.zoom = 17;
+        $rootScope.revealMenuBar('none');
         $scope.storeInfo = obj;
         $scope.center = {
             latitude: obj.latitude,
             longitude: obj.longitude
         }   
-    }  
+    }
 
     // once data is loaded, load the sliced array into the view
     $scope.$watch('storesList', function(storesListValue) {
         if(storesListValue != undefined) {
-            $scope.storesWithLimit = $rootScope.storesList.slice(0, $scope.stores);
+            $scope.storesWithLimit = $scope.storesList.slice(0, $scope.stores);
         }
     });
 
@@ -99,7 +105,7 @@ function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster, $log) {
     // stored still in storesList
     $scope.$watch('stores', function(storesValue) {
         if(storesValue != undefined) {
-            $scope.storesWithLimit = $rootScope.storesList.slice(0, $scope.stores);
+            $scope.storesWithLimit = $scope.storesList.slice(0, $scope.stores);
         }
     });    
 
@@ -123,22 +129,65 @@ function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster, $log) {
 
 // --------------------------------------------------------------------
 /**
- * detailsCtrl
+ * searchCtrl
  *
- * Used to display data of the selected store
+ * Used by the sidebar to perform searches
  *
  */
 
-function detailsCtrl($scope, $rootScope, $routeParams, Store) {
-	$scope.storeId = $routeParams.storeId;
+function searchCtrl($scope, $rootScope, $routeParams, Store, $timeout, Finder, CookieMonster) {
 
-	// retrieve the data for the selected store
-	Store.getStore($routeParams.storeId).success(function(data) {
-		$scope.store = data.result;
-	}).error(function(data, status) {
-		if (json_data.status == 200)
-			$scope.store = json_data.result;
-	});
+    // watch searchText for user input
+    var timer = false; // required
+    $scope.$watch('searchText', function() {
+        // make sure search is long enough
+        if($scope.searchText.length > 5) {
+            // do not search until user has stopped typing
+            if(timer) {
+                $timeout.cancel(timer)
+            }  
+            timer = $timeout(function(){
+                $scope.searchSpinner = true; // show spinner
+                // perform the search
+                Store.searchStores($scope.searchText)
+                    .success(function(data) {
+                        $scope.store = data.result; })
+                    .error(function(data, status) {
+                        if (json_data.status == 200) {
+                            $rootScope.storesList = json_data.result;
+                            $rootScope.stores = json_data.result.length;
+                            //console.log($scope.searchResults);
+
+                            $scope.searchSpinner = false; // hide spinner
+                            $scope.searchComplete = true; // show results
+
+                            if($rootScope.storesList.length > 0) {
+                                $scope.searchResultTitle = "Search Results:";
+                                $scope.searchText = ""; // empty search bar
+                                var whereami = CookieMonster.readLocation();
+                                $rootScope.markers = [ { latitude: whereami.coords.latitude, longitude: whereami.coords.longitude, icon: 'img/icons/current_location.png'  } ];
+                                //Finder.drawMarkers($scope.storesList.length, $scope.storesList);
+                            } else {
+                                $scope.searchResultTitle = "No match found";
+                            }
+                        }
+                });
+
+            }, 1000) // set delay        
+        } else {
+            $scope.searchSpinner = false;
+        }
+    });
+
+    $scope.resetHome = function () {
+        $scope.searchText = "";
+        // return user back to default search
+        $scope.searchComplete = false;
+        $rootScope.revealMenuBar('none');
+        // get 25 stores on initial load
+        $rootScope.stores = 5;
+        Finder.nearbyStores(25);        
+    }
 }
 
 // --------------------------------------------------------------------

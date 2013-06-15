@@ -220,10 +220,14 @@
             // overwrite the default behaviour for infoWindows
             // when user clicks icon on map, launch modal containing store info, center map on store
             var modal_scope = angular.element($("#myModal")).scope();
+            var menu_scope = angular.element($("#wrapper")).scope();
             modal_scope.$apply(function () {
               var data = JSON.parse(infoWindowContent);
               modal_scope.storeInfo = data;
               modal_scope.center = { latitude: data.latitude, longitude: data.longitude };
+              modal_scope.zoom = 17;
+              menu_scope.showMenuBar = false;
+              menu_scope.showOptionsBar = false;
             });
             $('#myModal').foundation('reveal', 'open');
           });

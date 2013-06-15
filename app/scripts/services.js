@@ -36,9 +36,9 @@ angular.module('beerMeServices', ['ngResource'])
                 })
             },
             // returns data for a store
-            getStore: function(id) {
+            searchStores: function(searchTerm) {
                 return $http({
-                    url: 'http://lcboapi.com/stores/' + id,
+                    url: 'http://lcboapi.com/stores/?q=' + searchTerm + '&per_page=5',
                     method: 'JSONP',
                     params: {
                         callback: 'setJSON'
@@ -61,16 +61,22 @@ angular.module('beerMeServices', ['ngResource'])
             // returns data for closest 25 stores
             nearbyStores: function(radius) {
                 // check to see if we have the users location cached
-                if(!CookieMonster.checkCookie("cachedLocation")) {
-                    console.log("Read from GeoLocation");
-                    // get users current location
-                    geoLocation.getCurrentPosition(function (position) {
-                        processData(position);
-                    }, function() { alert('Failed to connect to GeoLocation'); });
-                } else {
-                    //console.log("Read from cookie");
-                    processData(CookieMonster.readLocation());                    
-                }                
+                // if(!CookieMonster.checkCookie("cachedLocation")) {
+                //     console.log("Read from GeoLocation");
+                //     // get users current location
+                //     geoLocation.getCurrentPosition(function (position) {
+                //         console.log(position);
+                //         processData(position);
+                //     }, function() { alert('Failed to connect to GeoLocation'); });
+                // } else {
+                //     //console.log("Read from cookie");
+                //     processData(CookieMonster.readLocation());                    
+                // } 
+
+                geoLocation.getCurrentPosition(function (position) {
+                    console.log(position);
+                    processData(position);
+                }, function() { alert('Failed to connect to GeoLocation'); });                               
                 // after position is established
                 function processData(position) {
                     $rootScope.currentLocation = { latitude: position.coords.latitude, longitude: position.coords.longitude };

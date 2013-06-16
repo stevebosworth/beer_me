@@ -34,7 +34,7 @@ function wrapperCtrl($scope, $rootScope) {
 		{
 			case (target == 'left' && $scope.showMenuBar == true):
 				$scope.showMenuBar = false;
-				$scope.showOptionsBar = false;	
+				$scope.showOptionsBar = false;
 				break;
 			case (target == 'left' && $scope.showMenuBar == false):
 				$scope.showMenuBar = true;
@@ -42,11 +42,11 @@ function wrapperCtrl($scope, $rootScope) {
 				break;
 			case (target == 'right' && $scope.showOptionsBar == true):
 				$scope.showMenuBar = false;
-				$scope.showOptionsBar = false;				
+				$scope.showOptionsBar = false;
 				break;
 			case (target == 'right' && $scope.showOptionsBar == false):
 				$scope.showMenuBar = false;
-				$scope.showOptionsBar = true;			
+				$scope.showOptionsBar = true;
 				break;
             case (target == 'none'):
                 $scope.showMenuBar = false;
@@ -86,12 +86,16 @@ function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster, $log) {
 
     $rootScope.getStoreInfo = function(obj) {
         $scope.zoom = 17;
-        $rootScope.revealMenuBar('none');
+        // $rootScope.revealMenuBar('none');
         $rootScope.storeInfo = obj;
         $scope.center = {
             latitude: obj.latitude,
             longitude: obj.longitude
-        }   
+        }
+    }
+
+    $rootScope.getProductInfo = function(obj){
+        $rootScope.productInfo = obj;
     }
 
     // once data is loaded, load the sliced array into the view
@@ -107,7 +111,7 @@ function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster, $log) {
         if(typeof $scope.storesList !== "undefined") {
             $scope.storesWithLimit = $scope.storesList.slice(0, $scope.stores);
         }
-    });    
+    });
 
     // watch the filtered expression and change the map based on new input
     $scope.$watch('filtered', function (filteredValue) {
@@ -135,7 +139,7 @@ function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster, $log) {
  *
  */
 
-function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster) {
+function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster, Products) {
 
     // watch searchText for user input
     var timer = false; // required
@@ -146,7 +150,7 @@ function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster) 
                 // do not search until user has stopped typing
                 if(timer) {
                     $timeout.cancel(timer)
-                }  
+                }
                 timer = $timeout(function(){
                     $scope.searchSpinner = true; // show spinner
                     // perform the search
@@ -157,23 +161,48 @@ function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster) 
                         .error(function(data, status) {
                             if (json_data.status == 200) {
                                 // once we apply the new data to storesList, the entire application will update
-                                $rootScope.storesList = json_data.result; 
+                                $rootScope.storesList = json_data.result;
                                 //console.log($scope.searchResults);
+                                $scope.storesResultsCount = $rootScope.storesList.length;
 
                                 $scope.searchSpinner = false; // hide spinner
                                 $scope.searchComplete = true; // show results
 
                                 if($rootScope.storesList.length > 0) {
                                     $rootScope.stores = $rootScope.storesList.length; // make sure results are visible on map
-                                    $scope.searchResultTitle = "Search Results:";
+                                    $scope.storesResultTitle = "Search Results:";
                                     $scope.searchText = ""; // empty search bar
                                 } else {
-                                    $scope.searchResultTitle = "No match found";
+                                    $scope.storesResultTitle = "No match found";
                                 }
                             }
                     });
 
-                }, 1000) // set delay        
+                    Products.getProductsByQuery($scope.searchText)
+                        .success(function(data){
+                            $scope.product = data.result;
+                        })
+                        .error(function(data){
+                            if (json_data.status == 200) {
+                                // once we apply the new data to productsList, the entire application will update
+                                $rootScope.productsList = json_data.result;
+                                //console.log($scope.searchResults);
+                                $scope.productsResultsCount = $rootScope.productsList.length;
+
+                                $scope.searchSpinner = false; // hide spinner
+                                $scope.searchComplete = true; // show results
+
+                                if($rootScope.productsList.length > 0) {
+                                    // $rootScope.products = $rootScope.productsList.length; // make sure results are visible on map
+                                    $scope.productsResultTitle = "Product Results:";
+                                    //$scope.searchText = ""; // empty search bar
+                                } else {
+                                    $scope.productsResultTitle = "No match found";
+                                }
+                            }
+                        });
+
+                }, 1000) // set delay
             } else {
                 $scope.searchSpinner = false;
             }
@@ -187,7 +216,7 @@ function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster) 
         $rootScope.revealMenuBar('none');
         // get 25 stores on initial load
         $rootScope.stores = 5;
-        Finder.nearbyStores(25);        
+        Finder.nearbyStores(25);
     }
 }
 
@@ -202,14 +231,14 @@ function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster) 
 function storeDetails($scope, $rootScope, parse, Store, $timeout, Finder, CookieMonster) {
 
     $scope.saveReview = function() {
-        alert(parse.update("Stores", 
-            { 
-                "storeId": $scope.storeInfo.id, 
+        alert(parse.update("Stores",
+            {
+                "storeId": $scope.storeInfo.id,
                 "rating": {
                     "__op": "Add",
                     "objects": ["5"]
                 }
-            } 
+            }
         ));
     }
 }
@@ -262,8 +291,8 @@ function productDetailsCtrl($scope, $routeParams, geoLocation, Products) {
                 if(!json_data.product['image_thumb_url']){
                     json_data.product['image_thumb_url'] = "img/glyphicons-halflings.png";
                 }
-                $scope.product = json_data.product;
-                $scope.storesList = json_data.result;
+                $rootScope.product = json_data.product;
+                $rootScope.storesList = json_data.result;
                 //console.log($scope.product);
             }
         });

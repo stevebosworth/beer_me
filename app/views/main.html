@@ -1,8 +1,8 @@
 <!-- google map -->
 <div class="primary-content">
-    <div class="google-map" 
+    <div class="google-map"
         center="center"
-        zoom="zoom" 
+        zoom="zoom"
         markers="markers"
         draggable="true"
         fit="true"
@@ -28,8 +28,28 @@
         <li>Vintages Corner: {{storeInfo.has_vintages_corner | checkmark }}</li>
         <li>Tasting Bar: {{storeInfo.has_tasting_bar | checkmark }}</li>
         <li>Transit Access: {{storeInfo.has_transit_access | checkmark }}</li>
-        <li><a ng-click="saveReview()">Save Review</a></li> {{reviewEntry}}                   
+        <li><a ng-click="saveReview()">Save Review</a></li> {{reviewEntry}}
     </ul>
+    <a class="close-reveal-modal">&#215;</a>
+</div>
+
+<div id="productModal" class="reveal-modal" ng-controller="productDetailsCtrl">
+    <div>
+        <h1>Product Details</h1>
+        <h2>{{productInfo.name}}</h2>
+        <ul>
+            <li>Price: &#36;{{productInfo.price_in_cents / 100}}</li>
+            <li>Serving Suggestions: {{productInfo.serving_suggestion}}</li>
+            <li><img src="{{productInfo.image_thumb_url}}" alt=""></li>
+            <li></li>
+        </ul>
+    </div>
+    <div >
+        <h1>Where can I get it nearby?</h1>
+        <ul>
+            <!-- <li ng-repeat="store in storesList"><a href="#/store/{{store.id}}">{{store.name}}</a></li> -->
+        </ul>
+    </div>
     <a class="close-reveal-modal">&#215;</a>
 </div>
 
@@ -69,26 +89,26 @@
              <label for="has_product_consultant"><span></span>Product Consultant</label>
          </li>
         <li>
-            <input id="has_special_occasion_permits" type="checkbox" ng-model="query.has_special_occasion_permits" ng-true-value="true" ng-false-value="" > 
+            <input id="has_special_occasion_permits" type="checkbox" ng-model="query.has_special_occasion_permits" ng-true-value="true" ng-false-value="" >
             <label for="has_special_occasion_permits"><span></span>Special Occasion Permits</label>
         </li>
     </ul>
 
     <ul class="filter-options">
         <li>
-            <input id="has_beer_cold_room" type="checkbox" ng-model="query.has_beer_cold_room" ng-true-value="true" ng-false-value="" > 
+            <input id="has_beer_cold_room" type="checkbox" ng-model="query.has_beer_cold_room" ng-true-value="true" ng-false-value="" >
             <label for="has_beer_cold_room"><span></span>Cold Beer Room</label>
         </li>
         <li>
-            <input id="has_vintages_corner" type="checkbox" ng-model="query.has_vintages_corner" ng-true-value="true" ng-false-value="" > 
+            <input id="has_vintages_corner" type="checkbox" ng-model="query.has_vintages_corner" ng-true-value="true" ng-false-value="" >
             <label for="has_vintages_corner"><span></span>Vintages Corner</label>
         </li>
         <li>
-            <input id="has_tasting_bar" type="checkbox" ng-model="query.has_tasting_bar" ng-true-value="true" ng-false-value="" > 
+            <input id="has_tasting_bar" type="checkbox" ng-model="query.has_tasting_bar" ng-true-value="true" ng-false-value="" >
             <label for="has_tasting_bar"><span></span>Tasting Bar</label>
         </li>
         <li>
-            <input id="has_transit_access" type="checkbox" ng-model="query.has_transit_access" ng-true-value="true" ng-false-value="" > 
+            <input id="has_transit_access" type="checkbox" ng-model="query.has_transit_access" ng-true-value="true" ng-false-value="" >
             <label for="has_transit_access"><span></span>Transit Access</label>
         </li>
     </ul>

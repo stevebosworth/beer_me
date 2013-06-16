@@ -498,7 +498,7 @@
                 _m.addMarker(v.latitude, v.longitude, v.icon, v.infoWindow);
               }
             });
-            
+
             // Clear orphaned markers
             var orphaned = [];
             
@@ -519,6 +519,9 @@
                 if (floatEqual(sm.latitude, lat) && floatEqual(sm.longitude, lng)) {
                   // Map marker is present in scope too, don't remove
                   found = true;
+
+                  //Set marker's new icon
+                  _m.findMarker(lat, lng).setIcon(sm.icon);
                 }
               }
               
@@ -528,8 +531,9 @@
               }
             });
 
-            orphaned.length && _m.removeMarkers(orphaned);           
-            
+            orphaned.length && _m.removeMarkers(orphaned);          
+
+
             // Fit map when there are more than one marker. 
             // This will change the map center coordinates
             if (attrs.fit == "true" && newValue && newValue.length > 1) {

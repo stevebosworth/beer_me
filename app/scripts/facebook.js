@@ -66,14 +66,14 @@ angular.module('facebookService', [])
 			var self = this;
 			FB.login(function(response) {
 				self.getInfo();
-				
+
 				//Add to param
 				FB.api('/me?fields=first_name,last_name,email,picture.type(large)', function(response) {
 					$rootScope.$apply(function() {
 						self.idExist(response.id).then(function(exist) {
-							
+
 							if(!exist) {
-								
+
 								//create json object to be entered into db
 								var userData = {
 									email: response.email,
@@ -82,11 +82,11 @@ angular.module('facebookService', [])
 									facebookId: response.id,
 									picture: response.picture.data.url
 								}
-								
+
 								//add to users table
 								parse.add('Users', userData);
 							}
-						});					
+						});
 					});
 				});
 			});

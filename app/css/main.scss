@@ -113,7 +113,7 @@ html, body {
 }
 
 #menu-bar, .options-bar {
-	height: 100%;
+	max-height: 80%;
 	position: fixed;
 	width: 17em;
 	background-color: rgba(75, 75, 75, 0.85);
@@ -121,6 +121,8 @@ html, body {
 	color: $white;
 	margin: 0;
 	z-index: 100;
+	overflow:auto;
+	padding-bottom:10%;
 
 	ul {
 		padding: 0;
@@ -179,6 +181,8 @@ input[type="checkbox"]:checked + label span {
 	// position: fixed; 
 	min-width: 100%;
 	font-size: 0.65em;
+	// height:15%;
+	z-index:200;
 
 	ul{
 		list-style: none;

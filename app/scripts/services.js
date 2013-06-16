@@ -105,9 +105,9 @@ angular.module('beerMeServices', ['ngResource'])
                     //             + '</ul></div>';
                     // decide which icon is required
                     var state;
-                    ($filter('is_open')(data[i]) == "Open") ? state = "open" : state = "closed";
-                    //console.log("redrawing: " + i);
-                    var setIcon = "img/icons/" + state + ".png";
+                    ($filter('is_open')(data[i]) == "Open") ? state = "o" : state = "c";
+                    console.log("redrawing: " + i);
+                    var setIcon = "img/icons/" + (i + 1) + state + ".png";
                     obj = { latitude: data[i].latitude, longitude: data[i].longitude, infoWindow: JSON.stringify(data[i]), icon: setIcon, title: data[i].name }
                     //console.log(obj);
                     $rootScope.markers.push(obj);

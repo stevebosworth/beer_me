@@ -82,6 +82,8 @@ function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster, $log) {
 		longitude: 42
 	};
 
+    $scope.dataBarVisible = true;
+
     $rootScope.getStoreInfo = function(obj) {
         $scope.zoom = 17;
         $rootScope.revealMenuBar('none');
@@ -150,7 +152,8 @@ function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster) 
                     // perform the search
                     Store.searchStores($scope.searchText)
                         .success(function(data) {
-                            $scope.store = data.result; })
+                            $scope.store = data.result; 
+                        })
                         .error(function(data, status) {
                             if (json_data.status == 200) {
                                 // once we apply the new data to storesList, the entire application will update
@@ -209,7 +212,6 @@ function storeDetails($scope, $rootScope, parse, Store, $timeout, Finder, Cookie
             } 
         ));
     }
-
 }
 
 // --------------------------------------------------------------------

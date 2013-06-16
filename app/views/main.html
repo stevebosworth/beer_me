@@ -95,7 +95,7 @@
 </div>
 
 <!-- lower data bar -->
-<div class="data-bar">
+<div class="data-bar" ng-show="dataBarVisible == true">
     <ul id="db-ul-container">
         <li class="db-listing" ng-repeat="store in filtered = (storesWithLimit | filter: query | filter: search | orderBy: orderStores | limitTo: stores)">
         <!-- <li class="db-listing" ng-repeat="store in storesList"> -->

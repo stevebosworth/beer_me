@@ -146,7 +146,7 @@ function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster, 
     $scope.$watch('searchText', function() {
         // make sure search is long enough
         if(typeof $scope.searchText !== "undefined") {
-            if($scope.searchText.length > 5) {
+            if($scope.searchText.length > 2) {
                 // do not search until user has stopped typing
                 if(timer) {
                     $timeout.cancel(timer)

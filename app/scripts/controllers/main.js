@@ -305,18 +305,21 @@ function productDetailsCtrl($scope, $routeParams, geoLocation, Products) {
  *
  */
 
-function storesForProductCtrl($scope, $routeParams, Products) {
+function storesForProductCtrl($scope, $rootScope, Products, geoLocation) {
+        //console.log();
+        //get stores for product based on rootScope ID
 
-
-        Products.getStoresForProduct($routeParams.productId).success(function(data){
-            $scope.storesList = data.result;
-            console.log($scope.storesList);
-        }).error(function(data, status) {
-            if (json_data.status == 200){
-                $scope.storesList = json_data.result;
-                console.log($scope.storesList);
-            }
-        });
+        //get current location
+        $scope.getStoresInStock = function (){
+            Products.getProduct($rootScope.productInfo.id, $rootScope.center, 5).success(function(data){
+                $scope.stockList = data.result;
+            }).error(function(data, status) {
+                if (json_data.status == 200){
+                    $scope.stockList = json_data.result;
+                    console.log($scope.stockList);
+                }
+            });
+        }
         //$scope.productSearch();
 }
 

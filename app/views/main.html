@@ -33,7 +33,7 @@
     <a class="close-reveal-modal">&#215;</a>
 </div>
 
-<div id="productModal" class="reveal-modal" ng-controller="productDetailsCtrl">
+<div id="productModal" class="reveal-modal" ng-controller="storesForProductCtrl">
     <div>
         <h1>Product Details</h1>
         <h2>{{productInfo.name}}</h2>
@@ -47,8 +47,9 @@
     <div >
         <h1>Where can I get it nearby?</h1>
         <ul>
-            <!-- <li ng-repeat="store in storesList"><a href="#/store/{{store.id}}">{{store.name}}</a></li> -->
+            <li ng-repeat="store in stockList | limitTo:5"><!-- <a href="#/store/{{store.id}}"> -->{{store.name}} - {{store.quantity}}<!-- </a> --></li>
         </ul>
+        <button ng-click="getStoresInStock()">Show Stores Nearby</button>
     </div>
     <a class="close-reveal-modal">&#215;</a>
 </div>

@@ -236,20 +236,20 @@ angular.module('beerMeServices', ['ngResource'])
                 })
             },
             // returns data for a single product
-            getProduct: function(id, position, radius) {
+            getProduct: function(id, center, radius) {
                 return $http({
                     url: 'http://lcboapi.com/products/' + id + '/stores',
                     method: 'JSONP',
                     params: {
                         callback: 'setJSON',
-                        lat: position.coords.latitude,
-                        lon: position.coords.longitude
+                        lat: center.latitude,
+                        lon: center.longitude
                     }
                 })
             },
             getStoresForProduct: function(productId){
                 return $http({
-                    url: 'http://lcboapi.com/product/' + productId + '/stores',
+                    url: 'http://lcboapi.com/products/' + productId + '/stores',
                     method: 'JSONP',
                     params: {
                         callback: 'setJSON'

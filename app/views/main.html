@@ -1,16 +1,3 @@
-<!-- google map -->
-<div class="primary-content">
-    <div class="google-map"
-        center="center"
-        zoom="zoom"
-        markers="markers"
-        draggable="true"
-        fit="true"
-        events="eventsProperty"
-        style="height: 100%; width: 100%">
-    </div>
-</div>
-
 <!-- store info panel -->
 <div id="myModal" class="reveal-modal" ng-controller="storeDetails">
     <h2>Details for Store #{{storeInfo.id}}</h2>
@@ -114,29 +101,38 @@
         </li>
     </ul>
 </div>
-
+ 
 <!-- lower data bar -->
-<div class="data-bar">
-    <ul id="db-ul-container">
-        <li class="db-listing" ng-repeat="store in filtered = (storesWithLimit | filter: query | filter: search | orderBy: orderStores | limitTo: stores)">
-        <!-- <li class="db-listing" ng-repeat="store in storesList"> -->
-                <div class="db-div-icon">
-                    <a data-reveal-id="myModal" ng-click="getStoreInfo({{store}})">
-                        <i class="icon-beer icon-4x" style="width: 100%; height: 100%;"></i>
-                        <span class="index-number">{{$index + 1}}</span>
-                    </a>
-                </div>
-                <ul class="db-ul-content">
-                    <a data-reveal-id="myModal" ng-click="getStoreInfo({{store}})">
-                        <li class="db-title">
-                            {{store.name}} <br /> {{store.city}}
-                        </li>
-                    </a>
-                    <li>{{store.address_line_1}} {{store.address_line_2}}</li>
-                    <li>Distance: {{store.distance_in_meters | mtokm}}</li>
-                    <li>Selection Size: {{store.products_count | inventorydiversity}}</li>
-                </ul>
+<div id="data-bar" ng-show="dataBarVisible == true">
+    <div class="data-container" ng-repeat="store in filtered = (storesWithLimit | filter: query | filter: search | orderBy: orderStores | limitTo: stores)">
+        <div class="data-left">
+            <a data-reveal-id="myModal" ng-click="getStoreInfo({{store}})">
+                <i class="icon-beer icon-4x" style="width: 100%; height: 100%;"></i>
+                <span class="index-number">{{$index + 1}}</span>
+            </a>
+        </div>
+        <div class="data-right">
+            <a data-reveal-id="myModal" ng-click="getStoreInfo({{store}})">
+                <h1 class="data-title">
+                    {{store.name}}
+                </h1>
+            </a>
+            <span>{{store.address_line_1}} <br />{{store.address_line_2}}</span>
+            <span>{{store.city}}, ON</span>
+            <span>{{store.distance_in_meters | mtokm}}</span>
+        </div>
+    </div>
+</div>
 
-        </li>
-    </ul>
+<!-- google map -->
+<div class="primary-content">
+    <div class="google-map"
+        center="center"
+        zoom="zoom"
+        markers="markers"
+        draggable="true"
+        fit="true"
+        events="eventsProperty"
+        style="height: 100%; width: 100%">
+    </div>
 </div>

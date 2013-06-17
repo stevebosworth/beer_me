@@ -4,10 +4,8 @@
  * Adapted from: http://stackoverflow.com/questions/16708324/google-maps-infowindow-close-button-hidden
  * ====================================================================
  */
-/* line 9, main.scss */
 img[src*="gstatic.com/"], img[src*="googleapis.com/"] {
-  max-width: none;
-}
+  max-width: none; }
 
 /* ====================================================================
  * Sass Mixins
@@ -17,55 +15,55 @@ img[src*="gstatic.com/"], img[src*="googleapis.com/"] {
  * Global Styles
  * ====================================================================
  */
-/* line 49, main.scss */
 html, body {
   font-size: 18px;
   font-family: 'Open Sans', 'Helvetica', 'Arial', sans-serif;
   font-weight: 300;
   height: 100%;
   padding: 0;
-  margin: 0;
-}
+  margin: 0; }
 
-/* line 58, main.scss */
 .row {
-  max-width: 100%;
-}
+  max-width: 100%; }
 
-/* line 62, main.scss */
 .fade-hide, .fade-show {
   -webkit-transition: all 0.2s ease-in-out;
   -moz-transition: all 0.2s ease-in-out;
   -ms-transition: all 0.2s ease-in-out;
   -o-transition: all 0.2s ease-in-out;
-  transition: all 0.2s ease-in-out;
-}
+  transition: all 0.2s ease-in-out; }
 
-/* line 66, main.scss */
 .fade-hide {
-  opacity: 1;
-}
+  opacity: 1; }
 
-/* line 69, main.scss */
 .fade-hide.fade-hide-active {
-  opacity: 0;
-}
+  opacity: 0; }
 
-/* line 73, main.scss */
 .fade-show {
-  opacity: 0;
-}
+  opacity: 0; }
 
-/* line 76, main.scss */
 .fade-show.fade-show-active {
-  opacity: 1;
-}
+  opacity: 1; }
+
+#loading {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  z-index: 999;
+  background-color: rgba(75, 75, 75, 0.75);
+  color: white;
+  font-size: 2em; }
+  #loading span {
+    width: 100%;
+    display: block;
+    position: relative;
+    top: 35%;
+    text-align: center; }
 
 /* ====================================================================
  * Navigation Styles
  * ====================================================================
  */
-/* line 85, main.scss */
 #header-bar {
   height: 2.25em;
   position: fixed;
@@ -85,32 +83,21 @@ html, body {
   background-image: -o-linear-gradient(top, #2a6180, #224e66);
   /* Opera 11.10+ */
   background-image: linear-gradient(top, #2a6180, #224e66);
-  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='$fromColor', EndColorStr='$toColor');
-}
-/* line 94, main.scss */
-#header-bar #brand {
-  font-size: 1.5em;
-  width: 100%;
-  display: inline-block;
-  text-align: center;
-}
-/* line 101, main.scss */
-#header-bar a {
-  color: white;
-}
-/* line 103, main.scss */
-#header-bar a:hover {
-  color: #efefef;
-}
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='$fromColor', EndColorStr='$toColor'); }
+  #header-bar #brand {
+    font-size: 1.5em;
+    width: 100%;
+    display: inline-block;
+    text-align: center; }
+  #header-bar a {
+    color: white; }
+    #header-bar a:hover {
+      color: #efefef; }
 
-/* line 109, main.scss */
 #content {
   height: 100%;
-  float: left;
-  padding-top: 2.25em;
-}
+  float: left; }
 
-/* line 115, main.scss */
 #menu-bar, .options-bar {
   max-height: 80%;
   position: fixed;
@@ -121,31 +108,23 @@ html, body {
   color: white;
   margin: 0;
   z-index: 100;
-  overflow: auto;
-}
-/* line 127, main.scss */
-#menu-bar ul, .options-bar ul {
-  padding: 0;
-  margin: 0;
-  list-style-type: none;
-}
+  overflow: auto; }
+  #menu-bar ul, .options-bar ul {
+    padding: 0;
+    margin: 0;
+    list-style-type: none; }
 
-/* line 134, main.scss */
 #menu-bar {
   padding-top: 3em;
-  left: 0;
-}
+  left: 0; }
 
 /* ====================================================================
  * Custom Checkboxes
  * ====================================================================
  */
-/* line 144, main.scss */
 input[type="checkbox"] {
-  display: none;
-}
+  display: none; }
 
-/* line 147, main.scss */
 input[type="checkbox"] + label span {
   display: inline-block;
   width: 19px;
@@ -153,124 +132,94 @@ input[type="checkbox"] + label span {
   margin: -1px 4px 0 0;
   vertical-align: middle;
   background: url(check_radio_sheet.png) left top no-repeat;
-  cursor: pointer;
-}
+  cursor: pointer; }
 
-/* line 156, main.scss */
 input[type="checkbox"]:checked + label span {
-  background: url(check_radio_sheet.png) -19px top no-repeat;
-}
+  background: url(check_radio_sheet.png) -19px top no-repeat; }
 
 /* ====================================================================
  * Nearby Finder
  * ====================================================================
  */
-/* line 165, main.scss */
 #zoomOut {
   position: fixed;
   top: 5%;
-  left: 5%;
-}
+  left: 5%; }
 
-/* line 171, main.scss */
 .primary-content {
   width: 100%;
-  height: 80%;
+  height: 85%;
+  position: absolute; }
+
+#data-bar {
   position: fixed;
-}
-
-/* line 177, main.scss */
-.data-bar {
-  background-color: white;
-  border-top: solid 2px #224e66;
+  z-index: 1;
   bottom: 0;
-  position: absolute;
-  min-width: 100%;
-  font-size: 0.65em;
-  min-height: 15%;
-  z-index: 200;
-}
-/* line 190, main.scss */
-.data-bar ul {
-  list-style: none;
-  padding: 5px;
-}
-/* line 195, main.scss */
-.data-bar #db-ul-container {
-  overflow-x: scroll;
+  width: 100%;
+  height: 15%;
+  overflow: auto;
+  overflow-y: hidden;
+  margin: 0 auto;
   white-space: nowrap;
-  width: 100%;
-  margin: 0;
-}
-/* line 201, main.scss */
-.data-bar #db-ul-container .db-listing {
-  border-right: 2px solid #224e66;
-  display: inline-block;
-  *display: inline;
-  /*zoom: 1*/
-  float: left;
-  color: #3a9141;
-}
-/* line 209, main.scss */
-.data-bar #db-ul-container .db-listing .db-div-icon {
-  margin-left: 2em;
-  position: relative;
-  text-align: center;
-  float: left;
-  height: 100%;
-}
-/* line 216, main.scss */
-.data-bar #db-ul-container .db-listing .db-div-icon .index-number {
-  position: absolute;
-  color: white;
-  top: 20%;
-  left: 56%;
-}
-/* line 224, main.scss */
-.data-bar #db-ul-container .db-listing .db-ul-content {
-  min-width: 200px;
-  padding: 0 1em;
-  float: left;
-  overflow: hidden;
-}
-/* line 231, main.scss */
-.data-bar #db-ul-container .db-listing .db-ul-content .db-title {
-  font-weight: bold;
-}
-/* line 238, main.scss */
-.data-bar .icon-beer {
-  color: #2a6180;
-}
+  border-top: 1px solid #2a6180;
+  padding: 01%;
+  background: white; }
+  #data-bar .data-container {
+    height: 100%;
+    border-right: 1px solid #2a6180;
+    width: 300px;
+    display: inline-block; }
+    #data-bar .data-container .data-left {
+      float: left;
+      width: 25%;
+      padding: 0 2.5%;
+      position: relative;
+      height: 100%;
+      text-align: center; }
+      #data-bar .data-container .data-left a {
+        color: #224e66; }
+      #data-bar .data-container .data-left .index-number {
+        position: absolute;
+        text-align: center;
+        color: white;
+        top: 0.5em;
+        left: 19%;
+        width: 100%;
+        font-size: 1.45em; }
+    #data-bar .data-container .data-right {
+      float: left;
+      width: 65%;
+      padding: 0 2.5%; }
+      #data-bar .data-container .data-right h1 {
+        width: 100%;
+        font-size: 1em;
+        line-height: 1em;
+        color: #224e66;
+        padding: 0;
+        margin: 0; }
+    #data-bar .data-container span {
+      font-size: 0.85em;
+      font-weight: 500;
+      display: block;
+      line-height: 1.25em; }
 
-/* line 243, main.scss */
 .options-bar {
-  right: 0;
-}
-/* line 246, main.scss */
-.options-bar h1, .options-bar h2, .options-bar h3, .options-bar h4, .options-bar h5, .options-bar h6, .options-bar p, .options-bar span, .options-bar label {
-  color: white;
-}
-/* line 250, main.scss */
-.options-bar ul.filter-options {
-  float: left;
-  width: 45%;
-  padding: 2.5%;
-  list-style-type: none;
-  margin: 0;
-  display: inline-block;
-}
-/* line 257, main.scss */
-.options-bar ul.filter-options li {
-  width: 100%;
-  display: inline-block;
-  margin: 0.25em 0;
-}
-/* line 264, main.scss */
-.options-bar .check-wrapper {
-  width: 10%;
-  float: left;
-}
-/* line 269, main.scss */
-.options-bar .check-label {
-  float: left;
-}
+  right: 0; }
+  .options-bar h1, .options-bar h2, .options-bar h3, .options-bar h4, .options-bar h5, .options-bar h6, .options-bar p, .options-bar span, .options-bar label {
+    color: white; }
+  .options-bar ul.filter-options {
+    float: left;
+    width: 45%;
+    padding: 2.5%;
+    list-style-type: none;
+    margin: 0;
+    display: inline-block; }
+    .options-bar ul.filter-options li {
+      width: 100%;
+      display: inline-block;
+      margin: 0.25em 0; }
+  .options-bar .check-wrapper {
+    width: 10%;
+    float: left; }
+  .options-bar .check-label {
+    float: left; }

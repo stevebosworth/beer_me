@@ -89,6 +89,7 @@ angular.module('beerMeServices', ['ngResource'])
                     }).error(function(data, status) {
                         if (json_data.status == 200) {
                             $rootScope.storesList = json_data.result;
+                            $rootScope.showLoading = false;
                         }
                     });
                 }

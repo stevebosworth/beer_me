@@ -30,6 +30,10 @@
         <![endif]-->
         <div id="wrapper" ng-controller="wrapperCtrl">
 
+            <div id="loading" ng-animate="'fade'" ng-show="showLoading == true">
+                <span><i class="icon-spinner icon-spin icon-large"></i> Loading...</span>
+            </div>
+
             <div id="header-bar" class="row">
                 <div class="small-3 columns">
                     <a class="menu-icon" ng-click="revealMenuBar('left')" alt="Show Menu">

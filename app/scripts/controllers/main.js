@@ -196,8 +196,7 @@ function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster) 
  *
  */
 
-function storeDetails($scope, $rootScope, parse, Store, $timeout, Finder, CookieMonster) {
-
+function storeDetails($scope, $rootScope, parse, Store, Favourites, $timeout, Finder, CookieMonster) {
     $scope.saveReview = function() {
         alert(parse.update("Stores", 
             { 
@@ -208,8 +207,46 @@ function storeDetails($scope, $rootScope, parse, Store, $timeout, Finder, Cookie
                 }
             } 
         ));
-    }
+    };
 
+    //make sure storeInfo is loaded before checking if store is favourite
+    $scope.$watch('storeInfo', function(data) {
+        if($scope.storeInfo != undefined){
+            $scope.favourite = Favourites.isFavourite($scope.storeInfo.id, $rootScope.fbUser.id);
+        }   
+    });
+
+    $scope.setFavourite = function() {
+        
+        var data = {
+            isFavourite: true,
+            storeId: $scope.storeInfo.id,
+            userId: $rootScope.fbUser.id
+        }
+
+        Favourites.isFavourite(data.storeId, data.userId).then(function(response){ 
+            //already set to favourite
+            if(response) {
+                //remove favourite
+                parse.getByColumn('Favourites','userId', data.userId).then(function(response) {
+                    //loop through to match the store
+                    angular.forEach(response, function(v, i) {
+                        if(v.storeId == data.storeId) {
+                            //remove from database
+                            parse.remove('Favourites', v.objectId);
+                        }
+                    });
+
+                    //set favourite to false
+                    $scope.favourite = false;
+                });
+            } else {
+                //add to favourite
+                Favourites.setFavourite(data); 
+                $scope.favourite = true;
+            }
+        });   
+    };
 }
 
 // --------------------------------------------------------------------
@@ -291,7 +328,9 @@ function storesForProductCtrl($scope, $routeParams, Products) {
         //$scope.productSearch();
 }
 
-function facebookCtrl($scope, facebook, parse) {
+function facebookCtrl($scope, facebook) {
     $scope.login = facebook.login();
     $scope.logout = facebook.logout();
 }
+
+

@@ -28,7 +28,11 @@
         <li>Vintages Corner: {{storeInfo.has_vintages_corner | checkmark }}</li>
         <li>Tasting Bar: {{storeInfo.has_tasting_bar | checkmark }}</li>
         <li>Transit Access: {{storeInfo.has_transit_access | checkmark }}</li>
-        <li><a ng-click="saveReview()">Save Review</a></li> {{reviewEntry}}                   
+        <li ng-show="fbAuthorized">
+            <a ng-click="setFavourite()">Favourite <i ng-class="{'icon-star': favourite, 'icon-star-empty': !favourite}"></i></a>
+        </li>
+        <li><a ng-click="saveReview()">Save Review</a></li> 
+        {{reviewEntry}}                   
     </ul>
     <a class="close-reveal-modal">&#215;</a>
 </div>

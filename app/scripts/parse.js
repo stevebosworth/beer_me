@@ -70,6 +70,3 @@ angular.module('parseService', [])
 		}
 	}
 ]);
-
-
-// 				return tempData;

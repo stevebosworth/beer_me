@@ -258,3 +258,27 @@ angular.module('beerMeServices', ['ngResource'])
             }
         }
     })
+
+    .factory('Favourites', ['parse', function (parse) {
+        return {
+            isFavourite: function(storeId, facebookId) {
+                return parse.getByColumn('Favourites','userId', facebookId).then(function(response) {  
+                    var isFavourite = false;
+                    angular.forEach(response, function(v, i) {
+                        if(v.storeId == storeId) {
+                            isFavourite = true;
+                            return;
+                        }
+                    });
+
+                    return isFavourite;
+                });
+            },
+
+            setFavourite: function(data) {
+                //add favourites
+                parse.add("Favourites", data);
+            }
+    
+        }
+    }])

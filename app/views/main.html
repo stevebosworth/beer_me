@@ -1,16 +1,3 @@
-<!-- google map -->
-<div class="primary-content">
-    <div class="google-map" 
-        center="center"
-        zoom="zoom" 
-        markers="markers"
-        draggable="true"
-        fit="true"
-        events="eventsProperty"
-        style="height: 100%; width: 100%">
-    </div>
-</div>
-
 <!-- store info panel -->
 <div id="myModal" class="reveal-modal" ng-controller="storeDetails">
     <h2>Details for Store #{{storeInfo.id}}</h2>
@@ -31,9 +18,29 @@
         <li ng-show="fbAuthorized">
             <a ng-click="setFavourite()">Favourite <i ng-class="{'icon-star': favourite, 'icon-star-empty': !favourite}"></i></a>
         </li>
-        <li><a ng-click="saveReview()">Save Review</a></li> 
-        {{reviewEntry}}                   
+        <li><a ng-click="saveReview()">Save Review</a></li> {{reviewEntry}}                   
     </ul>
+    <a class="close-reveal-modal">&#215;</a>
+</div>
+
+<div id="productModal" class="reveal-modal" ng-controller="storesForProductCtrl">
+    <div>
+        <h1>Product Details</h1>
+        <h2>{{productInfo.name}}</h2>
+        <ul>
+            <li>Price: &#36;{{productInfo.price_in_cents / 100}}</li>
+            <li>Serving Suggestions: {{productInfo.serving_suggestion}}</li>
+            <li><img src="{{productInfo.image_thumb_url}}" alt=""></li>
+            <li></li>
+        </ul>
+    </div>
+    <div >
+        <h1>Where can I get it nearby?</h1>
+        <ul>
+            <li ng-repeat="store in stockList | limitTo:5"><!-- <a href="#/store/{{store.id}}"> -->{{store.name}} - {{store.quantity}}<!-- </a> --></li>
+        </ul>
+        <button ng-click="getStoresInStock()">Show Stores Nearby</button>
+    </div>
     <a class="close-reveal-modal">&#215;</a>
 </div>
 
@@ -73,53 +80,62 @@
              <label for="has_product_consultant"><span></span>Product Consultant</label>
          </li>
         <li>
-            <input id="has_special_occasion_permits" type="checkbox" ng-model="query.has_special_occasion_permits" ng-true-value="true" ng-false-value="" > 
+            <input id="has_special_occasion_permits" type="checkbox" ng-model="query.has_special_occasion_permits" ng-true-value="true" ng-false-value="" >
             <label for="has_special_occasion_permits"><span></span>Special Occasion Permits</label>
         </li>
     </ul>
 
     <ul class="filter-options">
         <li>
-            <input id="has_beer_cold_room" type="checkbox" ng-model="query.has_beer_cold_room" ng-true-value="true" ng-false-value="" > 
+            <input id="has_beer_cold_room" type="checkbox" ng-model="query.has_beer_cold_room" ng-true-value="true" ng-false-value="" >
             <label for="has_beer_cold_room"><span></span>Cold Beer Room</label>
         </li>
         <li>
-            <input id="has_vintages_corner" type="checkbox" ng-model="query.has_vintages_corner" ng-true-value="true" ng-false-value="" > 
+            <input id="has_vintages_corner" type="checkbox" ng-model="query.has_vintages_corner" ng-true-value="true" ng-false-value="" >
             <label for="has_vintages_corner"><span></span>Vintages Corner</label>
         </li>
         <li>
-            <input id="has_tasting_bar" type="checkbox" ng-model="query.has_tasting_bar" ng-true-value="true" ng-false-value="" > 
+            <input id="has_tasting_bar" type="checkbox" ng-model="query.has_tasting_bar" ng-true-value="true" ng-false-value="" >
             <label for="has_tasting_bar"><span></span>Tasting Bar</label>
         </li>
         <li>
-            <input id="has_transit_access" type="checkbox" ng-model="query.has_transit_access" ng-true-value="true" ng-false-value="" > 
+            <input id="has_transit_access" type="checkbox" ng-model="query.has_transit_access" ng-true-value="true" ng-false-value="" >
             <label for="has_transit_access"><span></span>Transit Access</label>
         </li>
     </ul>
 </div>
-
+ 
 <!-- lower data bar -->
-<div class="data-bar">
-    <ul id="db-ul-container">
-        <li class="db-listing" ng-repeat="store in filtered = (storesWithLimit | filter: query | filter: search | orderBy: orderStores | limitTo: stores)">
-        <!-- <li class="db-listing" ng-repeat="store in storesList"> -->
-                <div class="db-div-icon">
-                    <a data-reveal-id="myModal" ng-click="getStoreInfo({{store}})">
-                        <i class="icon-beer icon-4x" style="width: 100%; height: 100%;"></i>
-                        <span class="index-number">{{$index + 1}}</span>
-                    </a>
-                </div>
-                <ul class="db-ul-content">
-                    <a data-reveal-id="myModal" ng-click="getStoreInfo({{store}})">
-                        <li class="db-title">
-                            {{store.name}} <br /> {{store.city}}
-                        </li>
-                    </a>
-                    <li>{{store.address_line_1}} {{store.address_line_2}}</li>
-                    <li>Distance: {{store.distance_in_meters | mtokm}}</li>
-                    <li>Selection Size: {{store.products_count | inventorydiversity}}</li>
-                </ul>
+<div id="data-bar" ng-show="dataBarVisible == true">
+    <div class="data-container" ng-repeat="store in filtered = (storesWithLimit | filter: query | filter: search | orderBy: orderStores | limitTo: stores)">
+        <div class="data-left">
+            <a data-reveal-id="myModal" ng-click="getStoreInfo({{store}})">
+                <i class="icon-beer icon-4x" style="width: 100%; height: 100%;"></i>
+                <span class="index-number">{{$index + 1}}</span>
+            </a>
+        </div>
+        <div class="data-right">
+            <a data-reveal-id="myModal" ng-click="getStoreInfo({{store}})">
+                <h1 class="data-title">
+                    {{store.name}}
+                </h1>
+            </a>
+            <span>{{store.address_line_1}} <br />{{store.address_line_2}}</span>
+            <span>{{store.city}}, ON</span>
+            <span>{{store.distance_in_meters | mtokm}}</span>
+        </div>
+    </div>
+</div>
 
-        </li>
-    </ul>
+<!-- google map -->
+<div class="primary-content">
+    <div class="google-map"
+        center="center"
+        zoom="zoom"
+        markers="markers"
+        draggable="true"
+        fit="true"
+        events="eventsProperty"
+        style="height: 100%; width: 100%">
+    </div>
 </div>

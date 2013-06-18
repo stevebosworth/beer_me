@@ -70,13 +70,13 @@ angular.module('beerMeServices', ['ngResource'])
                 //     }, function() { alert('Failed to connect to GeoLocation'); });
                 // } else {
                 //     //console.log("Read from cookie");
-                //     processData(CookieMonster.readLocation());                    
-                // } 
+                //     processData(CookieMonster.readLocation());
+                // }
 
                 geoLocation.getCurrentPosition(function (position) {
                     $rootScope.currentLocation = position;
                     processData(position);
-                }, function() { alert('Failed to connect to GeoLocation'); });                               
+                }, function() { alert('Failed to connect to GeoLocation'); });
                 // after position is established
                 function processData(position) {
                     // show users current location on map
@@ -89,8 +89,9 @@ angular.module('beerMeServices', ['ngResource'])
                     }).error(function(data, status) {
                         if (json_data.status == 200) {
                             $rootScope.storesList = json_data.result;
+                            $rootScope.showLoading = false;
                         }
-                    });                    
+                    });
                 }
             },
             drawMarkers: function(stores, data) {
@@ -106,15 +107,14 @@ angular.module('beerMeServices', ['ngResource'])
                     // decide which icon is required
                     var state;
                     ($filter('is_open')(data[i]) == "Open") ? state = "o" : state = "c";
-                    // console.log("redrawing: " + i);
                     var setIcon = "img/icons/" + (i + 1) + state + ".png";
                     obj = { latitude: data[i].latitude, longitude: data[i].longitude, infoWindow: JSON.stringify(data[i]), icon: setIcon, title: data[i].name }
                     //console.log(obj);
                     $rootScope.markers.push(obj);
-                };                 
+                };
             }
         }
-    })    
+    })
 
     // --------------------------------------------------------------------
     /**
@@ -144,7 +144,7 @@ angular.module('beerMeServices', ['ngResource'])
                     while (c.charAt(0)==' ') c = c.substring(1,c.length);
                     if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
                 }
-                return null; 
+                return null;
             },
             checkCookie: function(name) {
                 if(document.cookie.indexOf(name) >= 0)
@@ -161,7 +161,7 @@ angular.module('beerMeServices', ['ngResource'])
                 expires.setTime(expires.getTime() + (10 * 60 * 1000)); // Ten minutes
 
                 // Date()'s toGMTSting() method will format the date correctly for a cookie
-                document.cookie = "cachedLocation=" + location + "; expires=" + expires.toGMTString();     
+                document.cookie = "cachedLocation=" + location + "; expires=" + expires.toGMTString();
             },
             readLocation: function() {
                 // returns an object of the users location if it exists
@@ -171,7 +171,7 @@ angular.module('beerMeServices', ['ngResource'])
                     return false;
             }
         }
-    })    
+    })
 
     // --------------------------------------------------------------------
     /**
@@ -210,7 +210,7 @@ angular.module('beerMeServices', ['ngResource'])
                         });
                     }
                 },
-                options);                
+                options);
             }
         };
     })
@@ -219,7 +219,7 @@ angular.module('beerMeServices', ['ngResource'])
     /**
     * Products
     *
-    * Provides us with several methods to access the LCBO API
+    * Provides us with several methods to access the LCBO APIs
     *
     */
 
@@ -236,20 +236,20 @@ angular.module('beerMeServices', ['ngResource'])
                 })
             },
             // returns data for a single product
-            getProduct: function(id, position, radius) {
+            getProduct: function(id, center, radius) {
                 return $http({
                     url: 'http://lcboapi.com/products/' + id + '/stores',
                     method: 'JSONP',
                     params: {
                         callback: 'setJSON',
-                        lat: position.coords.latitude,
-                        lon: position.coords.longitude
+                        lat: center.latitude,
+                        lon: center.longitude
                     }
                 })
             },
             getStoresForProduct: function(productId){
                 return $http({
-                    url: 'http://lcboapi.com/product/' + productId + '/stores',
+                    url: 'http://lcboapi.com/products/' + productId + '/stores',
                     method: 'JSONP',
                     params: {
                         callback: 'setJSON'

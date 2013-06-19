@@ -44,6 +44,16 @@ angular.module('beerMeServices', ['ngResource'])
                         callback: 'setJSON'
                     }
                 })
+            },
+
+            getStoreById: function(id) {
+                return $http({
+                    url: 'http://lcboapi.com/stores/' + id,
+                    method: 'JSONP',
+                    params: {
+                        callback: 'setJSON'
+                    }
+                });
             }
         }
     })
@@ -278,7 +288,16 @@ angular.module('beerMeServices', ['ngResource'])
             setFavourite: function(data) {
                 //add favourites
                 parse.add("Favourites", data);
+            },
+
+            getFavouriteCount: function(userId) {
+                return this.getFavourite(userId).then(function(response) {
+                    return response.length;
+                });
+            },
+            
+            getFavourite: function(userId) {
+                return parse.getByColumn('Favourites','userId', userId);
             }
-    
         }
     }])

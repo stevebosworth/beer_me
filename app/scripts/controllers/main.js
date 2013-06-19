@@ -139,7 +139,7 @@ function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster, $log) {
  *
  */
 
-function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster, Products) {
+function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster, Products, Favourites) {
 
     // watch searchText for user input
     var timer = false; // required
@@ -217,7 +217,35 @@ function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster, 
         // get 25 stores on initial load
         $rootScope.stores = 5;
         Finder.nearbyStores(25);
-    }
+    };
+
+    //get favourite count
+    $scope.$watch('fbUser', function() {
+        if($rootScope.fbUser != undefined) {
+            //get favourite count
+            $scope.favouritesResultsCount = Favourites.getFavouriteCount($rootScope.fbUser.id);
+
+            //get favourite list
+            $scope.favouriteList = Favourites.getFavourite($rootScope.fbUser.id).then(function(response) {
+                if(response.length > 0) {
+                    angular.forEach(response, function(v, i) {
+                        //add store name and other information based on id
+                         Store.getStoreById(v.storeId).error(function() {
+                            if(json_data.status == 200) {
+                                v['storeInfo'] = json_data.result;
+                            }
+                        });
+                    });
+                }
+                return response;
+            });
+        }
+    });
+   
+   //show favourite
+   $scope.toggleFavourite = function(showFavourite) {
+        return !showFavourite;
+   };
 }
 
 // --------------------------------------------------------------------

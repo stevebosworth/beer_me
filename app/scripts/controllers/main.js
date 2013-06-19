@@ -24,6 +24,34 @@ function setJSON(data) {
  *
  */
 
+ function setUserFavourites(rootScope, Favourites, Store) {
+    //get favourite count
+    rootScope.favouritesResultsCount = Favourites.getFavouriteCount(rootScope.fbUser.id);
+
+    //get favourite list
+    rootScope.favouriteList = Favourites.getFavourite(rootScope.fbUser.id).then(function(response) {
+        if(response.length > 0) {
+            angular.forEach(response, function(v, i) {
+                //add store name and other information based on id
+                 Store.getStoreById(v.storeId).error(function() {
+                    if(json_data.status == 200) {
+                        v['storeInfo'] = json_data.result;
+                    }
+                });
+            });
+        }
+        return response;
+    });
+ }
+
+// --------------------------------------------------------------------
+/**
+ * menuCtrl
+ *
+ * Used to show the list of all the stores available
+ *
+ */
+
 function wrapperCtrl($scope, $rootScope) {
 	$scope.showMenuBar = false;
 	$scope.showOptionsBar = false;
@@ -222,23 +250,7 @@ function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster, 
     //get favourite count
     $scope.$watch('fbUser', function() {
         if($rootScope.fbUser != undefined) {
-            //get favourite count
-            $scope.favouritesResultsCount = Favourites.getFavouriteCount($rootScope.fbUser.id);
-
-            //get favourite list
-            $scope.favouriteList = Favourites.getFavourite($rootScope.fbUser.id).then(function(response) {
-                if(response.length > 0) {
-                    angular.forEach(response, function(v, i) {
-                        //add store name and other information based on id
-                         Store.getStoreById(v.storeId).error(function() {
-                            if(json_data.status == 200) {
-                                v['storeInfo'] = json_data.result;
-                            }
-                        });
-                    });
-                }
-                return response;
-            });
+            setUserFavourites($rootScope, Favourites, Store);
         }
     });
    
@@ -305,6 +317,10 @@ function storeDetails($scope, $rootScope, parse, Store, Favourites, $timeout, Fi
                 Favourites.setFavourite(data); 
                 $scope.favourite = true;
             }
+
+            $timeout(function() {
+                setUserFavourites($rootScope, Favourites, Store);
+            }, 1500);
         });   
     };
 }

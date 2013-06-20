@@ -73,7 +73,7 @@
                     </li>
                     <li ng-show="searchComplete"><a href="#" ng-click="resetHome()">Return to Local Search</a></li>
                     <li ng-show="fbAuthorized"><hr/></li>
-                    <li ng-show="fbAuthorized"><img style="width:40px; height:40px" src="{{fbUser.picture.data.url}}" /> {{fbUser.first_name + ' ' + fbUser.last_name}}</li>
+                    <li ng-show="fbAuthorized"><img style="width:40px; height:40px" ng-src="{{fbUser.picture.data.url}}" /> {{fbUser.first_name + ' ' + fbUser.last_name}}</li>
                     <li ng-show="fbAuthorized"><a ng-click="showFavourite=toggleFavourite(showFavourite)"><i ng-class="{'icon-collapse-alt': showFavourite, 'icon-expand-alt': !showFavourite}"></i> Favourites ({{favouritesResultsCount}}) </a> 
                         <div ng-show="showFavourite">
                             <ul>

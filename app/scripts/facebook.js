@@ -103,7 +103,7 @@ angular.module('facebookService', [])
 
 		this.idExist = function(facebookId) {
 			return parse.getRowByColumn('Users', 'facebookId', facebookId).then(function(data) {
-				if (data != null)
+				if (data.length > 0)
 					return true;
 				else
 					return false;

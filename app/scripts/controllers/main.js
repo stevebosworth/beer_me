@@ -30,8 +30,8 @@ function setJSON(data) {
 
     //get favourite list
     rootScope.favouriteList = Favourites.getFavourite(rootScope.fbUser.id).then(function(response) {
-        if(response.length > 0) {
-            angular.forEach(response, function(v, i) {
+        if(response.data.results.length > 0) {
+            angular.forEach(response.data.results, function(v, i) {
                 //add store name and other information based on id
                  Store.getStoreById(v.storeId).error(function() {
                     if(json_data.status == 200) {
@@ -40,7 +40,7 @@ function setJSON(data) {
                 });
             });
         }
-        return response;
+        return response.data.results;
     });
  }
 
@@ -52,7 +52,7 @@ function setJSON(data) {
  *
  */
 
-function wrapperCtrl($scope, $rootScope) {
+function wrapperCtrl($scope, $rootScope, parse) {
 	$scope.showMenuBar = false;
 	$scope.showOptionsBar = false;
 
@@ -285,6 +285,7 @@ function storeDetails($scope, $rootScope, parse, Store, Favourites, $timeout, Fi
     $scope.$watch('storeInfo', function(data) {
         if($scope.storeInfo != undefined){
             $scope.favourite = Favourites.isFavourite($scope.storeInfo.id, $rootScope.fbUser.id);
+            console.log($scope.favourite);
         }   
     });
 
@@ -299,10 +300,16 @@ function storeDetails($scope, $rootScope, parse, Store, Favourites, $timeout, Fi
         Favourites.isFavourite(data.storeId, data.userId).then(function(response){ 
             //already set to favourite
             if(response) {
+                //set filter parameters
+                params = { 
+                    userId : data.userId,
+                    storeId : data.storeId
+                };
+
                 //remove favourite
-                parse.getByColumn('Favourites','userId', data.userId).then(function(response) {
+                parse.getByColumn('Favourites', params).then(function(response) {
                     //loop through to match the store
-                    angular.forEach(response, function(v, i) {
+                    angular.forEach(response.data.results, function(v, i) {
                         if(v.storeId == data.storeId) {
                             //remove from database
                             parse.remove('Favourites', v.objectId);

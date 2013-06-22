@@ -15,10 +15,15 @@
         <li>Vintages Corner: {{storeInfo.has_vintages_corner | checkmark }}</li>
         <li>Tasting Bar: {{storeInfo.has_tasting_bar | checkmark }}</li>
         <li>Transit Access: {{storeInfo.has_transit_access | checkmark }}</li>
-        <li ng-show="fbAuthorized">
-            <a ng-click="setFavourite()">Favourite <i ng-class="{'icon-star': favourite, 'icon-star-empty': !favourite}"></i></a>
-        </li>
-        <li><a ng-click="saveReview()">Save Review</a></li> {{reviewEntry}}                   
+        <div ng-show="fbAuthorized">
+            <li>
+                <a ng-click="setFavourite()">Favourite <i ng-class="{'icon-star': favourite, 'icon-star-empty': !favourite}"></i></a>
+            </li>
+            <li ng-show="checkVote">
+                <a ng-click="saveReview(true)">Thumbs Up</a>
+                <a ng-click="saveReview(false)">Thumbs Down</a>
+            </li>
+        </div>
     </ul>
     <a class="close-reveal-modal">&#215;</a>
 </div>
@@ -104,7 +109,7 @@
         </li>
     </ul>
 </div>
- 
+
 <!-- lower data bar -->
 <div id="data-bar" ng-show="dataBarVisible == true">
     <div class="data-container" ng-repeat="store in filtered = (storesWithLimit | filter: query | filter: search | orderBy: orderStores | limitTo: stores)">

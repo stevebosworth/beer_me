@@ -269,6 +269,14 @@ angular.module('beerMeServices', ['ngResource'])
         }
     })
 
+    // --------------------------------------------------------------------
+    /**
+    * Favourites
+    *
+    * Access Parse API to retrieve favourite data
+    *
+    */
+
     .factory('Favourites', ['parse', function (parse) {
         return {
             isFavourite: function(storeId, facebookId) {
@@ -278,7 +286,7 @@ angular.module('beerMeServices', ['ngResource'])
                     storeId : storeId
                 };
 
-                return parse.getByColumn('Favourites',params).then(function(response) {  
+                return parse.getByColumn('Favourites',params).then(function(response) {
                     return response.data.results.length > 0;
                 });
             },
@@ -293,7 +301,7 @@ angular.module('beerMeServices', ['ngResource'])
                     return response.data.results.length;
                 });
             },
-            
+
             getFavourite: function(userId) {
                 //set filter params
                 params = {
@@ -301,6 +309,46 @@ angular.module('beerMeServices', ['ngResource'])
                 };
 
                 return parse.getByColumn('Favourites', params);
+            }
+        }
+    }])
+
+    // --------------------------------------------------------------------
+    /**
+    * StoreRatings
+    *
+    * Access Parse API to retrieve store rating data
+    *
+    */
+
+    .factory('StoreRatings', ['parse', function (parse) {
+        return {
+            checkVote: function(data) {
+                //set filter params
+                var params = {
+                    userId : data.userId,
+                    storeId : data.storeId
+                };
+
+                return parse.getByColumn('StoresRating', params).then(function(response) {
+                    return response.data.results.length > 0;
+                });
+            },
+
+            setVote: function(data) {
+                //add favourites
+                return parse.add("StoresRating", data);
+            },
+
+            countVotes: function(storeId) {
+                // set filter params
+                var params = {
+                    storeId: storeId
+                };
+
+                return parse.getByColumn('StoresRating', params).then(function(response) {
+                    return response.data.results.length;
+                });
             }
         }
     }])

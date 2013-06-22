@@ -106,8 +106,8 @@ function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster, $log) {
     Finder.nearbyStores(25);
 
 	$scope.center = {
-		latitude: 73,
-		longitude: 42
+		latitude: 79.4042,
+		longitude: 43.6481
 	};
 
     $scope.dataBarVisible = true;
@@ -184,7 +184,7 @@ function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster, 
                     // perform the search
                     Store.searchStores($scope.searchText)
                         .success(function(data) {
-                            $scope.store = data.result; 
+                            $scope.store = data.result;
                         })
                         .error(function(data, status) {
                             if (json_data.status == 200) {
@@ -253,7 +253,7 @@ function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster, 
             setUserFavourites($rootScope, Favourites, Store);
         }
     });
-   
+
    //show favourite
    $scope.toggleFavourite = function(showFavourite) {
         return !showFavourite;
@@ -268,40 +268,65 @@ function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster, 
  *
  */
 
-function storeDetails($scope, $rootScope, parse, Store, Favourites, $timeout, Finder, CookieMonster) {
-    $scope.saveReview = function() {
-        alert(parse.update("Stores",
-            {
-                "storeId": $scope.storeInfo.id,
-                "rating": {
-                    "__op": "Add",
-                    "objects": ["5"]
-                }
+function storeDetails($scope, $rootScope, parse, Store, StoreRatings, Favourites, $timeout, Finder, CookieMonster) {
+
+    // create empty data object
+    var data = "";
+
+    $scope.saveReview = function(result) {
+
+        // establish data object
+        var data = {
+            rating: result,
+            storeId: $scope.storeInfo.id,
+            userId: $rootScope.fbUser.id
+        }
+
+        // check if the user has previously voted
+        StoreRatings.checkVote(data).then(function(response) {
+            if(!response) {
+                // user hasn't voted, lets save their vote
+                StoreRatings.setVote(data).then(function(response) {
+                    // check if object successfully created
+                    if(response.status == 201) {
+                        console.log('Successfully added review');
+                    }
+                });
+            } else {
+                console.log('Invalid vote, user has already cast vote for this store.');
             }
-        ));
+        });
     };
 
     //make sure storeInfo is loaded before checking if store is favourite
     $scope.$watch('storeInfo', function(data) {
+
         if($scope.storeInfo != undefined){
             $scope.favourite = Favourites.isFavourite($scope.storeInfo.id, $rootScope.fbUser.id);
             console.log($scope.favourite);
-        }   
+
+            data.storeId = $scope.storeInfo.id;
+
+            // check if the user has yet voted on this store
+            StoreRatings.checkVote(data).then(function(votestatus) {
+                console.log(votestatus);
+            });
+        }
     });
 
     $scope.setFavourite = function() {
-        
+
         var data = {
             isFavourite: true,
             storeId: $scope.storeInfo.id,
             userId: $rootScope.fbUser.id
         }
 
-        Favourites.isFavourite(data.storeId, data.userId).then(function(response){ 
+        Favourites.isFavourite(data.storeId, data.userId).then(function(response){
             //already set to favourite
             if(response) {
                 //set filter parameters
-                params = { 
+                params = {
                     userId : data.userId,
                     storeId : data.storeId
                 };
@@ -321,14 +346,14 @@ function storeDetails($scope, $rootScope, parse, Store, Favourites, $timeout, Fi
                 });
             } else {
                 //add to favourite
-                Favourites.setFavourite(data); 
+                Favourites.setFavourite(data);
                 $scope.favourite = true;
             }
 
             $timeout(function() {
                 setUserFavourites($rootScope, Favourites, Store);
             }, 1500);
-        });   
+        });
     };
 }
 

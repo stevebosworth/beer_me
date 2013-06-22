@@ -55,6 +55,11 @@ function setJSON(data) {
 function wrapperCtrl($scope, $rootScope, parse) {
 	$scope.showMenuBar = false;
 	$scope.showOptionsBar = false;
+    $rootScope.currentTime = (
+            (((new Date().getHours()) % 12) ? ((new Date().getHours()) % 12) : 12) + ':' +
+            (((new Date().getMinutes()) < 10) ? ('0' + (new Date().getMinutes())) : new Date().getMinutes()) + ' ' +
+            (((new Date().getHours()) >= 12) ? 'PM' : 'AM')
+        );
 
 	$rootScope.revealMenuBar = function(target) {
 

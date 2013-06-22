@@ -15,6 +15,7 @@
         <li>Vintages Corner: {{storeInfo.has_vintages_corner | checkmark }}</li>
         <li>Tasting Bar: {{storeInfo.has_tasting_bar | checkmark }}</li>
         <li>Transit Access: {{storeInfo.has_transit_access | checkmark }}</li>
+        <li>Open Now ({{currentTime}}): {{storeInfo.is_open | checkmark }}</li>
         <li ng-show="fbAuthorized">
             <a ng-click="setFavourite()">Favourite <i ng-class="{'icon-star': favourite, 'icon-star-empty': !favourite}"></i></a>
         </li>
@@ -67,6 +68,10 @@
 
     <p>Advanced Filters:</p>
     <ul class="filter-options">
+        <li>
+            <input id="is_open" type="checkbox" ng-model="query.is_open" ng-true-value="true" ng-false-value="">
+            <label for="is_open"><span></span>Open Now ({{currentTime}})</label>
+        </li>
         <li>
             <input id="has_parking" type="checkbox" ng-model="query.has_parking" ng-true-value="true" ng-false-value="">
             <label for="has_parking"><span></span>Parking</label>

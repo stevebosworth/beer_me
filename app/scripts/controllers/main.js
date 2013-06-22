@@ -24,26 +24,35 @@ function setJSON(data) {
  *
  */
 
- function setUserFavourites(rootScope, Favourites, Store) {
+ function setUserFavourites(rootScope, Favourites, Store, Products, className, count, list) {
     //get favourite count
-    rootScope.favouritesResultsCount = Favourites.getFavouriteCount(rootScope.fbUser.id, 'Favourites');
-
+    rootScope[count] = Favourites.getFavouriteCount(rootScope.fbUser.id, className);
+    
     //get favourite list
-    rootScope.favouriteList = Favourites.getFavourite(rootScope.fbUser.id, 'Favourites').then(function(response) {
+    rootScope[list] = Favourites.getFavourite(rootScope.fbUser.id, className).then(function(response) {
         if(response.data.results.length > 0) {
             angular.forEach(response.data.results, function(v, i) {
-                //add store name and other information based on id
-                 Store.getStoreById(v.storeId).error(function() {
-                    if(json_data.status == 200) {
-                        v['storeInfo'] = json_data.result;
+                switch(className) {
+                    case 'Favourites': {
+                        //add store name and other information based on id
+                         Store.getStoreById(v.storeId).error(function() {
+                            if(json_data.status == 200) {
+                                v['storeInfo'] = json_data.result;
+                            }
+                        });
+                        break;
                     }
-                });
+
+                    case 'productsFavourites' : {
+
+                        break;
+                    } 
+                }
             });
         }
         return response.data.results;
     });
  }
-
 // --------------------------------------------------------------------
 /**
  * menuCtrl
@@ -255,7 +264,7 @@ function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster, 
     //get favourite count
     $scope.$watch('fbUser', function() {
         if($rootScope.fbUser != undefined) {
-            setUserFavourites($rootScope, Favourites, Store);
+            setUserFavourites($rootScope, Favourites, Store, null, 'Favourites', 'favouritesResultsCount', 'favouriteList');
         }
     });
 
@@ -288,14 +297,13 @@ function storeDetails($scope, $rootScope, parse, Store, Favourites, $timeout, Fi
 
     //make sure storeInfo is loaded before checking if store is favourite
     $scope.$watch('storeInfo', function(data) {
-        //set params for .isFavourite
-        params = {
-            userId :facebookID,
-            storeId : storeId
-        };
+         if($scope.storeInfo != undefined){
+            //set params for .isFavourite
+            params = {
+                userId : $rootScope.fbUser.id,
+                storeId : $scope.storeInfo.id
+            };
 
-
-        if($scope.storeInfo != undefined){
             $scope.favourite = Favourites.isFavourite($scope.storeInfo.id, 'Favourites', $rootScope.fbUser.id, params);
             console.log($scope.favourite);
         }
@@ -339,7 +347,7 @@ function storeDetails($scope, $rootScope, parse, Store, Favourites, $timeout, Fi
             }
 
             $timeout(function() {
-                setUserFavourites($rootScope, Favourites, Store);
+                setUserFavourites($rootScope, Favourites, Store, null, 'Favourites', 'favouritesResultsCount', 'favouriteList');
             }, 1500);
         });
     };

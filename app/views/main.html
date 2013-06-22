@@ -18,7 +18,7 @@
         <li ng-show="fbAuthorized">
             <a ng-click="setFavourite()">Favourite <i ng-class="{'icon-star': favourite, 'icon-star-empty': !favourite}"></i></a>
         </li>
-        <li><a ng-click="saveReview()">Save Review</a></li> {{reviewEntry}}                   
+        <li><a ng-click="saveReview()">Save Review</a></li> {{reviewEntry}}
     </ul>
     <a class="close-reveal-modal">&#215;</a>
 </div>
@@ -37,7 +37,7 @@
     <div >
         <h1>Where can I get it nearby?</h1>
         <ul>
-            <li ng-repeat="store in stockList | limitTo:5"><!-- <a href="#/store/{{store.id}}"> -->{{store.name}} - {{store.quantity}}<!-- </a> --></li>
+            <li ng-repeat="store in stockList | limitTo:5"><a data-reveal-id="myModal" ng-click="getStoreInfo({{store}})">{{store.name}} - Qty Available: {{store.quantity}}</a></li>
         </ul>
         <button ng-click="getStoresInStock()">Show Stores Nearby</button>
     </div>
@@ -104,7 +104,7 @@
         </li>
     </ul>
 </div>
- 
+
 <!-- lower data bar -->
 <div id="data-bar" ng-show="dataBarVisible == true">
     <div class="data-container" ng-repeat="store in filtered = (storesWithLimit | filter: query | filter: search | orderBy: orderStores | limitTo: stores)">

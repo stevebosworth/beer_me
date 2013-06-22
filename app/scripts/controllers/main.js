@@ -26,10 +26,10 @@ function setJSON(data) {
 
  function setUserFavourites(rootScope, Favourites, Store) {
     //get favourite count
-    rootScope.favouritesResultsCount = Favourites.getFavouriteCount(rootScope.fbUser.id);
+    rootScope.favouritesResultsCount = Favourites.getFavouriteCount(rootScope.fbUser.id, 'Favourites');
 
     //get favourite list
-    rootScope.favouriteList = Favourites.getFavourite(rootScope.fbUser.id).then(function(response) {
+    rootScope.favouriteList = Favourites.getFavourite(rootScope.fbUser.id, 'Favourites').then(function(response) {
         if(response.data.results.length > 0) {
             angular.forEach(response.data.results, function(v, i) {
                 //add store name and other information based on id
@@ -184,7 +184,7 @@ function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster, 
                     // perform the search
                     Store.searchStores($scope.searchText)
                         .success(function(data) {
-                            $scope.store = data.result; 
+                            $scope.store = data.result;
                         })
                         .error(function(data, status) {
                             if (json_data.status == 200) {
@@ -198,7 +198,7 @@ function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster, 
 
                                 if($rootScope.storesList.length > 0) {
                                     $rootScope.stores = $rootScope.storesList.length; // make sure results are visible on map
-                                    $scope.storesResultTitle = "Search Results:";
+                                    $scope.storesResultTitle = "Stores Results:";
                                     $scope.searchText = ""; // empty search bar
                                 } else {
                                     $scope.storesResultTitle = "No match found";
@@ -253,7 +253,7 @@ function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster, 
             setUserFavourites($rootScope, Favourites, Store);
         }
     });
-   
+
    //show favourite
    $scope.toggleFavourite = function(showFavourite) {
         return !showFavourite;
@@ -283,25 +283,33 @@ function storeDetails($scope, $rootScope, parse, Store, Favourites, $timeout, Fi
 
     //make sure storeInfo is loaded before checking if store is favourite
     $scope.$watch('storeInfo', function(data) {
+        //set params for .isFavourite
+        params = {
+            userId :facebookID,
+            storeId : storeId
+        };
+
+
         if($scope.storeInfo != undefined){
-            $scope.favourite = Favourites.isFavourite($scope.storeInfo.id, $rootScope.fbUser.id);
+            $scope.favourite = Favourites.isFavourite($scope.storeInfo.id, 'Favourites', $rootScope.fbUser.id, params);
             console.log($scope.favourite);
-        }   
+        }
     });
 
     $scope.setFavourite = function() {
-        
+
         var data = {
             isFavourite: true,
             storeId: $scope.storeInfo.id,
             userId: $rootScope.fbUser.id
         }
 
-        Favourites.isFavourite(data.storeId, data.userId).then(function(response){ 
+
+        Favourites.isFavourite(data.storeId, "Favourites", data.userId, data).then(function(response){
             //already set to favourite
             if(response) {
                 //set filter parameters
-                params = { 
+                params = {
                     userId : data.userId,
                     storeId : data.storeId
                 };
@@ -321,14 +329,14 @@ function storeDetails($scope, $rootScope, parse, Store, Favourites, $timeout, Fi
                 });
             } else {
                 //add to favourite
-                Favourites.setFavourite(data); 
+                Favourites.setFavourite(data, 'Favourites');
                 $scope.favourite = true;
             }
 
             $timeout(function() {
                 setUserFavourites($rootScope, Favourites, Store);
             }, 1500);
-        });   
+        });
     };
 }
 
@@ -367,8 +375,9 @@ function productDetailsCtrl($scope, $routeParams, geoLocation, Products) {
     //$scope.productId = $routeParams.productId;
     geoLocation.getCurrentPosition(function (position) {
 
+        //reset current location in scope
         $scope.currentLocation = {latitude: position.coords.latitude, longitude: position.coords.longitude};
-        // show users current location on map
+
 
         // retrieve the data for the selected store
         Products.getProduct($routeParams.productId, position, 1).success(function(data) {
@@ -376,7 +385,7 @@ function productDetailsCtrl($scope, $routeParams, geoLocation, Products) {
             $scope.store = data.result;
         }).error(function(data, status) {
             if (json_data.status == 200){
-                //set default images
+                //set default images if no product image is available
                 if(!json_data.product['image_thumb_url']){
                     json_data.product['image_thumb_url'] = "img/glyphicons-halflings.png";
                 }

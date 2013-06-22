@@ -98,6 +98,11 @@ angular.module('beerMeServices', ['ngResource'])
                         $rootScope.storesList = data.result;
                     }).error(function(data, status) {
                         if (json_data.status == 200) {
+                            //add store open data
+                            angular.forEach(json_data.result, function(v, i) {
+                                v["is_open"] = ($filter('is_open')(v) == 'Open' ? true : false);
+                            });
+
                             $rootScope.storesList = json_data.result;
                             $rootScope.showLoading = false;
                         }

@@ -24,7 +24,35 @@ function setJSON(data) {
  *
  */
 
-function wrapperCtrl($scope, $rootScope) {
+ function setUserFavourites(rootScope, Favourites, Store) {
+    //get favourite count
+    rootScope.favouritesResultsCount = Favourites.getFavouriteCount(rootScope.fbUser.id);
+
+    //get favourite list
+    rootScope.favouriteList = Favourites.getFavourite(rootScope.fbUser.id).then(function(response) {
+        if(response.data.results.length > 0) {
+            angular.forEach(response.data.results, function(v, i) {
+                //add store name and other information based on id
+                 Store.getStoreById(v.storeId).error(function() {
+                    if(json_data.status == 200) {
+                        v['storeInfo'] = json_data.result;
+                    }
+                });
+            });
+        }
+        return response.data.results;
+    });
+ }
+
+// --------------------------------------------------------------------
+/**
+ * menuCtrl
+ *
+ * Used to show the list of all the stores available
+ *
+ */
+
+function wrapperCtrl($scope, $rootScope, parse) {
 	$scope.showMenuBar = false;
 	$scope.showOptionsBar = false;
 
@@ -139,7 +167,7 @@ function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster, $log) {
  *
  */
 
-function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster, Products) {
+function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster, Products, Favourites) {
 
     // watch searchText for user input
     var timer = false; // required
@@ -217,7 +245,19 @@ function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster, 
         // get 25 stores on initial load
         $rootScope.stores = 5;
         Finder.nearbyStores(25);
-    }
+    };
+
+    //get favourite count
+    $scope.$watch('fbUser', function() {
+        if($rootScope.fbUser != undefined) {
+            setUserFavourites($rootScope, Favourites, Store);
+        }
+    });
+   
+   //show favourite
+   $scope.toggleFavourite = function(showFavourite) {
+        return !showFavourite;
+   };
 }
 
 // --------------------------------------------------------------------
@@ -245,6 +285,7 @@ function storeDetails($scope, $rootScope, parse, Store, Favourites, $timeout, Fi
     $scope.$watch('storeInfo', function(data) {
         if($scope.storeInfo != undefined){
             $scope.favourite = Favourites.isFavourite($scope.storeInfo.id, $rootScope.fbUser.id);
+            console.log($scope.favourite);
         }   
     });
 
@@ -259,10 +300,16 @@ function storeDetails($scope, $rootScope, parse, Store, Favourites, $timeout, Fi
         Favourites.isFavourite(data.storeId, data.userId).then(function(response){ 
             //already set to favourite
             if(response) {
+                //set filter parameters
+                params = { 
+                    userId : data.userId,
+                    storeId : data.storeId
+                };
+
                 //remove favourite
-                parse.getByColumn('Favourites','userId', data.userId).then(function(response) {
+                parse.getByColumn('Favourites', params).then(function(response) {
                     //loop through to match the store
-                    angular.forEach(response, function(v, i) {
+                    angular.forEach(response.data.results, function(v, i) {
                         if(v.storeId == data.storeId) {
                             //remove from database
                             parse.remove('Favourites', v.objectId);
@@ -277,6 +324,10 @@ function storeDetails($scope, $rootScope, parse, Store, Favourites, $timeout, Fi
                 Favourites.setFavourite(data); 
                 $scope.favourite = true;
             }
+
+            $timeout(function() {
+                setUserFavourites($rootScope, Favourites, Store);
+            }, 1500);
         });   
     };
 }

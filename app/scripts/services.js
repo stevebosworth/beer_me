@@ -44,6 +44,16 @@ angular.module('beerMeServices', ['ngResource'])
                         callback: 'setJSON'
                     }
                 })
+            },
+
+            getStoreById: function(id) {
+                return $http({
+                    url: 'http://lcboapi.com/stores/' + id,
+                    method: 'JSONP',
+                    params: {
+                        callback: 'setJSON'
+                    }
+                });
             }
         }
     })
@@ -262,23 +272,35 @@ angular.module('beerMeServices', ['ngResource'])
     .factory('Favourites', ['parse', function (parse) {
         return {
             isFavourite: function(storeId, facebookId) {
-                return parse.getByColumn('Favourites','userId', facebookId).then(function(response) {  
-                    var isFavourite = false;
-                    angular.forEach(response, function(v, i) {
-                        if(v.storeId == storeId) {
-                            isFavourite = true;
-                            return;
-                        }
-                    });
+                //set filter params
+                params = {
+                    userId : facebookId,
+                    storeId : storeId
+                };
 
-                    return isFavourite;
+                return parse.getByColumn('Favourites',params).then(function(response) {  
+                    return response.data.results.length > 0;
                 });
             },
 
             setFavourite: function(data) {
                 //add favourites
                 parse.add("Favourites", data);
+            },
+
+            getFavouriteCount: function(userId) {
+                return this.getFavourite(userId).then(function(response) {
+                    return response.data.results.length;
+                });
+            },
+            
+            getFavourite: function(userId) {
+                //set filter params
+                params = {
+                    userId : userId,
+                };
+
+                return parse.getByColumn('Favourites', params);
             }
-    
         }
     }])

@@ -36,12 +36,14 @@ angular.module('beerMeServices', ['ngResource'])
                 })
             },
             // returns data for a store
-            searchStores: function(searchTerm, per_page) {
+            searchStores: function(searchTerm, per_page, position) {
                 return $http({
                     url: 'http://lcboapi.com/stores/?q=' + searchTerm + '&per_page=25',
                     method: 'JSONP',
                     params: {
-                        callback: 'setJSON'
+                        callback: 'setJSON',
+                        lat: position.coords.latitude,
+                        lon: position.coords.longitude
                     }
                 })
             },

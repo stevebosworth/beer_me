@@ -78,7 +78,7 @@
                     <li ng-show="searchComplete"><a href="#" ng-click="resetHome()">Return to Local Search</a></li>
                     <!-- <li ng-show="fbAuthorized"><hr/></li>
                     <li ng-show="fbAuthorized"><img style="width:40px; height:40px" ng-src="{{fbUser.picture.data.url}}" /> {{fbUser.first_name + ' ' + fbUser.last_name}}</li>
-                    <li ng-show="fbAuthorized"><a ng-click="showFavourite=toggleFavourite(showFavourite)"><i ng-class="{'icon-collapse-alt': showFavourite, 'icon-expand-alt': !showFavourite}"></i> Favourites ({{favouritesResultsCount}}) </a> 
+                    <li ng-show="fbAuthorized"><a ng-click="showFavourite=toggleFavourite(showFavourite)"><i ng-class="{'icon-collapse-alt': showFavourite, 'icon-expand-alt': !showFavourite}"></i> Favourite Stores ({{favouritesResultsCount}}) </a>
                         <div ng-show="showFavourite">
                             <ul>
                                 <li ng-repeat="result in favouriteList">
@@ -87,6 +87,7 @@
                             </ul>
                         </div>
                     </li>
+<<<<<<< HEAD
                     <li ng-show="fbAuthorized"><a href="#" ng-click="fb.logout()">Logout</a></li> -->
                 </ul>
                 <div ng-show="searchComplete" ng-animate="'fade'">
@@ -96,14 +97,14 @@
                     </ul>
                     <div>
                         <section ng-show="selected == 1">
-                            <p>Stores</p>
+                            <!-- <p>Stores</p> -->
                             <ul>
                                 <li>{{storesResultTitle}}</li>
                                 <li ng-repeat="result in storesList" ng-show="searchComplete"><a data-reveal-id="myModal" ng-click="getStoreInfo({{result}})">{{result.name}}</a></li>
                             </ul>
                         </section>
                         <section ng-show="selected == 2">
-                            <p >Products</p>
+                            <!-- <p >Products</p> -->
                             <ul>
                                 <li>{{productsResultTitle}}</li>
                                 <li ng-repeat="result in productsList" ng-show="searchComplete"><a data-reveal-id="productModal" ng-click="getProductInfo({{result}})">{{result.name}}</a></li>

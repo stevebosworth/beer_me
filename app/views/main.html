@@ -15,10 +15,11 @@
         <li>Vintages Corner: {{storeInfo.has_vintages_corner | checkmark }}</li>
         <li>Tasting Bar: {{storeInfo.has_tasting_bar | checkmark }}</li>
         <li>Transit Access: {{storeInfo.has_transit_access | checkmark }}</li>
+        <li>Open Now ({{currentTime}}): {{storeInfo.is_open | checkmark }}</li>
         <li ng-show="fbAuthorized">
             <a ng-click="setFavourite()">Favourite <i ng-class="{'icon-star': favourite, 'icon-star-empty': !favourite}"></i></a>
         </li>
-        <li><a ng-click="saveReview()">Save Review</a></li> {{reviewEntry}}                   
+        <li><a ng-click="saveReview()">Save Review</a></li> {{reviewEntry}}
     </ul>
     <a class="close-reveal-modal">&#215;</a>
 </div>
@@ -37,7 +38,7 @@
     <div >
         <h1>Where can I get it nearby?</h1>
         <ul>
-            <li ng-repeat="store in stockList | limitTo:5"><!-- <a href="#/store/{{store.id}}"> -->{{store.name}} - {{store.quantity}}<!-- </a> --></li>
+            <li ng-repeat="store in stockList | limitTo:5"><a data-reveal-id="myModal" ng-click="getStoreInfo({{store}})">{{store.name}} - Qty Available: {{store.quantity}}</a></li>
         </ul>
         <button ng-click="getStoresInStock()">Show Stores Nearby</button>
     </div>
@@ -55,8 +56,8 @@
         </li>
         <li ng-show="fbAuthorized"><hr/></li>
         <li ng-show="fbAuthorized"><img style="width:40px; height:40px" ng-src="{{fbUser.picture.data.url}}" /> {{fbUser.first_name + ' ' + fbUser.last_name}}</li>
-        <li ng-show="fbAuthorized"><a ng-click="showFavourite=toggleFavourite(showFavourite)"><i ng-class="{'icon-collapse-alt': showFavourite, 'icon-expand-alt': !showFavourite}"></i> Favourites ({{favouritesResultsCount}}) </a> 
-            <div ng-show="showFavourite">
+        <li ng-show="fbAuthorized"><a ng-click="showFavouriteProd=toggleFavourite(showFavouriteProd)"><i ng-class="{'icon-collapse-alt': showFavouriteProd, 'icon-expand-alt': !showFavouriteProd}"></i> Favourite Products ({{favouritesResultsCount}}) </a>
+            <div ng-show="showFavouriteProd">
                 <ul>
                     <li ng-repeat="result in favouriteList">
                         <a data-reveal-id="myModal" ng-click="getStoreInfo(result.storeInfo)"><i class="icon-beer"></i> {{result.storeInfo.name}}</a>
@@ -88,6 +89,10 @@
 
     <div>Advanced Filters:
         <ul class="filter-options">
+            <li>
+                <input id="is_open" type="checkbox" ng-model="query.is_open" ng-true-value="true" ng-false-value="">
+                <label for="is_open"><span></span>Open Now ({{currentTime}})</label>
+            </li>
             <li>
                 <input id="has_parking" type="checkbox" ng-model="query.has_parking" ng-true-value="true" ng-false-value="">
                 <label for="has_parking"><span></span>Parking</label>
@@ -129,7 +134,7 @@
         <hr />
     </div>
 </div>
- 
+
 <!-- lower data bar -->
 <div id="data-bar" ng-show="dataBarVisible == true">
     <div class="data-container" ng-repeat="store in filtered = (storesWithLimit | filter: query | filter: search | orderBy: orderStores | limitTo: stores)">

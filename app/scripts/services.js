@@ -98,6 +98,11 @@ angular.module('beerMeServices', ['ngResource'])
                         $rootScope.storesList = data.result;
                     }).error(function(data, status) {
                         if (json_data.status == 200) {
+                            //add store open data
+                            angular.forEach(json_data.result, function(v, i) {
+                                v["is_open"] = ($filter('is_open')(v) == 'Open' ? true : false);
+                            });
+
                             $rootScope.storesList = json_data.result;
                             $rootScope.showLoading = false;
                         }
@@ -235,7 +240,9 @@ angular.module('beerMeServices', ['ngResource'])
 
     .factory('Products', function($http) {
         return {
-            // returns data for upto 20 products matching search
+            // returns data for upto 20 products matching search query
+            // passes string
+            //returns jsonp
             getProductsByQuery: function(query) {
                 return $http({
                     url: 'http://lcboapi.com/products?q=' + query,
@@ -271,36 +278,36 @@ angular.module('beerMeServices', ['ngResource'])
 
     .factory('Favourites', ['parse', function (parse) {
         return {
-            isFavourite: function(storeId, facebookId) {
+            isFavourite: function(Id, className, facebookId, params) {
                 //set filter params
-                params = {
-                    userId : facebookId,
-                    storeId : storeId
-                };
+                // params = {
+                //     userId : facebookId,
+                //     storeId : storeId
+                // };
 
-                return parse.getByColumn('Favourites',params).then(function(response) {  
+                return parse.getByColumn(className, params).then(function(response) {
                     return response.data.results.length > 0;
                 });
             },
 
-            setFavourite: function(data) {
+            setFavourite: function(data, className) {
                 //add favourites
-                parse.add("Favourites", data);
+                parse.add(className, data);
             },
 
-            getFavouriteCount: function(userId) {
-                return this.getFavourite(userId).then(function(response) {
+            getFavouriteCount: function(userId, className) {
+                return this.getFavourite(userId, className).then(function(response) {
                     return response.data.results.length;
                 });
             },
-            
-            getFavourite: function(userId) {
+
+            getFavourite: function(userId, className) {
                 //set filter params
                 params = {
                     userId : userId,
                 };
 
-                return parse.getByColumn('Favourites', params);
+                return parse.getByColumn(className, params);
             }
         }
     }])

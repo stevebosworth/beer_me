@@ -101,6 +101,11 @@ html, body {
  * ====================================================================
  */
 
+
+ .main-search-bar{
+ 	width:125%;
+ }
+
 #header-bar {
 	height: 2.25em;
 	position: fixed;
@@ -306,11 +311,13 @@ input[type="checkbox"]:checked + label span {
 	}
 }
 
+
 /* ====================================================================
  * Media Queries
  * ====================================================================
  */
 
+	 
 @media screen and (max-width: 400px)  
 {
 	#header-bar{
@@ -318,5 +325,26 @@ input[type="checkbox"]:checked + label span {
 			display: none;
 		}
 	}
-	 
+
 }
+
+@media screen and (min-width: 400px)  
+{
+	.main-search-bar{
+		width: 200%;
+	}
+
+}
+
+@media screen and (min-width: 750px)  
+{
+	.main-search-bar{
+		width: 350%;
+	}
+
+}
+
+
+
+
+

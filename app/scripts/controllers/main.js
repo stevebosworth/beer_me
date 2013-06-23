@@ -26,10 +26,10 @@ function setJSON(data) {
 
  function setUserFavourites(rootScope, Favourites, Store) {
     //get favourite count
-    rootScope.favouritesResultsCount = Favourites.getFavouriteCount(rootScope.fbUser.id);
+    rootScope.favouritesResultsCount = Favourites.getFavouriteCount(rootScope.fbUser.id, 'Favourites');
 
     //get favourite list
-    rootScope.favouriteList = Favourites.getFavourite(rootScope.fbUser.id).then(function(response) {
+    rootScope.favouriteList = Favourites.getFavourite(rootScope.fbUser.id, 'Favourites').then(function(response) {
         if(response.data.results.length > 0) {
             angular.forEach(response.data.results, function(v, i) {
                 //add store name and other information based on id
@@ -55,6 +55,11 @@ function setJSON(data) {
 function wrapperCtrl($scope, $rootScope, parse) {
 	$scope.showMenuBar = false;
 	$scope.showOptionsBar = false;
+    $rootScope.currentTime = (
+            (((new Date().getHours()) % 12) ? ((new Date().getHours()) % 12) : 12) + ':' +
+            (((new Date().getMinutes()) < 10) ? ('0' + (new Date().getMinutes())) : new Date().getMinutes()) + ' ' +
+            (((new Date().getHours()) >= 12) ? 'PM' : 'AM')
+        );
 
 	$rootScope.revealMenuBar = function(target) {
 
@@ -97,6 +102,11 @@ function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster, $log) {
 	// enables new version of google maps
     google.maps.visualRefresh = true;
 
+    $scope.center = {
+        latitude: 79.4042,
+        longitude: 43.6481
+    };
+
 	// default settings
 	$rootScope.stores = 5;
 	$scope.zoom = 12;
@@ -104,11 +114,6 @@ function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster, $log) {
 
     // get 25 stores on initial load
     Finder.nearbyStores(25);
-
-	$scope.center = {
-		latitude: 79.4042,
-		longitude: 43.6481
-	};
 
     $scope.dataBarVisible = true;
 
@@ -198,7 +203,7 @@ function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster, 
 
                                 if($rootScope.storesList.length > 0) {
                                     $rootScope.stores = $rootScope.storesList.length; // make sure results are visible on map
-                                    $scope.storesResultTitle = "Search Results:";
+                                    $scope.storesResultTitle = "Stores Results:";
                                     $scope.searchText = ""; // empty search bar
                                 } else {
                                     $scope.storesResultTitle = "No match found";
@@ -271,7 +276,9 @@ function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster, 
 function storeDetails($scope, $rootScope, parse, Store, StoreRatings, Favourites, $timeout, Finder, CookieMonster) {
 
     // create empty data object
-    var data = "";
+    var data = {
+        userId: $rootScope.fbUser.id
+    };
 
     $scope.saveReview = function(result) {
 
@@ -290,6 +297,9 @@ function storeDetails($scope, $rootScope, parse, Store, StoreRatings, Favourites
                     // check if object successfully created
                     if(response.status == 201) {
                         console.log('Successfully added review');
+                        // hide the voting li
+                        $scope.checkVote = true;
+                        $scope.storeVoteTotal = StoreRatings.countVotes(data.storeId);
                     }
                 });
             } else {
@@ -300,16 +310,20 @@ function storeDetails($scope, $rootScope, parse, Store, StoreRatings, Favourites
 
     //make sure storeInfo is loaded before checking if store is favourite
     $scope.$watch('storeInfo', function(data) {
-
         if($scope.storeInfo != undefined){
-            $scope.favourite = Favourites.isFavourite($scope.storeInfo.id, $rootScope.fbUser.id);
-            console.log($scope.favourite);
+            $scope.favourite = Favourites.isFavourite($scope.storeInfo.id, 'Favourites', $rootScope.fbUser.id, params);
 
+            data.userId = $rootScope.fbUser.id;
             data.storeId = $scope.storeInfo.id;
 
-            // check if the user has yet voted on this store
+            // check if the user has yet voted on this store, hide it if so
             StoreRatings.checkVote(data).then(function(votestatus) {
-                console.log(votestatus);
+                $scope.checkVote = votestatus;
+            });
+
+            // count the amount of votes placed for this store
+            StoreRatings.countVotes($scope.storeInfo.id).then(function(votecount) {
+                $scope.storeVoteTotal = votecount;
             });
         }
     });
@@ -322,7 +336,7 @@ function storeDetails($scope, $rootScope, parse, Store, StoreRatings, Favourites
             userId: $rootScope.fbUser.id
         }
 
-        Favourites.isFavourite(data.storeId, data.userId).then(function(response){
+        Favourites.isFavourite(data.storeId, "Favourites", data.userId, data).then(function(response){
             //already set to favourite
             if(response) {
                 //set filter parameters
@@ -346,7 +360,7 @@ function storeDetails($scope, $rootScope, parse, Store, StoreRatings, Favourites
                 });
             } else {
                 //add to favourite
-                Favourites.setFavourite(data);
+                Favourites.setFavourite(data, 'Favourites');
                 $scope.favourite = true;
             }
 
@@ -392,8 +406,9 @@ function productDetailsCtrl($scope, $routeParams, geoLocation, Products) {
     //$scope.productId = $routeParams.productId;
     geoLocation.getCurrentPosition(function (position) {
 
+        //reset current location in scope
         $scope.currentLocation = {latitude: position.coords.latitude, longitude: position.coords.longitude};
-        // show users current location on map
+
 
         // retrieve the data for the selected store
         Products.getProduct($routeParams.productId, position, 1).success(function(data) {
@@ -401,7 +416,7 @@ function productDetailsCtrl($scope, $routeParams, geoLocation, Products) {
             $scope.store = data.result;
         }).error(function(data, status) {
             if (json_data.status == 200){
-                //set default images
+                //set default images if no product image is available
                 if(!json_data.product['image_thumb_url']){
                     json_data.product['image_thumb_url'] = "img/glyphicons-halflings.png";
                 }

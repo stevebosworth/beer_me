@@ -13,7 +13,7 @@
         <!-- styles -->
         <link rel="stylesheet" href="css/normalize.css"/>
         <link rel="stylesheet" href="css/foundation.min.css"/>
-        <link rel="stylesheet" href="css/font-awesome.min.css"/>
+        <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
         <link rel="stylesheet" href="css/main.css"/>
 
     </head>
@@ -43,7 +43,8 @@
                 </div>
                 <div class="small-6 columns">
                     <span id="brand">
-                        <i class="icon-beer"></i> BeerME!
+                        <i class="icon-beer"></i>
+                        <span class="title"> BeerME</span>
                     </span>
                 </div>
                 <div class="small-3 columns">
@@ -92,14 +93,14 @@
                     </ul>
                     <div>
                         <section ng-show="selected == 1">
-                            <p>Stores</p>
+                            <!-- <p>Stores</p> -->
                             <ul>
                                 <li>{{storesResultTitle}}</li>
                                 <li ng-repeat="result in storesList" ng-show="searchComplete"><a data-reveal-id="myModal" ng-click="getStoreInfo({{result}})">{{result.name}}</a></li>
                             </ul>
                         </section>
                         <section ng-show="selected == 2">
-                            <p >Products</p>
+                            <!-- <p >Products</p> -->
                             <ul>
                                 <li>{{productsResultTitle}}</li>
                                 <li ng-repeat="result in productsList" ng-show="searchComplete"><a data-reveal-id="productModal" ng-click="getProductInfo({{result}})">{{result.name}}</a></li>

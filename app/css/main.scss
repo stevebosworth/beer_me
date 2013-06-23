@@ -42,6 +42,7 @@ img[src*="gstatic.com/"], img[src*="googleapis.com/"] {
 $bg-color: #000;
 $lightblue: #2a6180;
 $darkblue: #224e66;
+$green:#3a9141;
 $menu: #32394a;
 $white: #fff;
 $smoke: #efefef;
@@ -130,18 +131,26 @@ html, body {
 }
 
 #menu-bar, .options-bar {
-	max-height: 80%;
+	height: 100%;
 	position: fixed;
-	width: 17em;
+	width: 15em;
 	background-color: rgba(55, 126, 166, 0.80); 
-	padding: 1em 1em 1em 1em;
+	padding: 3em 1em 1em 1em;
 	padding-bottom:10%;
 	color: $white;
 	margin: 0;
 	z-index: 1;
 	overflow:auto;
 
+	// select{
+	// 	width:75%;
+	// }
+	// input[type=text]{
+	// 	width: 100%;
+	// }
+
 	ul {
+		font-size: 0.65em;
 		padding: 0;
 		margin: 0;
 		list-style-type: none;
@@ -155,7 +164,6 @@ html, body {
 }
 
 #menu-bar {
-	padding-top: 3em;
 	left: 0;
 }
 
@@ -202,7 +210,7 @@ input[type="checkbox"]:checked + label span {
 	z-index: 1; // bring me in front of the google map but behind any modal
 	bottom: 0;
 	width: 100%;
-	height: 15%;
+	min-height: 15%;
 	overflow: auto;
 	overflow-y: hidden;
 	margin: 0 auto;
@@ -216,6 +224,7 @@ input[type="checkbox"]:checked + label span {
 		border-right: 1px solid $lightblue;
 		width: 300px;
 		display: inline-block;
+		vertical-align:text-top;
 
 		.data-left {
 			float: left;
@@ -245,9 +254,10 @@ input[type="checkbox"]:checked + label span {
 			width: 65%;
 			padding: 0 2.5%;
 
+
 			h1 {
 				width: 100%;
-				font-size: 1em;
+				font-size: 0.9em;
 				line-height: 1em;
 				color: $darkblue;
 				padding: 0;
@@ -256,7 +266,8 @@ input[type="checkbox"]:checked + label span {
 		}
 
 		span {
-			font-size: 0.85em;
+			color: $green;
+			font-size: 0.8em;
 			font-weight: 500;
 			display: block;
 			line-height: 1.25em;
@@ -293,5 +304,19 @@ input[type="checkbox"]:checked + label span {
 	.check-label {
 		float: left;
 	}
+}
 
+/* ====================================================================
+ * Media Queries
+ * ====================================================================
+ */
+
+@media screen and (max-width: 400px)  
+{
+	#header-bar{
+		.title{
+			display: none;
+		}
+	}
+	 
 }

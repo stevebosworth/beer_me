@@ -289,7 +289,7 @@ function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster, $log) {
  *
  */
 
-function storeDetails($scope, $rootScope, parse, Store, StoreRatings, Favourites, $timeout, Finder, CookieMonster) {
+function storeDetails($scope, $rootScope, parse, Store, StoreRatings, Favourites, Products, $timeout, Finder, CookieMonster) {
 
     // create empty data object
     var data = {
@@ -306,63 +306,40 @@ function storeDetails($scope, $rootScope, parse, Store, StoreRatings, Favourites
     });
 
    //show favourite
-   $scope.toggleFavourite = function(showFavourite) {
-        return !showFavourite;
-   };
-}
+   // $scope.toggleFavourite = function(showFavourite) {
+   //      return !showFavourite;
+   // };
 
-        // establish data object
-        var data = {
-            rating: result,
-            storeId: $scope.storeInfo.id,
-            userId: $rootScope.fbUser.id
-        }
 
-        // check if the user has previously voted
-        StoreRatings.checkVote(data).then(function(response) {
-            if(!response) {
-                // user hasn't voted, lets save their vote
-                StoreRatings.setVote(data).then(function(response) {
-                    // check if object successfully created
-                    if(response.status == 201) {
-                        console.log('Successfully added review');
-                        // hide the voting li
-                        $scope.checkVote = true;
-                        $scope.storeVoteTotal = StoreRatings.countVotes(data.storeId);
-                    }
-                });
-            } else {
-                console.log('Invalid vote, user has already cast vote for this store.');
-            }
-        });
-    };
+    $scope.saveReview = function(result) {
 
-    //make sure storeInfo is loaded before checking if store is favourite
-    $scope.$watch('storeInfo', function(data) {
+        // establish data object
+        var data = {
+            rating: result,
+            storeId: $scope.storeInfo.id,
+            userId: $rootScope.fbUser.id
+        }
 
-         if($scope.storeInfo != undefined) {
-            //set params for .isFavourite
-            params = {
-                userId : $rootScope.fbUser.id,
-                storeId : $scope.storeInfo.id
-            };
+        // check if the user has previously voted
+        StoreRatings.checkVote(data).then(function(response) {
+            if(!response) {
+                // user hasn't voted, lets save their vote
+                StoreRatings.setVote(data).then(function(response) {
+                    // check if object successfully created
+                    if(response.status == 201) {
+                        console.log('Successfully added review');
+                        // hide the voting li
+                        $scope.checkVote = true;
+                        $scope.storeVoteTotal = StoreRatings.countVotes(data.storeId);
+                    }
+                });
+            } else {
+                console.log('Invalid vote, user has already cast vote for this store.');
+            }
+        });
+    };
 
-            $scope.favourite = Favourites.isFavourite($scope.storeInfo.id, 'Favourites', $rootScope.fbUser.id, params);
 
-            data.userId = $rootScope.fbUser.id;
-            data.storeId = $scope.storeInfo.id;
-
-            // check if the user has yet voted on this store, hide it if so
-            StoreRatings.checkVote(data).then(function(votestatus) {
-                $scope.checkVote = votestatus;
-            });
-
-            // count the amount of votes placed for this store
-            StoreRatings.countVotes($scope.storeInfo.id).then(function(votecount) {
-                $scope.storeVoteTotal = votecount;
-            });
-        }
-    });
 
     $scope.setFavourite = function() {
 
@@ -430,6 +407,13 @@ function productsListCtrl($scope, Products) {
     }
 }
 
+/**
+ * productDetailsCtrl
+ *
+ * Used to display detailed view of a product
+ * Includes Stock Information and returns 20 closest stores
+ *
+ */
 
 
 // --------------------------------------------------------------------
@@ -465,9 +449,9 @@ function storesForProductCtrl($scope, $rootScope, $routeParams, Products, Favour
         });
     });
 
-    $scope.$watch('productInfo', function(data) {`
+    $scope.$watch('productInfo', function(data) {
          if($scope.productInfo != undefined){
-            //set params used .isFavourite in Favourites Service
+            //set params for .isFavourite
             params = {
                 userId : $rootScope.fbUser.id,
                 productId : $scope.productInfo.id

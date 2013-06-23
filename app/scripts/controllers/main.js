@@ -27,7 +27,7 @@ function setJSON(data) {
  function setUserFavourites(rootScope, Favourites, Store, Products, className, count, list) {
     //get favourite count
     rootScope[count] = Favourites.getFavouriteCount(rootScope.fbUser.id, className);
-    
+
     //get favourite list
     rootScope[list] = Favourites.getFavourite(rootScope.fbUser.id, className).then(function(response) {
         if(response.data.results.length > 0) {
@@ -42,11 +42,14 @@ function setJSON(data) {
                         });
                         break;
                     }
-
-                    case 'productsFavourites' : {
-
+                    case 'productsFavorites' : {
+                        Products.getProduct(v.productId, rootScope.center).error(function(){
+                            if(json_data.status == 200){
+                                v['productInfo'] = json_data.product;
+                            }
+                        });
                         break;
-                    } 
+                    }
                 }
             });
         }
@@ -137,6 +140,10 @@ function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster, $log) {
     }
 
     $rootScope.getProductInfo = function(obj){
+        // console.log(obj);
+        console.log($scope.stockList);
+        //$scope.showHide = true;
+        //console.log($scope.showHide);
         $rootScope.productInfo = obj;
     }
 
@@ -265,6 +272,7 @@ function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster, 
     $scope.$watch('fbUser', function() {
         if($rootScope.fbUser != undefined) {
             setUserFavourites($rootScope, Favourites, Store, null, 'Favourites', 'favouritesResultsCount', 'favouriteList');
+            setUserFavourites($rootScope, Favourites, null, Products, 'productsFavorites', 'favouriteProductsResultsCount', 'favouriteProductsList');
         }
     });
 
@@ -384,8 +392,22 @@ function productsListCtrl($scope, Products) {
  *
  */
 
-function productDetailsCtrl($scope, $routeParams, geoLocation, Products) {
-    //$scope.productId = $routeParams.productId;
+
+// --------------------------------------------------------------------
+/**
+ * Products in Store by Query listCtrl
+ *
+ * Used to display a list of products based on a query.
+ *
+ */
+
+function storesForProductCtrl($scope, $rootScope, $routeParams, Products, Favourites, geoLocation, parse, $timeout) {
+
+        //get stores for product based on rootScope ID
+
+        //hide stores in Details Modal
+        $scope.showHide = true;
+        console.log($scope.showHide);
     geoLocation.getCurrentPosition(function (position) {
 
         //reset current location in scope
@@ -408,31 +430,78 @@ function productDetailsCtrl($scope, $routeParams, geoLocation, Products) {
             }
         });
     });
-}
 
-// --------------------------------------------------------------------
-/**
- * Products in Store by Query listCtrl
- *
- * Used to display a list of products based on a query.
- *
- */
-
-function storesForProductCtrl($scope, $rootScope, Products, geoLocation) {
-        //console.log();
-        //get stores for product based on rootScope ID
-
-        //get current location
-        $scope.getStoresInStock = function (){
-            Products.getProduct($rootScope.productInfo.id, $rootScope.center, 5).success(function(data){
-                $scope.stockList = data.result;
-            }).error(function(data, status) {
-                if (json_data.status == 200){
-                    $scope.stockList = json_data.result;
-                    console.log($scope.stockList);
-                }
-            });
+    $scope.$watch('productInfo', function(data) {
+         if($scope.productInfo != undefined){
+            //set params for .isFavourite
+            params = {
+                userId : $rootScope.fbUser.id,
+                productId : $scope.productInfo.id
+            };
+            $scope.favourite = Favourites.isFavourite($scope.productInfo.id, 'productsFavorites', $rootScope.fbUser.id, params);
         }
+    });
+
+
+    //get current location
+    $scope.getStoresInStock = function (){
+
+        Products.getProduct($rootScope.productInfo.id, $rootScope.center, 5).success(function(data){
+            $scope.stockList = data.result;
+        }).error(function(data, status) {
+            if (json_data.status == 200){
+                $scope.stockList = json_data.result;
+                //console.log($scope.stockList);
+                $scope.showHide = false;
+                console.log($scope.showHide);
+            }
+        });
+    }
+
+
+
+    $scope.setProductFavourite = function() {
+        var data = {
+            isFavourite: true,
+            productId : $scope.productInfo.id,
+            userId: $rootScope.fbUser.id
+        }
+
+        console.log(data);
+
+        Favourites.isFavourite(data.productId, 'productsFavorites', data.userId, data).then(function(response){
+            //already set to favourite
+            if(response) {
+                //set filter parameters
+                params = {
+                    userId : data.userId,
+                    productId : data.productId
+                };
+
+                //remove favourite
+                parse.getByColumn('productsFavorites', params).then(function(response) {
+                    //loop through to match the store
+                    angular.forEach(response.data.results, function(v, i) {
+                        if(v.productId == data.productId) {
+                            //remove from database
+                            parse.remove('productsFavorites', v.objectId);
+                        }
+                    });
+
+                    //set favourite to false
+                    $scope.favourite = false;
+                });
+            } else {
+                //add to favourite
+                Favourites.setFavourite(data, 'productsFavorites');
+                $scope.favourite = true;
+            }
+
+            $timeout(function() {
+                setUserFavourites($rootScope, Favourites, null, Products, 'productsFavorites', 'favouriteProductsResultsCount', 'favouriteProductsList');
+            }, 1000);
+        });
+    };
         //$scope.productSearch();
 }
 

@@ -30,14 +30,16 @@
         <h2>{{productInfo.name}}</h2>
         <ul>
             <li>Price: &#36;{{productInfo.price_in_cents / 100}}</li>
-            <li>Serving Suggestions: {{productInfo.serving_suggestion}}</li>
-            <li><img ng-src="{{productInfo.image_thumb_url}}" alt=""></li>
-            <li></li>
+            <li ng-show="productInfo.serving_suggestions != null">Serving Suggestions: {{productInfo.serving_suggestion}}</li>
+            <li ng-show="productInfo.image_thumb_url != null"><img ng-src="{{productInfo.image_thumb_url}}" alt=""></li>
+            <li ng-show="fbAuthorized">
+                <a ng-click="setProductFavourite()">Favourite <i ng-class="{'icon-star': favourite, 'icon-star-empty': !favourite}"></i></a>
+            </li>
         </ul>
     </div>
     <div >
         <h1>Where can I get it nearby?</h1>
-        <ul>
+        <ul ng-hide="showHide" ng-show="!showHide">
             <li ng-repeat="store in stockList | limitTo:5"><a data-reveal-id="myModal" ng-click="getStoreInfo({{store}})">{{store.name}} - Qty Available: {{store.quantity}}</a></li>
         </ul>
         <button ng-click="getStoresInStock()">Show Stores Nearby</button>

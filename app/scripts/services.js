@@ -253,7 +253,7 @@ angular.module('beerMeServices', ['ngResource'])
                 })
             },
             // returns data for a single product
-            getProduct: function(id, center, radius) {
+            getProduct: function(id, center) {
                 return $http({
                     url: 'http://lcboapi.com/products/' + id + '/stores',
                     method: 'JSONP',

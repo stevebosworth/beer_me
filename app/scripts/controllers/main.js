@@ -53,15 +53,17 @@ function setJSON(data) {
         return response.data.results;
     });
  }
+
 // --------------------------------------------------------------------
 /**
- * menuCtrl
+ * wrapperCtrl
  *
- * Used to show the list of all the stores available
+ * Used to control all global functions of the application:
+ * search, menu, facebook favourites
  *
  */
 
-function wrapperCtrl($scope, $rootScope, parse) {
+function wrapperCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster, Products, Favourites, geoLocation, parse) {
 	$scope.showMenuBar = false;
 	$scope.showOptionsBar = false;
     $rootScope.currentTime = (
@@ -96,92 +98,6 @@ function wrapperCtrl($scope, $rootScope, parse) {
                 break;
 		}
 	}
-}
-
-// --------------------------------------------------------------------
-/**
- * listCtrl
- *
- * Used to show the list of all the stores available
- *
- */
-
-function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster, $log) {
-
-	// enables new version of google maps
-    google.maps.visualRefresh = true;
-
-    $scope.center = {
-        latitude: 79.4042,
-        longitude: 43.6481
-    };
-
-	// default settings
-	$rootScope.stores = 5;
-	$scope.zoom = 12;
-	$scope.orderStores = 'distance_in_meters';
-
-    // get 25 stores on initial load
-    Finder.nearbyStores(25);
-
-    $scope.dataBarVisible = true;
-
-    $rootScope.getStoreInfo = function(obj) {
-        $scope.zoom = 17;
-        // $rootScope.revealMenuBar('none');
-        $rootScope.storeInfo = obj;
-        $scope.center = {
-            latitude: obj.latitude,
-            longitude: obj.longitude
-        }
-    }
-
-    $rootScope.getProductInfo = function(obj){
-        $rootScope.productInfo = obj;
-    }
-
-    // once data is loaded, load the sliced array into the view
-    $scope.$watch('storesList', function(storesListValue) {
-        if(storesListValue != undefined) {
-            $scope.storesWithLimit = $scope.storesList.slice(0, $scope.stores);
-        }
-    });
-
-    // wait for user to change the value of the stores listing and reassign the array based on values
-    // stored still in storesList
-    $scope.$watch('stores', function(storesValue) {
-        if(typeof $scope.storesList !== "undefined") {
-            $scope.storesWithLimit = $scope.storesList.slice(0, $scope.stores);
-        }
-    });
-
-    // watch the filtered expression and change the map based on new input
-    $scope.$watch('filtered', function (filteredValue) {
-        // watch checks on load, when data does not exist yet
-        if(typeof filteredValue !== "undefined") {
-        	// reset the markers, place the users location in as a marker
-        	$rootScope.markers = [ { latitude: $rootScope.currentLocation.coords.latitude, longitude: $rootScope.currentLocation.coords.longitude, icon: 'img/icons/current_location.png'  } ];
-
-        	// this workaround resolves the issue with filteredValue.length being less than $scope.stores
-        	// without it, the loop tries to draw stores that do not exist
-        	var storesToDraw = 5;
-        	(filteredValue.length < $scope.stores) ? storesToDraw = filteredValue.length : storesToDraw = $scope.stores;
-
-        	// draw the filtered markers
-        	Finder.drawMarkers(storesToDraw, filteredValue);
-        }
-    }, true);
-};
-
-// --------------------------------------------------------------------
-/**
- * searchCtrl
- *
- * Used by the sidebar to perform searches
- *
- */
-
-function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster, Products, Favourites, geoLocation) {
 
     // watch searchText for user input
     var timer = false; // required
@@ -195,6 +111,7 @@ function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster, 
                     $timeout.cancel(timer)
                 }
                 timer = $timeout(function(){
+                    $scope.showMenuBar = true;
                     $scope.searchSpinner = true; // show spinner
                     // perform the search
 
@@ -280,6 +197,82 @@ function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster, 
         return !showFavourite;
    };
 }
+
+// --------------------------------------------------------------------
+/**
+ * listCtrl
+ *
+ * Used to show the list of all the stores available
+ *
+ */
+
+function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster, $log) {
+
+	// enables new version of google maps
+    google.maps.visualRefresh = true;
+
+    $scope.center = {
+        latitude: 79.4042,
+        longitude: 43.6481
+    };
+
+	// default settings
+	$rootScope.stores = 5;
+	$scope.zoom = 12;
+	$scope.orderStores = 'distance_in_meters';
+
+    // get 25 stores on initial load
+    Finder.nearbyStores(25);
+
+    $scope.dataBarVisible = true;
+
+    $rootScope.getStoreInfo = function(obj) {
+        $scope.zoom = 17;
+        // $rootScope.revealMenuBar('none');
+        $rootScope.storeInfo = obj;
+        $scope.center = {
+            latitude: obj.latitude,
+            longitude: obj.longitude
+        }
+    }
+
+    $rootScope.getProductInfo = function(obj){
+        $rootScope.productInfo = obj;
+    }
+
+    // once data is loaded, load the sliced array into the view
+    $scope.$watch('storesList', function(storesListValue) {
+        if(storesListValue != undefined) {
+            $scope.storesWithLimit = $scope.storesList.slice(0, $scope.stores);
+        }
+    });
+
+    // wait for user to change the value of the stores listing and reassign the array based on values
+    // stored still in storesList
+    $scope.$watch('stores', function(storesValue) {
+        if(typeof $scope.storesList !== "undefined") {
+            $scope.storesWithLimit = $scope.storesList.slice(0, $scope.stores);
+        }
+    });
+
+    // watch the filtered expression and change the map based on new input
+    $scope.$watch('filtered', function (filteredValue) {
+        // watch checks on load, when data does not exist yet
+        if(typeof filteredValue !== "undefined") {
+        	// reset the markers, place the users location in as a marker
+        	$rootScope.markers = [ { latitude: $rootScope.currentLocation.coords.latitude, longitude: $rootScope.currentLocation.coords.longitude, icon: 'img/icons/current_location.png'  } ];
+
+        	// this workaround resolves the issue with filteredValue.length being less than $scope.stores
+        	// without it, the loop tries to draw stores that do not exist
+        	var storesToDraw = 5;
+        	(filteredValue.length < $scope.stores) ? storesToDraw = filteredValue.length : storesToDraw = $scope.stores;
+
+        	// draw the filtered markers
+        	Finder.drawMarkers(storesToDraw, filteredValue);
+        }
+    }, true);
+};
+
 
 // --------------------------------------------------------------------
 /**

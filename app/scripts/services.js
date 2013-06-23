@@ -36,12 +36,16 @@ angular.module('beerMeServices', ['ngResource'])
                 })
             },
             // returns data for a store
-            searchStores: function(searchTerm, per_page) {
+            searchStores: function(searchTerm, position) {
                 return $http({
-                    url: 'http://lcboapi.com/stores/?q=' + searchTerm + '&per_page=25',
+                    url: 'http://lcboapi.com/stores',
                     method: 'JSONP',
                     params: {
-                        callback: 'setJSON'
+                        callback: 'setJSON',
+                        q: searchTerm,
+                        per_page: 25,
+                        lat: position.coords.latitude,
+                        lon: position.coords.longitude
                     }
                 })
             },
@@ -276,6 +280,14 @@ angular.module('beerMeServices', ['ngResource'])
         }
     })
 
+    // --------------------------------------------------------------------
+    /**
+    * Favourites
+    *
+    * Access Parse API to retrieve favourite data
+    *
+    */
+
     .factory('Favourites', ['parse', function (parse) {
         return {
             isFavourite: function(Id, className, facebookId, params) {
@@ -301,6 +313,7 @@ angular.module('beerMeServices', ['ngResource'])
                 });
             },
 
+
             getFavourite: function(userId, className) {
                 //set filter params
                 params = {
@@ -308,6 +321,54 @@ angular.module('beerMeServices', ['ngResource'])
                 };
 
                 return parse.getByColumn(className, params);
+            }
+        }
+    }])
+
+    // --------------------------------------------------------------------
+    /**
+    * StoreRatings
+    *
+    * Access Parse API to retrieve store rating data
+    *
+    */
+
+    .factory('StoreRatings', ['parse', function (parse) {
+        return {
+            checkVote: function(data) {
+                //set filter params
+                var params = {
+                    userId : data.userId,
+                    storeId : data.storeId
+                };
+
+                return parse.getByColumn('StoresRating', params).then(function(response) {
+                    return response.data.results.length > 0;
+                });
+            },
+
+            setVote: function(data) {
+                //add favourites
+                return parse.add("StoresRating", data);
+            },
+
+            countVotes: function(storeId) {
+                // set filter params
+                var params = {
+                    storeId: storeId
+                };
+
+                return parse.getByColumn('StoresRating', params).then(function (response) {
+                    var x = 0;
+                    // cycle through the votes and determine the positive or negative rating
+                    angular.forEach(response.data.results, function (value, key) {
+                        if(value.rating == true)
+                            x = x + 1;
+                        else
+                            x = x - 1;
+                    });
+                    return x;
+                });
             }
         }
     }])

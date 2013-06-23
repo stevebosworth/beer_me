@@ -24,6 +24,25 @@ angular.module('beerMeFilters', [])
 
 	// --------------------------------------------------------------------
 	/**
+	 * ratingarrow
+	 *
+	 * If the number is greater than 0, show plus arrow, if product
+	 * is less than 0 show down arrow
+	 *
+	 */
+
+	.filter('ratingarrow', function() {
+		return function(input) {
+			if(input > 0) {
+				return '\f10c';
+			} else {
+				return '\f10c';
+			}
+		};
+	})
+
+	// --------------------------------------------------------------------
+	/**
 	 * yesno
 	 *
 	 * If true, return Yes, else No
@@ -127,7 +146,7 @@ angular.module('beerMeFilters', [])
 				case 4:
 					open = data.thursday_open;
 					close = data.thursday_close;
-					break;																
+					break;
 				case 5:
 					open = data.friday_open;
 					close = data.friday_close;
@@ -135,11 +154,11 @@ angular.module('beerMeFilters', [])
 				case 6:
 					open = data.saturday_open;
 					close = data.saturday_close;
-					break;								
+					break;
 			}
 			// so now I have the open and close time of today at the specified store
 			// compare it to the current seconds since midnight on the client
 			return (currentMSM > open && currentMSM < close) ? "Open" : "Closed";
 		};
-	})	
+	})
 

@@ -18,9 +18,9 @@ function setJSON(data) {
 
 // --------------------------------------------------------------------
 /**
- * menuCtrl
+ * setUserFavourites
  *
- * Used to show the list of all the stores available
+ * Ask Lucas
  *
  */
 
@@ -56,15 +56,17 @@ function setJSON(data) {
         return response.data.results;
     });
  }
+
 // --------------------------------------------------------------------
 /**
- * menuCtrl
+ * wrapperCtrl
  *
- * Used to show the list of all the stores available
+ * Used to control all global functions of the application:
+ * search, menu, facebook favourites
  *
  */
 
-function wrapperCtrl($scope, $rootScope, parse) {
+function wrapperCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster, Products, Favourites, geoLocation, parse) {
 	$scope.showMenuBar = false;
 	$scope.showOptionsBar = false;
     $rootScope.currentTime = (
@@ -99,6 +101,104 @@ function wrapperCtrl($scope, $rootScope, parse) {
                 break;
 		}
 	}
+
+    // watch searchText for user input
+    var timer = false; // required
+    $scope.$watch('searchText', function() {
+        //console.log($scope.searchText);
+        // make sure search is long enough
+        if($scope.searchText != undefined) {
+            if($scope.searchText.length > 2) {
+                // do not search until user has stopped typing
+                if(timer) {
+                    $timeout.cancel(timer)
+                }
+                timer = $timeout(function(){
+                    $scope.showMenuBar = true;
+                    $scope.searchSpinner = true; // show spinner
+                    // perform the search
+
+                    geoLocation.getCurrentPosition(function(position) {
+                        $rootScope.currentLocation = position;
+
+                        Store.searchStores($scope.searchText, position)
+                            .success(function(data) {
+                                $scope.store = data.result;
+                            })
+                            .error(function(data, status) {
+                                if (json_data.status == 200) {
+                                    // once we apply the new data to storesList, the entire application will update
+                                    $rootScope.storesList = json_data.result;
+
+                                    //console.log($scope.searchResults);
+                                    $scope.storesResultsCount = $rootScope.storesList.length;
+
+                                    $scope.searchSpinner = false; // hide spinner
+                                    $scope.searchComplete = true; // show results
+
+                                    if($rootScope.storesList.length > 0) {
+                                        $rootScope.stores = $rootScope.storesList.length; // make sure results are visible on map
+                                        $scope.storesResultTitle = "Stores Results:";
+                                        $scope.searchText = ""; // empty search bar
+                                    } else {
+                                        $scope.storesResultTitle = "No match found";
+                                    }
+                                }
+                        });
+
+                        Products.getProductsByQuery($scope.searchText)
+                            .success(function(data){
+                                $scope.product = data.result;
+                            })
+                            .error(function(data){
+                                if (json_data.status == 200) {
+                                    // once we apply the new data to productsList, the entire application will update
+                                    $rootScope.productsList = json_data.result;
+                                    //console.log($scope.searchResults);
+                                    $scope.productsResultsCount = $rootScope.productsList.length;
+
+                                    $scope.searchSpinner = false; // hide spinner
+                                    $scope.searchComplete = true; // show results
+
+                                    if($rootScope.productsList.length > 0) {
+                                        // $rootScope.products = $rootScope.productsList.length; // make sure results are visible on map
+                                        $scope.productsResultTitle = "Product Results:";
+                                        //$scope.searchText = ""; // empty search bar
+                                    } else {
+                                        $scope.productsResultTitle = "No match found";
+                                    }
+                                }
+                        });
+                    });
+
+                }, 1000) // set delay
+            } else {
+                $scope.searchSpinner = false;
+            }
+        }
+    });
+
+    $scope.resetHome = function () {
+        $scope.searchText = "";
+        // return user back to default search
+        $scope.searchComplete = false;
+        $rootScope.revealMenuBar('none');
+        // get 25 stores on initial load
+        $rootScope.stores = 5;
+        Finder.nearbyStores(25);
+    };
+
+    //get favourite count
+    $scope.$watch('fbUser', function() {
+        if($rootScope.fbUser != undefined) {
+            setUserFavourites($rootScope, Favourites, Store, null, 'Favourites', 'favouritesResultsCount', 'favouriteList');
+        }
+    });
+
+   //show favourite
+   $scope.toggleFavourite = function(showFavourite) {
+        return !showFavourite;
+   };
 }
 
 // --------------------------------------------------------------------
@@ -114,6 +214,11 @@ function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster, $log) {
 	// enables new version of google maps
     google.maps.visualRefresh = true;
 
+    $scope.center = {
+        latitude: 79.4042,
+        longitude: 43.6481
+    };
+
 	// default settings
 	$rootScope.stores = 5;
 	$scope.zoom = 12;
@@ -121,11 +226,6 @@ function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster, $log) {
 
     // get 25 stores on initial load
     Finder.nearbyStores(25);
-
-	$scope.center = {
-		latitude: 73,
-		longitude: 42
-	};
 
     $scope.dataBarVisible = true;
 
@@ -180,93 +280,22 @@ function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster, $log) {
     }, true);
 };
 
+
 // --------------------------------------------------------------------
 /**
- * searchCtrl
+ * storeDetails
  *
- * Used by the sidebar to perform searches
+ * Used by store modal popup
  *
  */
 
-function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster, Products, Favourites) {
+function storeDetails($scope, $rootScope, parse, Store, StoreRatings, Favourites, $timeout, Finder, CookieMonster) {
 
-    // watch searchText for user input
-    var timer = false; // required
-    $scope.$watch('searchText', function() {
-        // make sure search is long enough
-        if(typeof $scope.searchText !== "undefined") {
-            if($scope.searchText.length > 2) {
-                // do not search until user has stopped typing
-                if(timer) {
-                    $timeout.cancel(timer)
-                }
-                timer = $timeout(function(){
-                    $scope.searchSpinner = true; // show spinner
-                    // perform the search
-                    Store.searchStores($scope.searchText)
-                        .success(function(data) {
-                            $scope.store = data.result;
-                        })
-                        .error(function(data, status) {
-                            if (json_data.status == 200) {
-                                // once we apply the new data to storesList, the entire application will update
-                                $rootScope.storesList = json_data.result;
-                                //console.log($scope.searchResults);
-                                $scope.storesResultsCount = $rootScope.storesList.length;
-
-                                $scope.searchSpinner = false; // hide spinner
-                                $scope.searchComplete = true; // show results
-
-                                if($rootScope.storesList.length > 0) {
-                                    $rootScope.stores = $rootScope.storesList.length; // make sure results are visible on map
-                                    $scope.storesResultTitle = "Stores Results:";
-                                    $scope.searchText = ""; // empty search bar
-                                } else {
-                                    $scope.storesResultTitle = "No match found";
-                                }
-                            }
-                    });
-
-                    Products.getProductsByQuery($scope.searchText)
-                        .success(function(data){
-                            $scope.product = data.result;
-                        })
-                        .error(function(data){
-                            if (json_data.status == 200) {
-                                // once we apply the new data to productsList, the entire application will update
-                                $rootScope.productsList = json_data.result;
-                                //console.log($scope.searchResults);
-                                $scope.productsResultsCount = $rootScope.productsList.length;
-
-                                $scope.searchSpinner = false; // hide spinner
-                                $scope.searchComplete = true; // show results
-
-                                if($rootScope.productsList.length > 0) {
-                                    // $rootScope.products = $rootScope.productsList.length; // make sure results are visible on map
-                                    $scope.productsResultTitle = "Product Results:";
-                                    //$scope.searchText = ""; // empty search bar
-                                } else {
-                                    $scope.productsResultTitle = "No match found";
-                                }
-                            }
-                        });
-
-                }, 1000) // set delay
-            } else {
-                $scope.searchSpinner = false;
-            }
-        }
-    });
-
-    $scope.resetHome = function () {
-        $scope.searchText = "";
-        // return user back to default search
-        $scope.searchComplete = false;
-        $rootScope.revealMenuBar('none');
-        // get 25 stores on initial load
-        $rootScope.stores = 5;
-        Finder.nearbyStores(25);
+    // create empty data object
+    var data = {
+        userId: $rootScope.fbUser.id
     };
+
 
     //get favourite count
     $scope.$watch('fbUser', function() {
@@ -282,30 +311,36 @@ function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster, 
    };
 }
 
-// --------------------------------------------------------------------
-/**
- * storeDetails
- *
- * Used by store modal popup
- *
- */
+        // establish data object
+        var data = {
+            rating: result,
+            storeId: $scope.storeInfo.id,
+            userId: $rootScope.fbUser.id
+        }
 
-function storeDetails($scope, $rootScope, parse, Store, Favourites, $timeout, Finder, CookieMonster) {
-    $scope.saveReview = function() {
-        alert(parse.update("Stores",
-            {
-                "storeId": $scope.storeInfo.id,
-                "rating": {
-                    "__op": "Add",
-                    "objects": ["5"]
-                }
+        // check if the user has previously voted
+        StoreRatings.checkVote(data).then(function(response) {
+            if(!response) {
+                // user hasn't voted, lets save their vote
+                StoreRatings.setVote(data).then(function(response) {
+                    // check if object successfully created
+                    if(response.status == 201) {
+                        console.log('Successfully added review');
+                        // hide the voting li
+                        $scope.checkVote = true;
+                        $scope.storeVoteTotal = StoreRatings.countVotes(data.storeId);
+                    }
+                });
+            } else {
+                console.log('Invalid vote, user has already cast vote for this store.');
             }
-        ));
+        });
     };
 
     //make sure storeInfo is loaded before checking if store is favourite
     $scope.$watch('storeInfo', function(data) {
-         if($scope.storeInfo != undefined){
+
+         if($scope.storeInfo != undefined) {
             //set params for .isFavourite
             params = {
                 userId : $rootScope.fbUser.id,
@@ -313,7 +348,19 @@ function storeDetails($scope, $rootScope, parse, Store, Favourites, $timeout, Fi
             };
 
             $scope.favourite = Favourites.isFavourite($scope.storeInfo.id, 'Favourites', $rootScope.fbUser.id, params);
-            console.log($scope.favourite);
+
+            data.userId = $rootScope.fbUser.id;
+            data.storeId = $scope.storeInfo.id;
+
+            // check if the user has yet voted on this store, hide it if so
+            StoreRatings.checkVote(data).then(function(votestatus) {
+                $scope.checkVote = votestatus;
+            });
+
+            // count the amount of votes placed for this store
+            StoreRatings.countVotes($scope.storeInfo.id).then(function(votecount) {
+                $scope.storeVoteTotal = votecount;
+            });
         }
     });
 
@@ -324,7 +371,6 @@ function storeDetails($scope, $rootScope, parse, Store, Favourites, $timeout, Fi
             storeId: $scope.storeInfo.id,
             userId: $rootScope.fbUser.id
         }
-
 
         Favourites.isFavourite(data.storeId, "Favourites", data.userId, data).then(function(response){
             //already set to favourite
@@ -384,13 +430,6 @@ function productsListCtrl($scope, Products) {
     }
 }
 
-/**
- * productDetailsCtrl
- *
- * Used to display detailed view of a product
- * Includes Stock Information and returns 20 closest stores
- *
- */
 
 
 // --------------------------------------------------------------------
@@ -420,20 +459,15 @@ function storesForProductCtrl($scope, $rootScope, $routeParams, Products, Favour
             $scope.store = data.result;
         }).error(function(data, status) {
             if (json_data.status == 200){
-                //set default images if no product image is available
-                if(!json_data.product['image_thumb_url']){
-                    json_data.product['image_thumb_url'] = "img/glyphicons-halflings.png";
-                }
                 $rootScope.product = json_data.product;
                 $rootScope.storesList = json_data.result;
-                //console.log($scope.product);
             }
         });
     });
 
-    $scope.$watch('productInfo', function(data) {
+    $scope.$watch('productInfo', function(data) {`
          if($scope.productInfo != undefined){
-            //set params for .isFavourite
+            //set params used .isFavourite in Favourites Service
             params = {
                 userId : $rootScope.fbUser.id,
                 productId : $scope.productInfo.id

@@ -84,7 +84,12 @@ html, body {
  * Navigation Styles
  * ====================================================================
  */
-/* line 104, main.scss */
+/* line 105, main.scss */
+.main-search-bar {
+  width: 125%;
+}
+
+/* line 109, main.scss */
 #header-bar {
   height: 2.25em;
   position: fixed;
@@ -106,29 +111,29 @@ html, body {
   background-image: linear-gradient(top, #2a6180, #224e66);
   filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='$fromColor', EndColorStr='$toColor');
 }
-/* line 113, main.scss */
+/* line 118, main.scss */
 #header-bar #brand {
   font-size: 1.5em;
   width: 100%;
   display: inline-block;
   text-align: center;
 }
-/* line 120, main.scss */
+/* line 125, main.scss */
 #header-bar a {
   color: white;
 }
-/* line 122, main.scss */
+/* line 127, main.scss */
 #header-bar a:hover {
   color: #efefef;
 }
 
-/* line 128, main.scss */
+/* line 133, main.scss */
 #content {
   height: 100%;
   float: left;
 }
 
-/* line 133, main.scss */
+/* line 138, main.scss */
 #menu-bar, .options-bar {
   height: 100%;
   position: fixed;
@@ -141,19 +146,19 @@ html, body {
   z-index: 1;
   overflow: auto;
 }
-/* line 152, main.scss */
+/* line 157, main.scss */
 #menu-bar ul, .options-bar ul {
   font-size: 0.65em;
   padding: 0;
   margin: 0;
   list-style-type: none;
 }
-/* line 159, main.scss */
+/* line 164, main.scss */
 #menu-bar ul li a, .options-bar ul li a {
   color: white;
 }
 
-/* line 166, main.scss */
+/* line 171, main.scss */
 #menu-bar {
   left: 0;
 }
@@ -162,12 +167,12 @@ html, body {
  * Custom Checkboxes
  * ====================================================================
  */
-/* line 175, main.scss */
+/* line 180, main.scss */
 input[type="checkbox"] {
   display: none;
 }
 
-/* line 178, main.scss */
+/* line 183, main.scss */
 input[type="checkbox"] + label span {
   display: inline-block;
   width: 19px;
@@ -178,7 +183,7 @@ input[type="checkbox"] + label span {
   cursor: pointer;
 }
 
-/* line 187, main.scss */
+/* line 192, main.scss */
 input[type="checkbox"]:checked + label span {
   background: url(check_radio_sheet.png) -19px top no-repeat;
 }
@@ -187,21 +192,21 @@ input[type="checkbox"]:checked + label span {
  * Nearby Finder
  * ====================================================================
  */
-/* line 196, main.scss */
+/* line 201, main.scss */
 #zoomOut {
   position: fixed;
   top: 5%;
   left: 5%;
 }
 
-/* line 202, main.scss */
+/* line 207, main.scss */
 .primary-content {
   width: 100%;
   height: 85%;
   position: absolute;
 }
 
-/* line 208, main.scss */
+/* line 213, main.scss */
 #data-bar {
   position: fixed;
   z-index: 1;
@@ -216,7 +221,7 @@ input[type="checkbox"]:checked + label span {
   padding: 01%;
   background: white;
 }
-/* line 222, main.scss */
+/* line 227, main.scss */
 #data-bar .data-container {
   height: 100%;
   border-right: 1px solid #2a6180;
@@ -224,7 +229,7 @@ input[type="checkbox"]:checked + label span {
   display: inline-block;
   vertical-align: text-top;
 }
-/* line 229, main.scss */
+/* line 234, main.scss */
 #data-bar .data-container .data-left {
   float: left;
   width: 25%;
@@ -233,11 +238,11 @@ input[type="checkbox"]:checked + label span {
   height: 100%;
   text-align: center;
 }
-/* line 237, main.scss */
+/* line 242, main.scss */
 #data-bar .data-container .data-left a {
   color: #224e66;
 }
-/* line 241, main.scss */
+/* line 246, main.scss */
 #data-bar .data-container .data-left .index-number {
   position: absolute;
   text-align: center;
@@ -247,13 +252,13 @@ input[type="checkbox"]:checked + label span {
   width: 100%;
   font-size: 1.45em;
 }
-/* line 252, main.scss */
+/* line 257, main.scss */
 #data-bar .data-container .data-right {
   float: left;
   width: 65%;
   padding: 0 2.5%;
 }
-/* line 258, main.scss */
+/* line 263, main.scss */
 #data-bar .data-container .data-right h1 {
   width: 100%;
   font-size: 0.9em;
@@ -262,7 +267,7 @@ input[type="checkbox"]:checked + label span {
   padding: 0;
   margin: 0;
 }
-/* line 268, main.scss */
+/* line 273, main.scss */
 #data-bar .data-container span {
   color: #3a9141;
   font-size: 0.8em;
@@ -271,15 +276,15 @@ input[type="checkbox"]:checked + label span {
   line-height: 1.25em;
 }
 
-/* line 278, main.scss */
+/* line 283, main.scss */
 .options-bar {
   right: 0;
 }
-/* line 281, main.scss */
+/* line 286, main.scss */
 .options-bar h1, .options-bar h2, .options-bar h3, .options-bar h4, .options-bar h5, .options-bar h6, .options-bar p, .options-bar span, .options-bar label {
   color: white;
 }
-/* line 285, main.scss */
+/* line 290, main.scss */
 .options-bar ul.filter-options {
   float: left;
   width: 45%;
@@ -288,18 +293,18 @@ input[type="checkbox"]:checked + label span {
   margin: 0;
   display: inline-block;
 }
-/* line 292, main.scss */
+/* line 297, main.scss */
 .options-bar ul.filter-options li {
   width: 100%;
   display: inline-block;
   margin: 0.25em 0;
 }
-/* line 299, main.scss */
+/* line 304, main.scss */
 .options-bar .check-wrapper {
   width: 10%;
   float: left;
 }
-/* line 304, main.scss */
+/* line 309, main.scss */
 .options-bar .check-label {
   float: left;
 }
@@ -309,8 +314,20 @@ input[type="checkbox"]:checked + label span {
  * ====================================================================
  */
 @media screen and (max-width: 400px) {
-  /* line 317, main.scss */
+  /* line 324, main.scss */
   #header-bar .title {
     display: none;
+  }
+}
+@media screen and (min-width: 400px) {
+  /* line 333, main.scss */
+  .main-search-bar {
+    width: 200%;
+  }
+}
+@media screen and (min-width: 750px) {
+  /* line 341, main.scss */
+  .main-search-bar {
+    width: 350%;
   }
 }

@@ -18,9 +18,9 @@ function setJSON(data) {
 
 // --------------------------------------------------------------------
 /**
- * menuCtrl
+ * setUserFavourites
  *
- * Used to show the list of all the stores available
+ * Ask Lucas
  *
  */
 
@@ -118,7 +118,7 @@ function wrapperCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster,
                     geoLocation.getCurrentPosition(function(position) {
                         $rootScope.currentLocation = position;
 
-                        Store.searchStores($scope.searchText, null, position)
+                        Store.searchStores($scope.searchText, position)
                             .success(function(data) {
                                 $scope.store = data.result;
                             })

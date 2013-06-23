@@ -56,9 +56,10 @@ function setJSON(data) {
 
 // --------------------------------------------------------------------
 /**
- * menuCtrl
+ * wrapperCtrl
  *
- * Used to show the list of all the stores available
+ * Used to control all global functions of the application: 
+ * search, menu, facebook favourites
  *
  */
 
@@ -109,7 +110,7 @@ function wrapperCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster,
                     $timeout.cancel(timer)
                 }
                 timer = $timeout(function(){
-                    $rootScope.revealMenuBar('left');
+                    $scope.showMenuBar = true;
                     $scope.searchSpinner = true; // show spinner
                     // perform the search
                     
@@ -172,6 +173,28 @@ function wrapperCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster,
             }
         }
     });
+
+    $scope.resetHome = function () {
+        $scope.searchText = "";
+        // return user back to default search
+        $scope.searchComplete = false;
+        $rootScope.revealMenuBar('none');
+        // get 25 stores on initial load
+        $rootScope.stores = 5;
+        Finder.nearbyStores(25);
+    };
+
+    //get favourite count
+    $scope.$watch('fbUser', function() {
+        if($rootScope.fbUser != undefined) {
+            setUserFavourites($rootScope, Favourites, Store, null, 'Favourites', 'favouritesResultsCount', 'favouriteList');
+        }
+    });
+
+   //show favourite
+   $scope.toggleFavourite = function(showFavourite) {
+        return !showFavourite;
+   };
 
 }
 
@@ -249,41 +272,6 @@ function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster, $log) {
         }
     }, true);
 };
-
-// --------------------------------------------------------------------
-/**
- * searchCtrl
- *
- * Used by the sidebar to perform searches
- *
- */
-
-function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster, Products, Favourites, geoLocation) {
-
-
-
-    $scope.resetHome = function () {
-        $scope.searchText = "";
-        // return user back to default search
-        $scope.searchComplete = false;
-        $rootScope.revealMenuBar('none');
-        // get 25 stores on initial load
-        $rootScope.stores = 5;
-        Finder.nearbyStores(25);
-    };
-
-    //get favourite count
-    $scope.$watch('fbUser', function() {
-        if($rootScope.fbUser != undefined) {
-            setUserFavourites($rootScope, Favourites, Store, null, 'Favourites', 'favouritesResultsCount', 'favouriteList');
-        }
-    });
-
-   //show favourite
-   $scope.toggleFavourite = function(showFavourite) {
-        return !showFavourite;
-   };
-}
 
 // --------------------------------------------------------------------
 /**

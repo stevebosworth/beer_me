@@ -56,6 +56,24 @@
     <div>
     {{storeList.result}}
     </div>
+    <ul>
+        <li>
+            <input type="button" class="btn btn-info" ng-hide="fbAuthorized" ng-click="fb.login()" value="Login with Facebook" />
+        </li>
+        <li ng-show="fbAuthorized"><hr/></li>
+        <li ng-show="fbAuthorized"><img style="width:40px; height:40px" ng-src="{{fbUser.picture.data.url}}" /> {{fbUser.first_name + ' ' + fbUser.last_name}}</li>
+        <li ng-show="fbAuthorized"><a ng-click="showFavouriteProd=toggleFavourite(showFavouriteProd)"><i ng-class="{'icon-collapse-alt': showFavouriteProd, 'icon-expand-alt': !showFavouriteProd}"></i> Favourite Products ({{favouritesResultsCount}}) </a>
+            <div ng-show="showFavouriteProd">
+                <ul>
+                    <li ng-repeat="result in favouriteList">
+                        <a data-reveal-id="myModal" ng-click="getStoreInfo(result.storeInfo)"><i class="icon-beer"></i> {{result.storeInfo.name}}</a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+        <li ng-show="fbAuthorized"><a href="#" ng-click="fb.logout()">Logout</a></li>
+    </ul>
+    <hr />
     <h3>Filters</h3>
     <div>Sort by:
         <select ng-model="orderStores">
@@ -117,6 +135,9 @@
                 <label for="has_transit_access"><span></span>Transit Access</label>
             </li>
         </ul>
+    </div>
+    <div style="margin:175px 0 100px 0;">
+        <hr />
     </div>
 </div>
 

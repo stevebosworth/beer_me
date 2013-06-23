@@ -53,6 +53,7 @@ function setJSON(data) {
         return response.data.results;
     });
  }
+
 // --------------------------------------------------------------------
 /**
  * menuCtrl
@@ -61,7 +62,7 @@ function setJSON(data) {
  *
  */
 
-function wrapperCtrl($scope, $rootScope, parse) {
+function wrapperCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster, Products, Favourites, geoLocation, parse) {
 	$scope.showMenuBar = false;
 	$scope.showOptionsBar = false;
     $rootScope.currentTime = (
@@ -96,6 +97,82 @@ function wrapperCtrl($scope, $rootScope, parse) {
                 break;
 		}
 	}
+
+    // watch searchText for user input
+    var timer = false; // required
+    $scope.$watch('searchText', function() {
+        // make sure search is long enough
+        if(typeof $scope.searchText !== "undefined") {
+            if($scope.searchText.length > 2) {
+                // do not search until user has stopped typing
+                if(timer) {
+                    $timeout.cancel(timer)
+                }
+                timer = $timeout(function(){
+                    $rootScope.revealMenuBar('left');
+                    $scope.searchSpinner = true; // show spinner
+                    // perform the search
+                    
+                    geoLocation.getCurrentPosition(function(position) {
+                        $rootScope.currentLocation = position;
+
+                        Store.searchStores($scope.searchText, null, position)
+                            .success(function(data) {
+                                $scope.store = data.result;
+                            })
+                            .error(function(data, status) {
+                                if (json_data.status == 200) {
+                                    // once we apply the new data to storesList, the entire application will update
+                                    $rootScope.storesList = json_data.result;
+                                    
+                                    //console.log($scope.searchResults);
+                                    $scope.storesResultsCount = $rootScope.storesList.length;
+
+                                    $scope.searchSpinner = false; // hide spinner
+                                    $scope.searchComplete = true; // show results
+
+                                    if($rootScope.storesList.length > 0) {
+                                        $rootScope.stores = $rootScope.storesList.length; // make sure results are visible on map
+                                        $scope.storesResultTitle = "Stores Results:";
+                                        $scope.searchText = ""; // empty search bar
+                                    } else {
+                                        $scope.storesResultTitle = "No match found";
+                                    }
+                                }
+                        });
+
+                        Products.getProductsByQuery($scope.searchText)
+                            .success(function(data){
+                                $scope.product = data.result;
+                            })
+                            .error(function(data){
+                                if (json_data.status == 200) {
+                                    // once we apply the new data to productsList, the entire application will update
+                                    $rootScope.productsList = json_data.result;
+                                    //console.log($scope.searchResults);
+                                    $scope.productsResultsCount = $rootScope.productsList.length;
+
+                                    $scope.searchSpinner = false; // hide spinner
+                                    $scope.searchComplete = true; // show results
+
+                                    if($rootScope.productsList.length > 0) {
+                                        // $rootScope.products = $rootScope.productsList.length; // make sure results are visible on map
+                                        $scope.productsResultTitle = "Product Results:";
+                                        //$scope.searchText = ""; // empty search bar
+                                    } else {
+                                        $scope.productsResultTitle = "No match found";
+                                    }
+                                }
+                        });
+                    });
+
+                }, 1000) // set delay
+            } else {
+                $scope.searchSpinner = false;
+            }
+        }
+    });
+
 }
 
 // --------------------------------------------------------------------
@@ -183,79 +260,7 @@ function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster, $log) {
 
 function searchCtrl($scope, $rootScope, Store, $timeout, Finder, CookieMonster, Products, Favourites, geoLocation) {
 
-    // watch searchText for user input
-    var timer = false; // required
-    $scope.$watch('searchText', function() {
-        // make sure search is long enough
-        if(typeof $scope.searchText !== "undefined") {
-            if($scope.searchText.length > 2) {
-                // do not search until user has stopped typing
-                if(timer) {
-                    $timeout.cancel(timer)
-                }
-                timer = $timeout(function(){
-                    $scope.searchSpinner = true; // show spinner
-                    // perform the search
-                    
-                    geoLocation.getCurrentPosition(function(position) {
-                        $rootScope.currentLocation = position;
 
-                        Store.searchStores($scope.searchText, null, position)
-                            .success(function(data) {
-                                $scope.store = data.result;
-                            })
-                            .error(function(data, status) {
-                                if (json_data.status == 200) {
-                                    // once we apply the new data to storesList, the entire application will update
-                                    $rootScope.storesList = json_data.result;
-                                    
-                                    //console.log($scope.searchResults);
-                                    $scope.storesResultsCount = $rootScope.storesList.length;
-
-                                    $scope.searchSpinner = false; // hide spinner
-                                    $scope.searchComplete = true; // show results
-
-                                    if($rootScope.storesList.length > 0) {
-                                        $rootScope.stores = $rootScope.storesList.length; // make sure results are visible on map
-                                        $scope.storesResultTitle = "Stores Results:";
-                                        $scope.searchText = ""; // empty search bar
-                                    } else {
-                                        $scope.storesResultTitle = "No match found";
-                                    }
-                                }
-                        });
-
-                        Products.getProductsByQuery($scope.searchText)
-                            .success(function(data){
-                                $scope.product = data.result;
-                            })
-                            .error(function(data){
-                                if (json_data.status == 200) {
-                                    // once we apply the new data to productsList, the entire application will update
-                                    $rootScope.productsList = json_data.result;
-                                    //console.log($scope.searchResults);
-                                    $scope.productsResultsCount = $rootScope.productsList.length;
-
-                                    $scope.searchSpinner = false; // hide spinner
-                                    $scope.searchComplete = true; // show results
-
-                                    if($rootScope.productsList.length > 0) {
-                                        // $rootScope.products = $rootScope.productsList.length; // make sure results are visible on map
-                                        $scope.productsResultTitle = "Product Results:";
-                                        //$scope.searchText = ""; // empty search bar
-                                    } else {
-                                        $scope.productsResultTitle = "No match found";
-                                    }
-                                }
-                        });
-                    });
-
-                }, 1000) // set delay
-            } else {
-                $scope.searchSpinner = false;
-            }
-        }
-    });
 
     $scope.resetHome = function () {
         $scope.searchText = "";

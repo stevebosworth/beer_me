@@ -41,13 +41,13 @@
                             <i class="icon-beer icon-2x" style="margin-right:15px;"></i>
                             <!-- <span class="title" style="margin-right:5px;"> Menu</span> -->
                         </div>
-                        <div style="float:left; margin-top:2px;">
-                            <form class="main-search-bar" ng-submit="alertMe()" style=" font-size:0.81em;">
-                                <input type="text" ng-model="searchText" placeholder="Search locations and products..."/>
-                                <div ng-show="searchSpinner" ng-animate="'fade'"><i class="icon-spinner icon-spin icon-large"></i> Searching...</div>
-                            </form>
-                        </div>
                     </a>
+                    <div style="float:left; margin-top:2px;">
+                        <form class="main-search-bar" style=" font-size:0.81em;">
+                            <input type="text" ng-model="searchText" placeholder="Search locations and products..."/>
+                            <span ng-show="searchSpinner" ng-animate="'fade'"><i class="icon-spinner icon-spin icon-large"></i> Searching...</span>
+                        </form>
+                    </div>
                 </div>
                 <!-- <div class="small-3 columns">
                     <span id="brand">
@@ -66,9 +66,8 @@
                 </div>
             </div>
 
-            <div id="menu-bar" ng-show="showMenuBar == true" ng-animate="'fade'" ng-controller="searchCtrl">
+            <div id="menu-bar" ng-show="showMenuBar == true" ng-animate="'fade'">
                 <ul>
-                    
                     <li ng-show="searchSpinner" ng-animate="'fade'"><hr/></li>
 
                     <li ng-show="searchComplete"><hr/></li>

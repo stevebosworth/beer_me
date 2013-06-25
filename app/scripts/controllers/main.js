@@ -335,6 +335,11 @@ function storeDetails($scope, $rootScope, parse, Store, StoreRatings, Favourites
     // make sure storeInfo is loaded before checking if store is favourite
     $scope.$watch('storeInfo', function(data) {
         if($scope.storeInfo != undefined){
+            params = {
+                userId: $rootScope.fbUser.id,
+                storeId:  $scope.storeInfo.id
+            }
+
             $scope.favourite = Favourites.isFavourite($scope.storeInfo.id, 'Favourites', $rootScope.fbUser.id, params);
 
             data.userId = $rootScope.fbUser.id;

@@ -43,7 +43,7 @@ function setJSON(data) {
                         break;
                     }
                     case 'productsFavorites' : {
-                        Products.getProduct(v.productId, rootScope.center).error(function(){
+                        Products.getProduct(v.productId, rootScope.currentLocation).error(function(){
                             if(json_data.status == 200){
                                 v['productInfo'] = json_data.product;
                             }
@@ -296,7 +296,6 @@ function storeDetails($scope, $rootScope, parse, Store, StoreRatings, Favourites
         userId: $rootScope.fbUser.id
     };
 
-
     //get favourite count
     $scope.$watch('fbUser', function() {
         if($rootScope.fbUser != undefined) {
@@ -305,41 +304,53 @@ function storeDetails($scope, $rootScope, parse, Store, StoreRatings, Favourites
         }
     });
 
-   //show favourite
-   // $scope.toggleFavourite = function(showFavourite) {
-   //      return !showFavourite;
-   // };
+    $scope.saveReview = function(result) {
 
+        // establish data object
+        var data = {
+            rating: result,
+            storeId: $scope.storeInfo.id,
+            userId: $rootScope.fbUser.id
+        }
 
-    $scope.saveReview = function(result) {
+        // check if the user has previously voted
+        StoreRatings.checkVote(data).then(function(response) {
+            if(!response) {
+                // user hasn't voted, lets save their vote
+                StoreRatings.setVote(data).then(function(response) {
+                    // check if object successfully created
+                    if(response.status == 201) {
+                        console.log('Successfully added review');
+                        // hide the voting li
+                        $scope.checkVote = true;
+                        $scope.storeVoteTotal = StoreRatings.countVotes(data.storeId);
+                    }
+                });
+            } else {
+                console.log('Invalid vote, user has already cast vote for this store.');
+            }
+        });
+    };
 
-        // establish data object
-        var data = {
-            rating: result,
-            storeId: $scope.storeInfo.id,
-            userId: $rootScope.fbUser.id
-        }
+    // make sure storeInfo is loaded before checking if store is favourite
+    $scope.$watch('storeInfo', function(data) {
+        if($scope.storeInfo != undefined){
+            $scope.favourite = Favourites.isFavourite($scope.storeInfo.id, 'Favourites', $rootScope.fbUser.id, params);
 
-        // check if the user has previously voted
-        StoreRatings.checkVote(data).then(function(response) {
-            if(!response) {
-                // user hasn't voted, lets save their vote
-                StoreRatings.setVote(data).then(function(response) {
-                    // check if object successfully created
-                    if(response.status == 201) {
-                        console.log('Successfully added review');
-                        // hide the voting li
-                        $scope.checkVote = true;
-                        $scope.storeVoteTotal = StoreRatings.countVotes(data.storeId);
-                    }
-                });
-            } else {
-                console.log('Invalid vote, user has already cast vote for this store.');
-            }
-        });
-    };
+            data.userId = $rootScope.fbUser.id;
+            data.storeId = $scope.storeInfo.id;
 
+            // check if the user has yet voted on this store, hide it if so
+            StoreRatings.checkVote(data).then(function(votestatus) {
+                $scope.checkVote = votestatus;
+            });
 
+            // count the amount of votes placed for this store
+            StoreRatings.countVotes($scope.storeInfo.id).then(function(votecount) {
+                $scope.storeVoteTotal = votecount;
+            });
+        }
+    });
 
     $scope.setFavourite = function() {
 
@@ -426,16 +437,15 @@ function productsListCtrl($scope, Products) {
 
 function storesForProductCtrl($scope, $rootScope, $routeParams, Products, Favourites, geoLocation, parse, $timeout) {
 
-        //get stores for product based on rootScope ID
+    //get stores for product based on rootScope ID
 
-        //hide stores in Details Modal
-        $scope.showHide = true;
-        console.log($scope.showHide);
+    //hide stores in Details Modal
+    $scope.showHide = true;
+    console.log($scope.showHide);
     geoLocation.getCurrentPosition(function (position) {
 
         //reset current location in scope
         $scope.currentLocation = {latitude: position.coords.latitude, longitude: position.coords.longitude};
-
 
         // retrieve the data for the selected store
         Products.getProduct($routeParams.productId, position, 1).success(function(data) {
@@ -450,7 +460,7 @@ function storesForProductCtrl($scope, $rootScope, $routeParams, Products, Favour
     });
 
     $scope.$watch('productInfo', function(data) {
-         if($scope.productInfo != undefined){
+         if($scope.productInfo != undefined) {
             //set params for .isFavourite
             params = {
                 userId : $rootScope.fbUser.id,

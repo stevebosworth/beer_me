@@ -446,7 +446,6 @@ function storesForProductCtrl($scope, $rootScope, $routeParams, Products, Favour
 
     //hide stores in Details Modal
     $scope.showHide = true;
-    console.log($scope.showHide);
     geoLocation.getCurrentPosition(function (position) {
 
         //reset current location in scope

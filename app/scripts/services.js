@@ -263,8 +263,8 @@ angular.module('beerMeServices', ['ngResource'])
                     method: 'JSONP',
                     params: {
                         callback: 'setJSON',
-                        lat: center.latitude,
-                        lon: center.longitude
+                        lat: center != undefined ? center.latitude : null,
+                        lon: center != undefined ? center.longitude : null
                     }
                 })
             },

@@ -59,7 +59,10 @@
     {{storeList.result}}
     </div>
     <ul>
-        <li ng-hide="fbAuthorized"><input type="button" class="btn btn-info" ng-hide="fbAuthorized" ng-click="fb.login()" value="Login with Facebook" /></li>
+        <li ng-hide="fbAuthorized">
+        <!--     <input type="button" class="btn btn-info" ng-hide="fbAuthorized" ng-click="fb.login()" value="Login with Facebook" /> -->
+        <button class="btn btn-inverse btn-primary" id="signup_facebook" ng-hide="fbAuthorized" ng-click="fb.login()"><span><i class="icon-facebook"></i></span> | Sign in with Facebook</button>
+        </li>
         <li ng-show="fbAuthorized"><img style="width:40px; height:40px" ng-src="{{fbUser.picture.data.url}}" /> {{fbUser.first_name + ' ' + fbUser.last_name}}</li>
         <li ng-show="fbAuthorized"><a ng-click="showFavourite=toggleFavourite(showFavourite)"><i ng-class="{'icon-collapse-alt': showFavourite, 'icon-expand-alt': !showFavourite}"></i> Favourite Stores ({{favouritesResultsCount}}) </a>
             <div ng-show="showFavourite">

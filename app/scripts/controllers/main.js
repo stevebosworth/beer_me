@@ -230,8 +230,9 @@ function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster, $log) {
     $scope.dataBarVisible = true;
 
     $rootScope.getStoreInfo = function(obj) {
+        console.log(obj);
         $scope.zoom = 17;
-        // $rootScope.revealMenuBar('none');
+        $rootScope.storeInfo = "";
         $rootScope.storeInfo = obj;
         $scope.center = {
             latitude: obj.latitude,
@@ -239,11 +240,10 @@ function listCtrl($scope, $rootScope, $filter, Finder, CookieMonster, $log) {
         }
     }
 
-    $rootScope.getProductInfo = function(obj){
-        // console.log(obj);
-        console.log($scope.stockList);
+    $rootScope.getProductInfo = function(obj) {
+        // empty stock list
+        $rootScope.stockList = "";
         //$scope.showHide = true;
-        //console.log($scope.showHide);
         $rootScope.productInfo = obj;
     }
 
@@ -473,12 +473,11 @@ function storesForProductCtrl($scope, $rootScope, $routeParams, Products, Favour
 
     //get current location
     $scope.getStoresInStock = function (){
-
         Products.getProduct($rootScope.productInfo.id, $rootScope.center, 5).success(function(data){
-            $scope.stockList = data.result;
+            $rootScope.stockList = data.result;
         }).error(function(data, status) {
             if (json_data.status == 200){
-                $scope.stockList = json_data.result;
+                $rootScope.stockList = json_data.result;
                 //console.log($scope.stockList);
                 $scope.showHide = false;
                 console.log($scope.showHide);

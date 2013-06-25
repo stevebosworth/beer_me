@@ -223,11 +223,7 @@
             var menu_scope = angular.element($("#wrapper")).scope();
             modal_scope.$apply(function () {
               var data = JSON.parse(infoWindowContent);
-              modal_scope.storeInfo = data;
-              modal_scope.center = { latitude: data.latitude, longitude: data.longitude };
-              modal_scope.zoom = 17;
-              menu_scope.showMenuBar = false;
-              menu_scope.showOptionsBar = false;
+              modal_scope.getStoreInfo(data);
             });
             $('#myModal').foundation('reveal', 'open');
           });
